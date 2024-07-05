@@ -1,3 +1,5 @@
+use std::{borrow::Cow, collections::HashMap};
+
 use fastnbt::Value;
 use serde::{Deserialize, Serialize};
 
@@ -9,8 +11,11 @@ pub mod block_state;
 pub mod bucket_entity_data;
 pub mod can_break;
 
+pub type ComponentMap<'a> = HashMap<Cow<'a, str>, Component<'a>>;
+
 /// Represents a component in a block entity.
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[serde(untagged)]
 pub enum Component<'a> {
     #[serde(borrow)]
     #[serde(rename = "minecraft:attribute_modifiers")]

@@ -5,12 +5,19 @@ use serde::{Deserialize, Serialize};
 
 pub mod banners;
 pub mod barrel;
+pub mod beacon;
 pub mod end_gateway;
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub enum BlockEntityData<'a> {
     #[serde(borrow)]
     Banners(banners::Banners<'a>),
+
+    #[serde(borrow)]
+    Barrel(barrel::Barrel<'a>),
+
+    #[serde(borrow)]
+    Beacon(beacon::Beacon<'a>),
 
     EndGateway(end_gateway::EndGateway),
     Other(Value),
@@ -46,6 +53,8 @@ impl<'a> BlockEntityData<'a> {
     pub fn as_hashmap(&'a self) -> HashMap<String, Value> {
         match self {
             BlockEntityData::Banners(banners) => to_value_map!(banners),
+            BlockEntityData::Barrel(barrel) => to_value_map!(barrel),
+            BlockEntityData::Beacon(beacon) => to_value_map!(beacon),
             BlockEntityData::EndGateway(end_gateway) => to_value_map!(end_gateway),
             BlockEntityData::Other(value) => match value {
                 Value::Compound(map) => map.clone(),

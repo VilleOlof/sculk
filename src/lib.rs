@@ -52,12 +52,12 @@ mod tests {
 
         let block_entity = deserialize_from_value(&end_gateway_nbt).unwrap();
 
-        println!("{:?}", block_entity);
+        println!("{:#?}", block_entity);
 
         println!();
 
         let serialized = serialize_to_value(&block_entity).unwrap();
 
-        println!("{:?}", serialized);
+        println!("{:#?}", serialized);
     }
 }

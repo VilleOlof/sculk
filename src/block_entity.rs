@@ -1,9 +1,9 @@
 use fastnbt::Value;
 use serde::{Deserialize, Serialize};
-use serde_with::{serde_as, EnumMap};
+use serde_with::serde_as;
 use std::{borrow::Cow, collections::HashMap};
 
-use crate::{block_entities::BlockEntityData, components::Component};
+use crate::{block_entities::BlockEntityData, ComponentMap};
 
 /// Refer to `BlockEntity` for documentation.
 #[serde_as]
@@ -21,11 +21,10 @@ pub struct LoseBlockEntity<'a> {
     pub z: i32,
 
     #[serde(borrow)]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    #[serde_as(as = "EnumMap")]
-    pub components: Vec<Component<'a>>,
-
+    #[serde(skip_serializing_if = "Option::is_none")]
+    // TODO: This should be a HashMap here and a custom deserializer.
+    pub components: Option<ComponentMap<'a>>,
+    // pub components: Vec<Component<'a>>,
     #[serde(flatten)]
     pub data: HashMap<String, Value>,
 }
@@ -53,7 +52,8 @@ pub struct BlockEntity<'a> {
     pub z: i32,
 
     /// The components of the block entity.
-    pub components: Vec<Component<'a>>,
+    // pub components: Vec<Component<'a>>,
+    pub components: Option<ComponentMap<'a>>,
 
     pub data: BlockEntityData<'a>,
 }
