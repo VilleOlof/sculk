@@ -36,6 +36,7 @@ pub mod skull;
 pub mod structure_block;
 pub mod suspicious_block;
 pub mod trail_spawner;
+pub mod vault;
 
 /// Represents unique data specific to a block entity.
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
@@ -161,6 +162,9 @@ pub enum BlockEntityData<'a> {
 
     #[serde(borrow)]
     TrailSpawner(trail_spawner::TrailSpawner<'a>),
+
+    #[serde(borrow)]
+    Vault(vault::Vault<'a>),
 
     Other(Option<Value>),
     None,
@@ -304,6 +308,7 @@ impl<'a> BlockEntityData<'a> {
             BlockEntityData::SuspiciousSand(suspicious_sand) => to_value_map!(suspicious_sand),
             BlockEntityData::TrappedChest(trapped_chest) => to_value_map!(trapped_chest),
             BlockEntityData::TrailSpawner(trail_spawner) => to_value_map!(trail_spawner),
+            BlockEntityData::Vault(vault) => to_value_map!(vault),
 
             BlockEntityData::Other(value) => value.clone(),
             BlockEntityData::None => None,
