@@ -26,7 +26,7 @@ pub struct LoseBlockEntity<'a> {
     pub components: Option<ComponentMap<'a>>,
     // pub components: Vec<Component<'a>>,
     #[serde(flatten)]
-    pub data: HashMap<String, Value>,
+    pub data: Option<HashMap<String, Value>>,
 }
 
 /// Represents a block entity.

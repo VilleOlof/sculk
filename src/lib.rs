@@ -19,6 +19,7 @@ mod tests {
 
     use super::*;
 
+    /// TODO: Move like block entity & components test to their own seperate module or something.
     #[test]
     fn test() {
         let end_gateway_nbt = nbt!({
