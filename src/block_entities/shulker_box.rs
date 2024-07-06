@@ -5,13 +5,15 @@ use serde::{Deserialize, Serialize};
 use crate::item::Item;
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
-pub struct Hopper<'a> {
+pub struct ShulkerBox<'a> {
     /// Optional. The name of this container in JSON text component, which appears in its GUI where the default name ordinarily appears.
     #[serde(borrow)]
     #[serde(rename = "CustomName")]
     pub custom_name: Option<Cow<'a, str>>,
 
     /// List of items in this container.  
+    ///
+    /// Shulker box slots are numbered 0–26, 0 starts in the top left corner.
     #[serde(borrow)]
     #[serde(rename = "Items")]
     pub items: Vec<Item<'a>>,
@@ -29,8 +31,4 @@ pub struct Hopper<'a> {
     /// Optional. Seed for generating the loot table. The default value works similarly to the seeds for worlds, where value of 0 or an omitted value causes the game to use a random seed.
     #[serde(rename = "LootTableSeed")]
     pub loot_table_seed: i64,
-
-    /// Time until the next transfer in game ticks, naturally between 1 and 8 or 0 if there is no transfer.
-    #[serde(rename = "TransferCooldown")]
-    pub transfer_cooldown: i32,
 }

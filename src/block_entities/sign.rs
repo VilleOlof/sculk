@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::color::Color;
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
-pub struct HangingSign<'a> {
+pub struct Sign<'a> {
     /// true if the text is locked with honeycomb.
     pub is_waxed: bool,
 

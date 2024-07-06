@@ -6,7 +6,6 @@ pub mod banners;
 pub mod barrel;
 pub mod beacon;
 pub mod beehive;
-pub mod blast_furnace;
 pub mod brewing_stand;
 pub mod calibrated_sculk_sensor;
 pub mod campfire;
@@ -22,13 +21,23 @@ pub mod dropper;
 pub mod enchanting_table;
 pub mod end_gateway;
 pub mod furnace;
-pub mod hanging_sign;
 pub mod hopper;
 pub mod jigsaw;
 pub mod jukebox;
 pub mod lectern;
 pub mod mob_spawner;
+pub mod piston;
+pub mod sculk_catalyst;
+pub mod sculk_sensor;
+pub mod sculk_shrieker;
+pub mod shulker_box;
+pub mod sign;
+pub mod skull;
+pub mod structure_block;
+pub mod suspicious_block;
+pub mod trail_spawner;
 
+/// Represents unique data specific to a block entity.
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub enum BlockEntityData<'a> {
     #[serde(borrow)]
@@ -47,7 +56,7 @@ pub enum BlockEntityData<'a> {
     Bell,
 
     #[serde(borrow)]
-    BlastFurnace(blast_furnace::BlastFurnace<'a>),
+    BlastFurnace(furnace::Furnace<'a>),
 
     #[serde(borrow)]
     BrewingStand(brewing_stand::BrewingStand<'a>),
@@ -98,6 +107,9 @@ pub enum BlockEntityData<'a> {
     Furnace(furnace::Furnace<'a>),
 
     #[serde(borrow)]
+    HangingSing(sign::Sign<'a>),
+
+    #[serde(borrow)]
     Hopper(hopper::Hopper<'a>),
 
     #[serde(borrow)]
@@ -111,6 +123,44 @@ pub enum BlockEntityData<'a> {
 
     #[serde(borrow)]
     MobSpawner(mob_spawner::MobSpawner<'a>),
+
+    #[serde(borrow)]
+    Piston(piston::Piston<'a>),
+
+    SculkCatalyst(sculk_catalyst::SculkCatalyst),
+
+    #[serde(borrow)]
+    SculkSensor(sculk_sensor::SculkSensor<'a>),
+
+    #[serde(borrow)]
+    SculkShrieker(sculk_shrieker::SculkShrieker<'a>),
+
+    #[serde(borrow)]
+    ShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    Sign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    Skull(skull::Skull<'a>),
+
+    #[serde(borrow)]
+    Smoker(furnace::Furnace<'a>),
+
+    #[serde(borrow)]
+    SoulCampfire(campfire::Campfire<'a>),
+
+    #[serde(borrow)]
+    SuspiciousGravel(suspicious_block::SuspiciousBlock<'a>),
+
+    #[serde(borrow)]
+    SuspiciousSand(suspicious_block::SuspiciousBlock<'a>),
+
+    #[serde(borrow)]
+    TrappedChest(chest::Chest<'a>),
+
+    #[serde(borrow)]
+    TrailSpawner(trail_spawner::TrailSpawner<'a>),
 
     Other(Option<Value>),
     None,
@@ -233,11 +283,27 @@ impl<'a> BlockEntityData<'a> {
             BlockEntityData::EndGateway(end_gateway) => to_value_map!(end_gateway),
             BlockEntityData::EndPortal => None,
             BlockEntityData::Furnace(furnace) => to_value_map!(furnace),
+            BlockEntityData::HangingSing(sign) => to_value_map!(sign),
             BlockEntityData::Hopper(hopper) => to_value_map!(hopper),
             BlockEntityData::Jigsaw(jigsaw) => to_value_map!(jigsaw),
             BlockEntityData::Jukebox(jukebox) => to_value_map!(jukebox),
             BlockEntityData::Lectern(lectern) => to_value_map!(lectern),
             BlockEntityData::MobSpawner(mob_spawner) => to_value_map!(mob_spawner),
+            BlockEntityData::Piston(piston) => to_value_map!(piston),
+            BlockEntityData::SculkCatalyst(sculk_catalyst) => to_value_map!(sculk_catalyst),
+            BlockEntityData::SculkSensor(sculk_sensor) => to_value_map!(sculk_sensor),
+            BlockEntityData::SculkShrieker(sculk_shrieker) => to_value_map!(sculk_shrieker),
+            BlockEntityData::ShulkerBox(shulker_box) => to_value_map!(shulker_box),
+            BlockEntityData::Sign(sign) => to_value_map!(sign),
+            BlockEntityData::Skull(skull) => to_value_map!(skull),
+            BlockEntityData::Smoker(smoker) => to_value_map!(smoker),
+            BlockEntityData::SoulCampfire(soul_campfire) => to_value_map!(soul_campfire),
+            BlockEntityData::SuspiciousGravel(suspicious_gravel) => {
+                to_value_map!(suspicious_gravel)
+            }
+            BlockEntityData::SuspiciousSand(suspicious_sand) => to_value_map!(suspicious_sand),
+            BlockEntityData::TrappedChest(trapped_chest) => to_value_map!(trapped_chest),
+            BlockEntityData::TrailSpawner(trail_spawner) => to_value_map!(trail_spawner),
 
             BlockEntityData::Other(value) => value.clone(),
             BlockEntityData::None => None,

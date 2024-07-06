@@ -1,4 +1,4 @@
-use std::{borrow::Cow, collections::HashMap};
+use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
@@ -9,7 +9,7 @@ pub struct CalibratedSculkSensor<'a> {
 
     /// The vibration event listener for this sculk shrieker, sculk sensor, or calibrated sculk sensor.
     #[serde(borrow)]
-    pub listener: HashMap<Cow<'a, str>, Listener<'a>>,
+    pub listener: Listener<'a>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
