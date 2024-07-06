@@ -1,7 +1,8 @@
 use std::{borrow::Cow, collections::HashMap};
 
-use fastnbt::Value;
 use serde::{Deserialize, Serialize};
+
+use crate::entity::Entity;
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct MobSpawner<'a> {
@@ -57,8 +58,8 @@ pub struct PotentialSpawn<'a> {
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct SpawnData<'a> {
     /// An entity, including the entity id.
-    // TODO: Yoink this into a entity struct
-    pub entity: Value,
+    #[serde(borrow)]
+    pub entity: Entity<'a>,
 
     /// Optional custom fields to override spawning requirements.
     pub custom_spawn_rules: SpawnRules,

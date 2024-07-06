@@ -3,6 +3,8 @@ use std::{borrow::Cow, collections::HashMap};
 use fastnbt::Value;
 use serde::{Deserialize, Serialize};
 
+use crate::item::Item;
+
 pub mod attribute_modifiers;
 pub mod banner_patterns;
 pub mod base_color;
@@ -29,8 +31,9 @@ pub enum Component<'a> {
     #[serde(rename = "minecraft:base_color")]
     BaseColor(base_color::BaseColor<'a>),
 
+    #[serde(borrow)]
     #[serde(rename = "minecraft:bees")]
-    Bees(Vec<bees::Bee>),
+    Bees(Vec<bees::Bee<'a>>),
 
     // TODO: This should mimic `BlockEntity` except no x, y, z fields.
     // Would probably require a post-processing step for BlockEntityData.
@@ -44,9 +47,9 @@ pub enum Component<'a> {
     #[serde(rename = "minecraft:bucket_entity_data")]
     BucketEntityData(bucket_entity_data::BucketEntityData),
 
-    // TODO: This should a vec of `Item` structs or something.
+    #[serde(borrow)]
     #[serde(rename = "minecraft:bundle_contents")]
-    BundleContents(Vec<Value>),
+    BundleContents(Vec<Item<'a>>),
 
     #[serde(borrow)]
     #[serde(rename = "minecraft:can_break")]

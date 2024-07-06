@@ -1,12 +1,12 @@
-use fastnbt::Value;
 use serde::{Deserialize, Serialize};
 
+use crate::entity::Entity;
+
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
-pub struct Bee {
+pub struct Bee<'a> {
     /// The NBT data of the entity in the hive.
-    // TODO: Make a EntityFormat enum/struct to handle this.
-    // https://minecraft.wiki/w/Entity_format
-    entity_data: Value,
+    #[serde(borrow)]
+    entity_data: Entity<'a>,
 
     /// The minimum amount of time in ticks for this entity to stay in the hive.
     min_ticks_in_hive: i32,

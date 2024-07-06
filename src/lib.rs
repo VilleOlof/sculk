@@ -2,6 +2,7 @@ mod block_entities;
 mod block_entity;
 mod color;
 mod components;
+mod entity;
 mod item;
 mod serialize;
 mod util;

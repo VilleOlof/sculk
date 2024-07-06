@@ -52,7 +52,8 @@ pub enum BlockEntityData<'a> {
 
     Bed,
 
-    Beehive(beehive::Beehive),
+    #[serde(borrow)]
+    Beehive(beehive::Beehive<'a>),
 
     Bell,
 
