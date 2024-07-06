@@ -19,3 +19,16 @@ pub struct Item<'a> {
     /// Optional map of data components. Additional information about the item.
     pub components: Option<ComponentMap<'a>>,
 }
+
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+pub struct ItemWithNoSlot<'a> {
+    /// The resource location of the item. Must not be `air`.
+    #[serde(borrow)]
+    pub id: Cow<'a, str>,
+
+    /// Number of items stacked in this inventory slot. Any item can be stacked, even if unstackable through normal means. Defaults to 1.
+    pub count: i32,
+
+    /// Optional map of data components. Additional information about the item.
+    pub components: Option<ComponentMap<'a>>,
+}

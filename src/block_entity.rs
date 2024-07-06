@@ -26,7 +26,7 @@ pub struct LoseBlockEntity<'a> {
     pub components: Option<ComponentMap<'a>>,
     // pub components: Vec<Component<'a>>,
     #[serde(flatten)]
-    pub data: Option<HashMap<String, Value>>,
+    pub data: Option<Value>,
 }
 
 /// Represents a block entity.
@@ -58,17 +58,22 @@ pub struct BlockEntity<'a> {
     pub data: BlockEntityData<'a>,
 }
 
-impl<'a> From<LoseBlockEntity<'a>> for BlockEntity<'a> {
-    fn from(value: LoseBlockEntity<'a>) -> Self {
-        Self {
-            id: value.id.clone(),
-            keep_packed: value.keep_packed,
-            x: value.x,
-            y: value.y,
-            z: value.z,
-            components: value.components,
-            data: BlockEntityData::new(&value.id, value.data),
-        }
+impl<'l: 'b, 'b> From<LoseBlockEntity<'l>> for BlockEntity<'b> {
+    fn from(value: LoseBlockEntity<'l>) -> Self {
+        // Self {
+        //     id: value.id.clone(),
+        //     keep_packed: value.keep_packed,
+        //     x: value.x,
+        //     y: value.y,
+        //     z: value.z,
+        //     components: value.components,
+        //     data: if let Some(ref data) = value.data {
+        //         BlockEntityData::new(&value.id, data)
+        //     } else {
+        //         BlockEntityData::None
+        //     },
+        // }
+        unimplemented!()
     }
 }
 
@@ -81,7 +86,7 @@ impl<'a> From<&BlockEntity<'a>> for LoseBlockEntity<'a> {
             y: value.y,
             z: value.z,
             components: value.components.clone(),
-            data: value.data.as_hashmap(),
+            data: value.data.as_value(),
         }
     }
 }
