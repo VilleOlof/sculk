@@ -15,6 +15,8 @@ pub use util::MC_VERSION;
 
 #[cfg(test)]
 mod tests {
+    use std::time::Instant;
+
     use fastnbt::nbt;
     use serialize::{deserialize_from_value, serialize_to_value};
 
@@ -24,37 +26,30 @@ mod tests {
     #[test]
     fn test() {
         let end_gateway_nbt = nbt!({
-            "id": "minecraft:end_gateway",
+            "id": "minecraft:chest",
             "keepPacked": false,
-            "x": 52,
-            "y": 14,
-            "z": 62,
-            "Age": 5,
-            "ExactTeleport": false,
-            "ExitPortal": {
-                "X": 2,
-                "Y": 4,
-                "Z": 8
-            },
-            "components": {
-                "minecraft:attribute_modifiers": {
-                    "show_in_tooltip": true,
-                    "modifiers": [
-                        {
-                            "type": "minecraft:attack_damage",
-                            "slot": "armor",
-                            "id": "custom:example",
-                            "amount": 0.5f64,
-                            "operation": "add_value"
-                        }
-                    ]
+            "x": 12,
+            "y": 163,
+            "z": 2,
+            "components": {},
+            "CustomName": "MY Chest",
+            "Items": [
+                {
+                    "Slot": 0,
+                    "id": "minecraft:stone",
+                    "Count": 1,
                 }
-            }
+            ],
+            "LootTable": "minecraft:chests/simple_dungeon",
         });
 
+        let start = Instant::now();
         let block_entity = deserialize_from_value(&end_gateway_nbt).unwrap();
+        println!("Deserialization took: {:?}", start.elapsed());
 
         println!("{:#?}", block_entity);
+
+        println!("Variant: {:?}", block_entity.variant());
 
         println!();
 
@@ -63,3 +58,5 @@ mod tests {
         println!("{:#?}", serialized);
     }
 }
+
+// LIVE SAVER: https://github.com/feather-rs/feather/blob/main/feather/base/src/anvil/block_entity.rs

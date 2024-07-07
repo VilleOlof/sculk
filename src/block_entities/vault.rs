@@ -23,16 +23,19 @@ pub struct Vault<'a> {
 pub struct VaultConfig<'a> {
     ///  A resource location to the loot table that is ejected when unlocking the vault. Defaults to "minecraft:chests/trial_chambers/reward"
     #[serde(borrow)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub loot_table: Option<Cow<'a, str>>,
 
     /// A resource location to the loot table that is used to display items in the vault. If not present, the game uses the loot_table field.
     #[serde(borrow)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub override_loot_table_to_display: Option<Cow<'a, str>>,
 
     /// The range in blocks when the vault should activate. Defaults to 4.
     pub activation_range: Option<i32>,
 
     /// The range in blocks when the vault should deactivate. Defaults to 4.5.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub deactivation_range: Option<i32>,
 
     /// The key item that is used to check for valid keys. Defaults to "minecraft:trial_key"

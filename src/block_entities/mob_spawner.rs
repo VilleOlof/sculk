@@ -38,6 +38,7 @@ pub struct MobSpawner<'a> {
     /// Optional. List of possible entities to spawn. If this tag does not exist, but SpawnData exists, Minecraft generates it the next time the spawner tries to spawn an entity. The generated list contains a single entry derived from the SpawnData tag.
     #[serde(borrow)]
     #[serde(rename = "SpawnPotentials")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub spawn_potentials: Option<Vec<PotentialSpawn<'a>>>,
 
     /// The radius around which the spawner attempts to place mobs randomly. The spawn area is square, includes the block the spawner is in, and is centered around the spawner's x,z coordinates - not the spawner itself. It is 2 blocks high, centered around the spawner's y coordinate (its bottom), allowing mobs to spawn as high as its top surface and as low as 1 block below its bottom surface. Vertical spawn coordinates are integers, while horizontal coordinates are floating point and weighted toward values near the spawner itself. Default value is 4.
@@ -65,6 +66,7 @@ pub struct SpawnData<'a> {
     pub custom_spawn_rules: SpawnRules,
 
     /// Optional. Determines the equipment the entity will wear.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub equipment: Option<Equipment<'a>>,
 }
 
@@ -83,6 +85,7 @@ pub struct Equipment<'a> {
     pub loot_table: Cow<'a, str>,
 
     /// Optional. When a determines the drop chances for every slot. When a , controls the drop chances per slot.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub slot_drop_chances: Option<DropChanceType>,
 }
 
@@ -95,23 +98,30 @@ pub enum DropChanceType {
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct DropChances {
     /// Optional. Drop chance of the boots.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub feet: Option<f32>,
 
     /// Optional. Drop chance of the leggings.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub legs: Option<f32>,
 
     /// Optional. Drop chance of the chestplate.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub chest: Option<f32>,
 
     /// Optional. Drop chance of the helmet.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub head: Option<f32>,
 
     /// Optional. Drop chance of the body armor.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub body: Option<f32>,
 
     /// Optional. Drop chance of the weapon in the main hand.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub mainhand: Option<f32>,
 
     /// Optional. Drop chance of the weapon in the off hand.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub offhand: Option<f32>,
 }

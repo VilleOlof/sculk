@@ -13,6 +13,7 @@ pub struct BrewingStand<'a> {
     /// Optional. The name of this container in JSON text component, which appears in its GUI where the default name ordinarily appears.
     #[serde(borrow)]
     #[serde(rename = "CustomName")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_name: Option<Cow<'a, str>>,
 
     /// Remaining fuel for the brewing stand. 20 when full, and counts down by 1 each time a potion is brewed.
@@ -33,5 +34,6 @@ pub struct BrewingStand<'a> {
     /// Optional. When not blank, prevents the container from being opened unless the opener is holding an item whose name matches this string.
     #[serde(borrow)]
     #[serde(rename = "Lock")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub lock: Option<Cow<'a, str>>,
 }

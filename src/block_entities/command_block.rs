@@ -14,11 +14,13 @@ pub struct CommandBlock<'a> {
 
     /// Indicates whether a conditional command block had its condition met when last activated. True if not a conditional command block.
     #[serde(rename = "conditonMet")]
+    #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub condition_met: bool,
 
     /// Optional. The name JSON text component of this command block, replacing the usual '@' when using commands such as /say and /tell.
     #[serde(borrow)]
     #[serde(rename = "CustomName")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_name: Option<Cow<'a, str>>,
 
     /// stores the tick a chain command block was last executed in.
@@ -31,6 +33,7 @@ pub struct CommandBlock<'a> {
     pub last_output: Cow<'a, str>,
 
     /// States whether or not the command block is powered by redstone or not.
+    #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub powered: bool,
 
     /// Represents the strength of the analog signal output by redstone comparators attached to this command block.
@@ -39,9 +42,11 @@ pub struct CommandBlock<'a> {
 
     /// Determines whether the LastOutput is stored. Can be toggled in the GUI by clicking a button near the "Previous Output" textbox. Caption on the button indicates current state: "O" if true, "X" if false.
     #[serde(rename = "TrackOutput")]
+    #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub track_output: bool,
 
     /// Defaults to true. If set to false, loops can be created where the same command block can run multiple times in one tick.
     #[serde(rename = "UpdateLastExecution")]
+    #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub update_last_execution: bool,
 }

@@ -43,9 +43,11 @@ pub struct Event<'a> {
     pub pos: [f64; 3],
 
     /// If the vibration was caused by a projectile, this is the UUID of the entity that launched the projectile. Does not exist if vibration was not caused by a projectile.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub projectile_owner: Option<i128>,
 
     /// The UUID of the entity that caused the vibration. Does not exist if vibration was not caused by an entity.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<i128>,
 }
 

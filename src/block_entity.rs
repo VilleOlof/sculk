@@ -1,19 +1,15 @@
-use fastnbt::Value;
 use serde::{Deserialize, Serialize};
-use serde_with::serde_as;
-use std::{borrow::Cow, collections::HashMap};
 
-use crate::{block_entities::BlockEntityData, ComponentMap};
+use crate::{
+    block_entities::{variant::BlockEntityVariant, BlockEntityData},
+    ComponentMap,
+};
 
 /// Refer to `BlockEntity` for documentation.
-#[serde_as]
-#[derive(Debug, Deserialize, Serialize)]
-pub struct LoseBlockEntity<'a> {
-    #[serde(borrow)]
-    pub id: Cow<'a, str>,
-
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+pub struct BlockEntityBase<'a> {
     #[serde(rename = "keepPacked")]
-    #[serde(default)]
+    #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub keep_packed: bool,
 
     pub x: i32,
@@ -24,69 +20,21 @@ pub struct LoseBlockEntity<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     // TODO: This should be a HashMap here and a custom deserializer.
     pub components: Option<ComponentMap<'a>>,
-    // pub components: Vec<Component<'a>>,
-    #[serde(flatten)]
-    pub data: Option<Value>,
 }
 
 /// Represents a block entity.
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct BlockEntity<'a> {
-    /// The ID of the block entity.
-    pub id: Cow<'a, str>,
+    #[serde(flatten)]
+    pub base: BlockEntityBase<'a>,
 
-    /// Whether the block entity should keep packed.  
-    ///
-    /// If `true` the block entity is an invalid block entity,  
-    /// And will not immediately be placed.  
-    ///
-    /// If `false` the block entity is a valid block entity,  
-    /// And will immediately be placed.
-    pub keep_packed: bool,
-
-    /// The X world coordinate of the block entity.
-    pub x: i32,
-    /// The Y world coordinate of the block entity.
-    pub y: i32,
-    /// The Z world coordinate of the block entity.
-    pub z: i32,
-
-    /// The components of the block entity.
-    // pub components: Vec<Component<'a>>,
-    pub components: Option<ComponentMap<'a>>,
-
-    pub data: BlockEntityData<'a>,
+    #[serde(borrow)]
+    #[serde(flatten)]
+    pub kind: BlockEntityData<'a>,
 }
 
-impl<'l: 'b, 'b> From<LoseBlockEntity<'l>> for BlockEntity<'b> {
-    fn from(value: LoseBlockEntity<'l>) -> Self {
-        // Self {
-        //     id: value.id.clone(),
-        //     keep_packed: value.keep_packed,
-        //     x: value.x,
-        //     y: value.y,
-        //     z: value.z,
-        //     components: value.components,
-        //     data: if let Some(ref data) = value.data {
-        //         BlockEntityData::new(&value.id, data)
-        //     } else {
-        //         BlockEntityData::None
-        //     },
-        // }
-        unimplemented!()
-    }
-}
-
-impl<'a> From<&BlockEntity<'a>> for LoseBlockEntity<'a> {
-    fn from(value: &BlockEntity<'a>) -> Self {
-        Self {
-            id: value.id.clone(),
-            keep_packed: value.keep_packed,
-            x: value.x,
-            y: value.y,
-            z: value.z,
-            components: value.components.clone(),
-            data: value.data.as_value(),
-        }
+impl<'a> BlockEntity<'a> {
+    pub fn variant(&self) -> BlockEntityVariant {
+        self.kind.variant()
     }
 }

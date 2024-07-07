@@ -8,6 +8,7 @@ pub struct StructureBlock<'a> {
 
     /// Whether entities should be ignored in the structure.
     #[serde(rename = "ignoreEntities")]
+    #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub ignore_entities: bool,
 
     /// How complete the structure is that gets placed.
@@ -38,6 +39,7 @@ pub struct StructureBlock<'a> {
     pub pos_z: i32,
 
     /// Whether this structure block is being powered by redstone.
+    #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub powered: bool,
 
     /// Rotation of the structure, one of "NONE", "CLOCKWISE_90", "CLOCKWISE_180", or "COUNTERCLOCKWISE_90".
@@ -48,6 +50,7 @@ pub struct StructureBlock<'a> {
 
     /// Whether to show the structure's bounding box to players in Creative mode.
     #[serde(rename = "showboundingbox")]
+    #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub show_bounding_box: bool,
 
     /// X-size of the structure, its length.

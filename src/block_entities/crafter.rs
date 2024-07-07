@@ -9,6 +9,7 @@ pub struct Crafter<'a> {
     pub crafting_ticks_remaining: i32,
 
     /// Set to 1 when it is powered. It is otherwise 0.
+    #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub triggered: bool,
 
     /// Indexes of slots that are disabled.
@@ -23,13 +24,16 @@ pub struct Crafter<'a> {
 
     /// Optional. When not blank, prevents the container from being opened unless the opener is holding an item whose name matches this string.
     #[serde(rename = "Lock")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub lock: Option<Cow<'a, str>>,
 
     /// Optional. Name of the loot table to use. If this is used in a chest-like container, the loot table generates its content when it is opened. Generating the items in the container removes both loot table tags ( LootTable and  LootTableSeed).
     #[serde(rename = "LootTable")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub loot_table: Option<Cow<'a, str>>,
 
     /// Optional. Seed for generating the loot table. The default value works similarly to the seeds for worlds, where value of 0 or an omitted value causes the game to use a random seed.
     #[serde(rename = "LootTableSeed")]
-    pub loot_table_seed: i64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub loot_table_seed: Option<i64>,
 }

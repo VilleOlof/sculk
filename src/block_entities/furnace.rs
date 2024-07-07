@@ -19,6 +19,7 @@ pub struct Furnace<'a> {
 
     /// Optional. The name of this container in JSON text component, which appears in its GUI where the default name ordinarily appears.
     #[serde(rename = "CustomName")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_name: Option<Cow<'a, str>>,
 
     /// List of items in this container.  
@@ -32,6 +33,7 @@ pub struct Furnace<'a> {
 
     /// Optional. When not blank, prevents the container from being opened unless the opener is holding an item whose name matches this string.
     #[serde(rename = "Lock")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub lock: Option<Cow<'a, str>>,
 
     /// Recipes that have been used since the last time a recipe result item was manually removed from the GUI. Used to calculate experience given to the player when taking out the resulting item.

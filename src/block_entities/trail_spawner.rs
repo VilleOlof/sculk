@@ -13,10 +13,12 @@ pub struct TrailSpawner<'a> {
 
     /// Optional, see configuration for defaults. — The configuration to use when not ominous.
     #[serde(borrow)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub normal_config: Option<TrailSpawnerConfig<'a>>,
 
     /// Optional, defaults to  normal_config. When individual entries are omitted, they also default to their setting in  normal_config. — The configuration to use when ominous.
     #[serde(borrow)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ominous_config: Option<TrailSpawnerConfig<'a>>,
 
     /// A set of player UUIDs. — All the players that have joined the battle. The length of this array determines the amount of mobs and amount of reward.
@@ -40,39 +42,49 @@ pub struct TrailSpawner<'a> {
 
     /// A resource location to the loot table that is given as reward. Unset if not currently giving rewards. Selected from  loot_tables_to_eject after all mobs are defeated.
     #[serde(borrow)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ejecting_loot_table: Option<Cow<'a, str>>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct TrailSpawnerConfig<'a> {
     /// Between 1 and 128. Defaults to 4 — Maximum distance in blocks that mobs can spawn.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub spawn_range: Option<i32>,
 
     /// Defaults to 6 — Total amount of mobs spawned before cooldown for a single player.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub total_mobs: Option<f32>,
 
     /// Defaults to 2 — The amount of spawned mobs from this spawner that are allowed to exist simultaneously.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub simultaneous_mobs: Option<i32>,
 
     /// Defaults to 2 — Amount of total mobs added for each additional player.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub total_mobs_added_per_player: Option<f32>,
 
     /// Defaults to 1 — Amount of simultaneous mobs added for each additional player.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub simultaneous_mobs_added_per_player: Option<f32>,
 
     /// Defaults to 40 — Time in ticks between spawn attempts.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticks_between_spawn: Option<i32>,
 
     ///  Defaults to an empty list — List of possible entities to spawn.
     #[serde(borrow)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub spawn_potentials: Option<Vec<PotentialSpawn<'a>>>,
 
     ///  Defaults to a list of `minecraft:spawners/trial_chamber/consumables` and `minecraft:spawners/trial_chamber/key`, both with weight 1 — List of possible loot tables to give as reward.
     #[serde(borrow)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub loot_tables_to_eject: Option<Vec<LootTable<'a>>>,
 
     /// Defaults to minecraft:spawners/trial_chamber/items_to_drop_when_ominous — A resource location to a loot table. Determines the items used by ominous item spawners spawned during the active phase when ominous. Ignored in normal mode.
     #[serde(borrow)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub items_to_drop_when_ominous: Option<Cow<'a, str>>,
 }
 

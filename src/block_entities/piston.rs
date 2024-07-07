@@ -10,6 +10,7 @@ pub struct Piston<'a> {
     pub block_state: BlockState<'a>,
 
     /// true if the piston is extending instead of withdrawing.
+    #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub extending: bool,
 
     /// Direction that the piston pushes
@@ -19,6 +20,7 @@ pub struct Piston<'a> {
     pub progress: f32,
 
     ///  true if the block represents the piston head itself, false if it represents a block being pushed.
+    #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub source: bool,
 }
 
@@ -30,6 +32,7 @@ pub struct BlockState<'a> {
 
     /// (Optional, can be empty) Block properties. Unspecified properties of the specified block will be set to their default values.
     #[serde(borrow)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub properties: Option<HashMap<Cow<'a, str>, Cow<'a, str>>>,
 }
 
