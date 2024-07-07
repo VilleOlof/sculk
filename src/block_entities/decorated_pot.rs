@@ -25,3 +25,29 @@ pub struct DecoratedPot<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub loot_table_seed: Option<i64>,
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "sherds": [
+            "minecraft:heartbreak_pottery_sherd",
+            "minecraft:blade_pottery_sherd",
+            "minecraft:brick",
+            "minecraft:prize_pottery_sherd",
+        ],
+        "item": {
+            "Slot": 0u8,
+            "id": "minecraft:flower_pot",
+            "Count": 1
+        }
+    });
+
+    let decorated_pot: DecoratedPot = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(decorated_pot.sherds.len(), 4);
+    assert_eq!(decorated_pot.item.id, "minecraft:flower_pot");
+    assert_eq!(decorated_pot.item.count, 1);
+}

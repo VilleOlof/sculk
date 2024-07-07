@@ -6,3 +6,21 @@ pub struct Comparator {
     #[serde(rename = "OutputSignal")]
     pub output_signal: i32,
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "OutputSignal": 5i32
+    });
+
+    let comparator: Comparator = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(comparator.output_signal, 5);
+
+    let nbt = fastnbt::to_value(&comparator).unwrap();
+
+    assert_eq!(nbt, nbt);
+}

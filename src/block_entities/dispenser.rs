@@ -16,6 +16,7 @@ pub struct Dispenser<'a> {
     ///
     /// Dispenser slots are numbered 0-8 with 0 in the top left corner.  
     #[serde(borrow)]
+    #[serde(default)]
     #[serde(rename = "Items")]
     pub items: Vec<Item<'a>>,
 
@@ -33,4 +34,49 @@ pub struct Dispenser<'a> {
     #[serde(rename = "LootTableSeed")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub loot_table_seed: Option<i64>,
+}
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "Items": [
+            {
+                "Slot": 0u8,
+                "id": "minecraft:stone",
+                "Count": 1
+            },
+            {
+                "Slot": 1u8,
+                "id": "minecraft:dirt",
+                "Count": 32
+            },
+            {
+                "Slot": 2u8,
+                "id": "minecraft:iron_ingot",
+                "Count": 64,
+                "components": {}
+            }
+        ],
+        "Lock": "minecraft:lock",
+        "LootTable": "minecraft:loot_table",
+        "LootTableSeed": 42i64
+    });
+
+    let dispenser: Dispenser = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(dispenser.custom_name, None);
+    assert_eq!(dispenser.items.len(), 3);
+    assert_eq!(dispenser.lock, Some(Cow::Borrowed("minecraft:lock")));
+    assert_eq!(
+        dispenser.loot_table,
+        Some(Cow::Borrowed("minecraft:loot_table"))
+    );
+    assert_eq!(dispenser.loot_table_seed, Some(42));
+
+    let nbt = fastnbt::to_value(&dispenser).unwrap();
+
+    assert_eq!(nbt, nbt);
 }

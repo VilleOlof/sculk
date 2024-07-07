@@ -20,6 +20,7 @@ pub struct SuspiciousBlock<'a> {
 
     /// The item in the block. May not exist.
     #[serde(borrow)]
+    #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub item: Option<Item<'a>>,
 }

@@ -14,6 +14,7 @@ pub struct Hopper<'a> {
 
     /// List of items in this container.  
     #[serde(borrow)]
+    #[serde(default)]
     #[serde(rename = "Items")]
     pub items: Vec<Item<'a>>,
 

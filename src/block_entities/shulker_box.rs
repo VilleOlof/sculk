@@ -16,6 +16,7 @@ pub struct ShulkerBox<'a> {
     ///
     /// Shulker box slots are numbered 0–26, 0 starts in the top left corner.
     #[serde(borrow)]
+    #[serde(default)]
     #[serde(rename = "Items")]
     pub items: Vec<Item<'a>>,
 

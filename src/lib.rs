@@ -8,6 +8,8 @@ mod serialize;
 mod util;
 
 // Re-export the modules.
+pub use block_entities::variant::BlockEntityVariant;
+pub use block_entities::BlockEntityData;
 pub use block_entity::BlockEntity;
 pub use components::*;
 pub use serialize::*;

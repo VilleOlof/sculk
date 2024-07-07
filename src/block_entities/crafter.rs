@@ -19,6 +19,7 @@ pub struct Crafter<'a> {
     ///
     /// Crafter slots are numbered 0-8. 0 starts in the top left corner.
     #[serde(borrow)]
+    #[serde(default)]
     #[serde(rename = "Items")]
     pub items: Vec<Item<'a>>,
 
@@ -36,4 +37,73 @@ pub struct Crafter<'a> {
     #[serde(rename = "LootTableSeed")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub loot_table_seed: Option<i64>,
+}
+
+#[cfg(test)]
+#[test]
+fn basic_test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "Items": [
+            {
+                "Slot": 0u8,
+                "id": "minecraft:stone",
+                "Count": 1
+            },
+            {
+                "Slot": 1u8,
+                "id": "minecraft:dirt",
+                "Count": 32
+            },
+            {
+                "Slot": 2u8,
+                "id": "minecraft:iron_ingot",
+                "Count": 64,
+                "components": {}
+            }
+        ],
+        "Lock": "key",
+        "LootTable": "minecraft:chests/simple_dungeon",
+        "LootTableSeed": 0i64,
+        "crafting_ticks_remaining": 0,
+        "triggered": 1i8,
+        "disabled_slots": [3, 4, 5]
+    });
+
+    let crafter: Crafter = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(crafter.crafting_ticks_remaining, 0);
+    assert_eq!(crafter.triggered, true);
+    assert_eq!(crafter.disabled_slots, vec![3, 4, 5]);
+
+    let nbt = fastnbt::to_value(&crafter).unwrap();
+
+    assert_eq!(nbt, nbt);
+}
+
+#[cfg(test)]
+#[test]
+fn empty_test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "Items": [],
+        "crafting_ticks_remaining": 0,
+        "triggered": 0i8,
+        "disabled_slots": []
+    });
+
+    let crafter: Crafter = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(crafter.crafting_ticks_remaining, 0);
+    assert_eq!(crafter.triggered, false);
+    assert_eq!(crafter.disabled_slots, Vec::<i32>::new());
+    assert_eq!(crafter.lock, None);
+    assert_eq!(crafter.loot_table, None);
+    assert_eq!(crafter.loot_table_seed, None);
+
+    let nbt = fastnbt::to_value(&crafter).unwrap();
+
+    assert_eq!(nbt, nbt);
 }

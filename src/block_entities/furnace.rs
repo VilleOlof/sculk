@@ -28,6 +28,7 @@ pub struct Furnace<'a> {
     /// Slot 1: The item(s) to use as the next fuel source.  
     /// Slot 2: The item(s) in the result slot.  
     #[serde(borrow)]
+    #[serde(default)]
     #[serde(rename = "Items")]
     pub items: Vec<Item<'a>>,
 

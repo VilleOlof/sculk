@@ -24,3 +24,31 @@ pub struct ExitPortal {
     #[serde(rename = "Z")]
     pub z: i32,
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "Age": 5,
+        "ExactTeleport": 1i8,
+        "ExitPortal": {
+            "X": 1,
+            "Y": 2,
+            "Z": 3
+        }
+    });
+
+    let end_gateway: EndGateway = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(end_gateway.age, 5);
+    assert_eq!(end_gateway.exact_teleport, true);
+    assert_eq!(end_gateway.exit_portal.x, 1);
+    assert_eq!(end_gateway.exit_portal.y, 2);
+    assert_eq!(end_gateway.exit_portal.z, 3);
+
+    let nbt = fastnbt::to_value(&end_gateway).unwrap();
+
+    assert_eq!(nbt, nbt);
+}
