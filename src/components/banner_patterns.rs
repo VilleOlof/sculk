@@ -2,11 +2,12 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
+use crate::color::Color;
+
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct BannerPattern<'a> {
     /// Dye color of the section.
-    #[serde(borrow)]
-    pub color: Cow<'a, str>,
+    pub color: Color,
 
     /// Banner pattern (referenced by ID or inlined)
     #[serde(borrow)]
@@ -15,6 +16,7 @@ pub struct BannerPattern<'a> {
 
 /// Either an id reference to a pattern or an inlined pattern.
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[serde(untagged)]
 pub enum Pattern<'a> {
     /// The resource location for the texture asset.
     ID(ResourceName),

@@ -37,3 +37,54 @@ pub struct BrewingStand<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lock: Option<Cow<'a, str>>,
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "BrewTime": 400i16,
+        "Fuel": 20i8,
+        "Items": [
+            {
+                "Slot": 0u8,
+                "id": "minecraft:potion",
+                "Count": 1
+            },
+            {
+                "Slot": 1u8,
+                "id": "minecraft:potion",
+                "Count": 1
+            },
+            {
+                "Slot": 2u8,
+                "id": "minecraft:potion",
+                "Count": 1
+            },
+            {
+                "Slot": 3u8,
+                "id": "minecraft:nether_wart",
+                "Count": 1
+            },
+            {
+                "Slot": 4u8,
+                "id": "minecraft:blaze_powder",
+                "Count": 1
+            }
+        ],
+        "Lock": "key"
+    });
+
+    let brewing_stand: BrewingStand = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(brewing_stand.brew_time, 400);
+    assert_eq!(brewing_stand.custom_name, None);
+    assert_eq!(brewing_stand.fuel, 20);
+    assert_eq!(brewing_stand.items.len(), 5);
+    assert_eq!(brewing_stand.lock, Some(Cow::Borrowed("key")));
+
+    let nbt = fastnbt::to_value(&brewing_stand).unwrap();
+
+    assert_eq!(nbt, nbt);
+}

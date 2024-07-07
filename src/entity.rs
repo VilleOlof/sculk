@@ -2,6 +2,10 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
+fn default_fire() -> i16 {
+    -20
+}
+
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct Entity<'a> {
     ///  How much air the entity has, in game ticks. Decreases when unable to breathe (except suffocating in a block). Increases when it can breathe.  Air being <= -20 game ticks (while still unable to breathe) on a given game tick causes the entity to immediately lose 1 health to drowning damage. This resets  Air to 0 game ticks. Most mobs can have a maximum of 300 game ticks (15 seconds) of  Air, while dolphins can reach up to 4800 game ticks (240 seconds), and axolotls have 6000 game ticks (300 seconds).
@@ -11,10 +15,12 @@ pub struct Entity<'a> {
     /// The custom name JSON text component of this entity. Appears in player death messages and villager trading interfaces, as well as above the entity when the player's cursor is over it. May be empty or not exist. Cannot be removed using the data remove command,[1] but setting it to an empty string has the same effect.
     #[serde(borrow)]
     #[serde(rename = "CustomName")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_name: Option<Cow<'a, str>>,
 
     /// if true, and this entity has a custom name, the name always appears above the entity, regardless of where the cursor points. If the entity does not have a custom name, a default name is shown. May not exist.
     #[serde(rename = "CustomNameVisible")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_name_visible: Option<bool>,
 
     /// Distance the entity has fallen. Larger values cause more damage when the entity lands.
@@ -22,6 +28,7 @@ pub struct Entity<'a> {
     pub fall_distance: f32,
 
     /// Number of game ticks until the fire is put out. Negative values reflect how long the entity can stand in fire before burning. Default -20 when not on fire.
+    #[serde(default = "default_fire")]
     #[serde(rename = "Fire")]
     pub fire: i16,
 
@@ -55,7 +62,9 @@ pub struct Entity<'a> {
 
     /// The data of the entities that are riding this entity.
     #[serde(borrow)]
+    #[serde(default)]
     #[serde(rename = "Passengers")]
+    #[serde(skip_serializing_if = "Vec::is_empty")]
     pub passengers: Vec<Entity<'a>>,
 
     /// The number of game ticks before which the entity may be teleported back through a nether portal. Initially starts at 300 game ticks (15 seconds) after teleportation and counts down to 0.
@@ -76,15 +85,19 @@ pub struct Entity<'a> {
 
     /// if true, this entity is silenced. May not exis
     #[serde(rename = "Silent")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub silent: Option<bool>,
 
     /// List of scoreboard tags of this entity.
     #[serde(borrow)]
+    #[serde(default)]
     #[serde(rename = "Tags")]
+    #[serde(skip_serializing_if = "Vec::is_empty")]
     pub tags: Vec<Cow<'a, str>>,
 
     /// Optional. How many game ticks the entity has been freezing. Although this tag is defined for all entities, it is actually only used by mobs that are not in the freeze_immune_entity_types entity type tag. Increases while in powder snow, even partially, up to a maximum of 300 game ticks (15 seconds), and decreases at double speed while not in powder snow.
     #[serde(rename = "TicksFrozen")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticks_frozen: Option<i32>,
 
     /// This entity's Universally Unique IDentifier.

@@ -25,7 +25,7 @@ mod tests {
     /// TODO: Move like block entity & components test to their own seperate module or something.
     #[test]
     fn test() {
-        let end_gateway_nbt = nbt!({
+        let test_data = nbt!({
             "id": "minecraft:chest",
             "keepPacked": false,
             "x": 12,
@@ -44,7 +44,7 @@ mod tests {
         });
 
         let start = Instant::now();
-        let block_entity = deserialize_from_value(&end_gateway_nbt).unwrap();
+        let block_entity = deserialize_from_value(&test_data).unwrap();
         println!("Deserialization took: {:?}", start.elapsed());
 
         println!("{:#?}", block_entity);

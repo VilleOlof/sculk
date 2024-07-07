@@ -14,7 +14,7 @@ pub struct Item<'a> {
     pub id: Cow<'a, str>,
 
     /// Number of items stacked in this inventory slot. Any item can be stacked, even if unstackable through normal means. Defaults to 1.
-    #[serde(rename = "Count")]
+    #[serde(rename = "Count", alias = "count")]
     pub count: i32,
 
     /// Optional map of data components. Additional information about the item.
@@ -29,7 +29,7 @@ pub struct ItemWithNoSlot<'a> {
     pub id: Cow<'a, str>,
 
     /// Number of items stacked in this inventory slot. Any item can be stacked, even if unstackable through normal means. Defaults to 1.
-    #[serde(rename = "Count")]
+    #[serde(rename = "Count", alias = "count")]
     pub count: i32,
 
     /// Optional map of data components. Additional information about the item.

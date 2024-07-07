@@ -50,3 +50,42 @@ pub struct CommandBlock<'a> {
     #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub update_last_execution: bool,
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "auto": 1i8,
+        "Command": "say Hello, world!",
+        "conditonMet": 1i8,
+        "CustomName": "Hello, world!",
+        "LastExecution": 0i64,
+        "LastOutput": "Hello, world!",
+        "powered": 1i8,
+        "SuccessCount": 0i32,
+        "TrackOutput": 1i8,
+        "UpdateLastExecution": 1i8
+    });
+
+    let command_block: CommandBlock = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(command_block.auto, true);
+    assert_eq!(command_block.command, Cow::Borrowed("say Hello, world!"));
+    assert_eq!(command_block.condition_met, true);
+    assert_eq!(
+        command_block.custom_name,
+        Some(Cow::Borrowed("Hello, world!"))
+    );
+    assert_eq!(command_block.last_execution, 0);
+    assert_eq!(command_block.last_output, Cow::Borrowed("Hello, world!"));
+    assert_eq!(command_block.powered, true);
+    assert_eq!(command_block.success_count, 0);
+    assert_eq!(command_block.track_output, true);
+    assert_eq!(command_block.update_last_execution, true);
+
+    let nbt = fastnbt::to_value(&command_block).unwrap();
+
+    assert_eq!(nbt, nbt);
+}

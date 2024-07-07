@@ -16,6 +16,7 @@ pub struct Chest<'a> {
     ///
     /// Chest slots are numbered 0-26, 0 starts in the top left corner.
     #[serde(borrow)]
+    #[serde(default)]
     #[serde(rename = "Items")]
     pub items: Vec<Item<'a>>,
 
@@ -35,4 +36,105 @@ pub struct Chest<'a> {
     #[serde(rename = "LootTableSeed")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub loot_table_seed: Option<i64>,
+}
+
+#[cfg(test)]
+#[test]
+fn basic_test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "Items": [
+            {
+                "Slot": 0u8,
+                "id": "minecraft:stone",
+                "Count": 1
+            },
+            {
+                "Slot": 1u8,
+                "id": "minecraft:dirt",
+                "Count": 32
+            },
+            {
+                "Slot": 2u8,
+                "id": "minecraft:iron_ingot",
+                "Count": 64,
+                "components": {}
+            }
+        ],
+        "Lock": "my_key"
+    });
+
+    let barrel: Chest = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(barrel.custom_name, None);
+    assert_eq!(barrel.items.len(), 3);
+    assert_eq!(barrel.lock, Some(Cow::Borrowed("my_key")));
+    assert_eq!(barrel.loot_table, None);
+    assert_eq!(barrel.loot_table_seed, None);
+
+    let nbt = fastnbt::to_value(&barrel).unwrap();
+
+    assert_eq!(nbt, nbt);
+}
+
+#[cfg(test)]
+#[test]
+fn empty_test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({});
+
+    let barrel: Chest = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(barrel.custom_name, None);
+    assert_eq!(barrel.items.len(), 0);
+    assert_eq!(barrel.lock, None);
+    assert_eq!(barrel.loot_table, None);
+    assert_eq!(barrel.loot_table_seed, None);
+
+    let nbt = fastnbt::to_value(&barrel).unwrap();
+
+    assert_eq!(nbt, nbt);
+}
+
+#[cfg(test)]
+#[test]
+fn extended_test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "CustomName": "My chest",
+        "Items": [
+            {
+                "Slot": 0u8,
+                "id": "minecraft:stone",
+                "Count": 1
+            },
+            {
+                "Slot": 2u8,
+                "id": "minecraft:iron_ingot",
+                "Count": 64,
+                "components": {}
+            }
+        ],
+        "Lock": "my_key",
+        "LootTable": "minecraft:chests/simple_dungeon",
+        "LootTableSeed": 1234567890i64
+    });
+
+    let barrel: Chest = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(barrel.custom_name, Some(Cow::Borrowed("My chest")));
+    assert_eq!(barrel.items.len(), 2);
+    assert_eq!(barrel.lock, Some(Cow::Borrowed("my_key")));
+    assert_eq!(
+        barrel.loot_table,
+        Some(Cow::Borrowed("minecraft:chests/simple_dungeon"))
+    );
+    assert_eq!(barrel.loot_table_seed, Some(1234567890));
+
+    let nbt = fastnbt::to_value(&barrel).unwrap();
+
+    assert_eq!(nbt, nbt);
 }

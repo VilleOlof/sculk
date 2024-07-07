@@ -26,3 +26,33 @@ pub struct Beacon<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub secondary_effect: Option<Cow<'a, str>>,
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "CustomName": "Hello, world!",
+        "Lock": "key",
+        "primary_effect": "minecraft:speed",
+        "secondary_effect": "minecraft:regeneration"
+    });
+
+    let beacon: Beacon = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(beacon.custom_name, Some(Cow::Borrowed("Hello, world!")));
+    assert_eq!(beacon.lock, Some(Cow::Borrowed("key")));
+    assert_eq!(
+        beacon.primary_effect,
+        Some(Cow::Borrowed("minecraft:speed"))
+    );
+    assert_eq!(
+        beacon.secondary_effect,
+        Some(Cow::Borrowed("minecraft:regeneration"))
+    );
+
+    let nbt = fastnbt::to_value(&beacon).unwrap();
+
+    assert_eq!(nbt, nbt);
+}

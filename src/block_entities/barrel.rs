@@ -15,6 +15,7 @@ pub struct Barrel<'a> {
     /// List of items in the container.
     #[serde(borrow)]
     #[serde(rename = "Items")]
+    #[serde(default)]
     pub items: Vec<Item<'a>>,
 
     /// Optional. When not blank, prevents the container from being opened unless the opener is holding an item whose name matches this string
@@ -33,4 +34,110 @@ pub struct Barrel<'a> {
     #[serde(rename = "LootTableSeed")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub loot_table_seed: Option<i64>,
+}
+
+#[cfg(test)]
+#[test]
+fn basic_test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "Items": [
+            {
+                "Slot": 0u8,
+                "id": "minecraft:stone",
+                "Count": 1
+            },
+            {
+                "Slot": 1u8,
+                "id": "minecraft:dirt",
+                "Count": 32
+            },
+            {
+                "Slot": 2u8,
+                "id": "minecraft:iron_ingot",
+                "Count": 64,
+                "components": {}
+            }
+        ],
+        "Lock": "my_key"
+    });
+
+    let barrel: Barrel = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(barrel.custom_name, None);
+    assert_eq!(barrel.items.len(), 3);
+    assert_eq!(barrel.lock, Some(Cow::Borrowed("my_key")));
+    assert_eq!(barrel.loot_table, None);
+    assert_eq!(barrel.loot_table_seed, None);
+
+    let nbt = fastnbt::to_value(&barrel).unwrap();
+
+    assert_eq!(nbt, nbt);
+}
+
+#[cfg(test)]
+#[test]
+fn empty_test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({});
+
+    let barrel: Barrel = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(barrel.custom_name, None);
+    assert_eq!(barrel.items.len(), 0);
+    assert_eq!(barrel.lock, None);
+    assert_eq!(barrel.loot_table, None);
+    assert_eq!(barrel.loot_table_seed, None);
+
+    let nbt = fastnbt::to_value(&barrel).unwrap();
+
+    assert_eq!(nbt, nbt);
+}
+
+#[cfg(test)]
+#[test]
+fn extended_test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "CustomName": "My barrel",
+        "Items": [
+            {
+                "Slot": 0u8,
+                "id": "minecraft:stone",
+                "Count": 1
+            },
+            {
+                "Slot": 1u8,
+                "id": "minecraft:dirt",
+                "Count": 32
+            },
+            {
+                "Slot": 2u8,
+                "id": "minecraft:iron_ingot",
+                "Count": 64,
+                "components": {}
+            }
+        ],
+        "Lock": "my_key",
+        "LootTable": "minecraft:chests/simple_dungeon",
+        "LootTableSeed": 1234567890i64
+    });
+
+    let barrel: Barrel = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(barrel.custom_name, Some(Cow::Borrowed("My barrel")));
+    assert_eq!(barrel.items.len(), 3);
+    assert_eq!(barrel.lock, Some(Cow::Borrowed("my_key")));
+    assert_eq!(
+        barrel.loot_table,
+        Some(Cow::Borrowed("minecraft:chests/simple_dungeon"))
+    );
+    assert_eq!(barrel.loot_table_seed, Some(1234567890));
+
+    let nbt = fastnbt::to_value(&barrel).unwrap();
+
+    assert_eq!(nbt, nbt);
 }
