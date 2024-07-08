@@ -119,7 +119,7 @@ fn test() {
         .collect()
     );
 
-    let nbt = fastnbt::to_value(&furnace).unwrap();
+    let serialized_nbt = fastnbt::to_value(&furnace).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

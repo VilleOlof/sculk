@@ -85,7 +85,7 @@ fn test() {
     assert_eq!(command_block.track_output, true);
     assert_eq!(command_block.update_last_execution, true);
 
-    let nbt = fastnbt::to_value(&command_block).unwrap();
+    let serialized_nbt = fastnbt::to_value(&command_block).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

@@ -76,7 +76,7 @@ fn test() {
         vec![String::from("This is the back of the sign.")]
     );
 
-    let nbt = fastnbt::to_value(&sign).unwrap();
+    let serialized_nbt = fastnbt::to_value(&sign).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

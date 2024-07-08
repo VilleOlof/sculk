@@ -65,7 +65,7 @@ fn test() {
     assert_eq!(campfire.items[3].id, "minecraft:potato");
     assert_eq!(campfire.items[3].count, 1);
 
-    let nbt = fastnbt::to_value(&campfire).unwrap();
+    let serialized_nbt = fastnbt::to_value(&campfire).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

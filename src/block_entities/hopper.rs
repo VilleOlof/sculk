@@ -72,7 +72,7 @@ fn test() {
     assert_eq!(hopper.loot_table_seed, Some(0));
     assert_eq!(hopper.transfer_cooldown, 0);
 
-    let nbt = fastnbt::to_value(&hopper).unwrap();
+    let serialized_nbt = fastnbt::to_value(&hopper).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

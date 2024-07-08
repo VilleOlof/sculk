@@ -19,7 +19,7 @@ fn test() {
 
     assert_eq!(conduit.target, 79228162551157825753847955460);
 
-    let nbt = fastnbt::to_value(&conduit).unwrap();
+    let serialized_nbt = fastnbt::to_value(&conduit).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

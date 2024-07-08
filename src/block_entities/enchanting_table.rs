@@ -27,7 +27,7 @@ fn test() {
         Some(Cow::Borrowed("Enchanting Table"))
     );
 
-    let nbt = fastnbt::to_value(&enchanting_table).unwrap();
+    let serialized_nbt = fastnbt::to_value(&enchanting_table).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

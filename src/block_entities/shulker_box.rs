@@ -80,7 +80,9 @@ fn test() {
 fn empty_test() {
     use fastnbt::nbt;
 
-    let nbt = nbt!({});
+    let nbt = nbt!({
+        "Items": []
+    });
 
     let shulker_box: ShulkerBox = fastnbt::from_value(&nbt).unwrap();
 
@@ -90,7 +92,7 @@ fn empty_test() {
     assert_eq!(shulker_box.loot_table, None);
     assert_eq!(shulker_box.loot_table_seed, None);
 
-    let nbt = fastnbt::to_value(&shulker_box).unwrap();
+    let serialized_nbt = fastnbt::to_value(&shulker_box).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

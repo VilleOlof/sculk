@@ -50,4 +50,8 @@ fn test() {
     assert_eq!(decorated_pot.sherds.len(), 4);
     assert_eq!(decorated_pot.item.id, "minecraft:flower_pot");
     assert_eq!(decorated_pot.item.count, 1);
+
+    let serialized_nbt = fastnbt::to_value(&decorated_pot).unwrap();
+
+    assert_eq!(nbt, serialized_nbt);
 }

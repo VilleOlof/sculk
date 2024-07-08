@@ -122,6 +122,7 @@ fn test() {
                             "Air": 32i16,
                             "CustomName": "Cool Breeze",
                             "FallDistance": 0.0f32,
+                            "Fire": -1i16,
                             "Glowing": true,
                             "HasVisualFire": true,
                             "id": "minecraft:breeze",
@@ -141,9 +142,9 @@ fn test() {
                         "equipment": {
                             "loot_table": "minecraft:entities/breeze",
                             "slot_drop_chances": {
-                                "feet": 0.045,
-                                "chest": 0.1,
-                                "mainhand": 0.085
+                                "feet": 0.045f32,
+                                "chest": 0.1f32,
+                                "mainhand": 0.085f32
                             }
                         }
                     },
@@ -177,6 +178,7 @@ fn test() {
                 "Air": 32i16,
                 "CustomName": "Cool Breeze",
                 "FallDistance": 0.0f32,
+                "Fire": -1i16,
                 "Glowing": true,
                 "HasVisualFire": true,
                 "id": "minecraft:breeze",
@@ -196,9 +198,9 @@ fn test() {
             "equipment": {
                 "loot_table": "minecraft:entities/breeze",
                 "slot_drop_chances": {
-                    "feet": 0.045,
-                    "chest": 0.1,
-                    "mainhand": 0.085
+                    "feet": 0.045f32,
+                    "chest": 0.1f32,
+                    "mainhand": 0.085f32
                 }
             }
         },
@@ -247,7 +249,7 @@ fn test() {
         "minecraft:spawners/trial_chamber/loot_table"
     );
 
-    let nbt = fastnbt::to_value(&trail_spawner).unwrap();
+    let serialized_nbt = fastnbt::to_value(&trail_spawner).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

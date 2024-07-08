@@ -144,6 +144,7 @@ fn basic_test() {
                 "Air": 32i16,
                 "CustomName": "Mr Zombie",
                 "FallDistance": 0.0f32,
+                "Fire": -1i16,
                 "Glowing": true,
                 "HasVisualFire": true,
                 "id": "minecraft:zombie",
@@ -163,9 +164,9 @@ fn basic_test() {
             "equipment": {
                 "loot_table": "minecraft:entities/zombie",
                 "slot_drop_chances": {
-                    "feet": 0.045,
-                    "chest": 0.1,
-                    "mainhand": 0.085
+                    "feet": 0.045f32,
+                    "chest": 0.1f32,
+                    "mainhand": 0.085f32
                 }
             }
         },
@@ -177,6 +178,7 @@ fn basic_test() {
                         "Air": 32i16,
                         "CustomName": "Mr Zombie",
                         "FallDistance": 0.0f32,
+                        "Fire": -1i16,
                         "Glowing": true,
                         "HasVisualFire": true,
                         "id": "minecraft:zombie",
@@ -196,9 +198,9 @@ fn basic_test() {
                     "equipment": {
                         "loot_table": "minecraft:entities/zombie",
                         "slot_drop_chances": {
-                            "feet": 0.045,
-                            "chest": 0.1,
-                            "mainhand": 0.085
+                            "feet": 0.045f32,
+                            "chest": 0.1f32,
+                            "mainhand": 0.085f32
                         }
                     }
                 }
@@ -293,7 +295,7 @@ fn basic_test() {
     }
     assert_eq!(mob_spawner.spawn_range, 4);
 
-    let nbt = fastnbt::to_value(&mob_spawner).unwrap();
+    let serialized_nbt = fastnbt::to_value(&mob_spawner).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

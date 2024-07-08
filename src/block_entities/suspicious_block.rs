@@ -50,9 +50,9 @@ fn test() {
     assert_eq!(item.id, "minecraft:stone");
     assert_eq!(item.count, 1);
 
-    let nbt = fastnbt::to_value(&suspicious_block).unwrap();
+    let serialized_nbt = fastnbt::to_value(&suspicious_block).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }
 
 #[cfg(test)]
@@ -64,7 +64,7 @@ fn empty_test() {
 
     let suspicious_block: SuspiciousBlock = fastnbt::from_value(&nbt).unwrap();
 
-    let nbt = fastnbt::to_value(&suspicious_block).unwrap();
+    let serialized_nbt = fastnbt::to_value(&suspicious_block).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

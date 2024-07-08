@@ -52,7 +52,7 @@ fn test() {
         Some(Cow::Borrowed("minecraft:regeneration"))
     );
 
-    let nbt = fastnbt::to_value(&beacon).unwrap();
+    let serialized_nbt = fastnbt::to_value(&beacon).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

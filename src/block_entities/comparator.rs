@@ -20,7 +20,7 @@ fn test() {
 
     assert_eq!(comparator.output_signal, 5);
 
-    let nbt = fastnbt::to_value(&comparator).unwrap();
+    let serialized_nbt = fastnbt::to_value(&comparator).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

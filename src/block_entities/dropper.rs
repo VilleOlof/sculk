@@ -76,7 +76,7 @@ fn test() {
     );
     assert_eq!(dropper.loot_table_seed, Some(42));
 
-    let nbt = fastnbt::to_value(&dropper).unwrap();
+    let serialized_nbt = fastnbt::to_value(&dropper).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

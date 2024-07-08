@@ -36,7 +36,7 @@ pub struct BlockState<'a> {
     pub properties: Option<HashMap<Cow<'a, str>, Cow<'a, str>>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(from = "i32")]
 pub enum Facing {
     Down = 0,
@@ -45,6 +45,15 @@ pub enum Facing {
     South = 3,
     West = 4,
     East = 5,
+}
+
+impl Serialize for Facing {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        (self.clone() as i32).serialize(serializer)
+    }
 }
 
 impl From<i32> for Facing {
@@ -84,7 +93,7 @@ fn test() {
     assert_eq!(piston.progress, 0.0);
     assert_eq!(piston.source, false);
 
-    let nbt = fastnbt::to_value(&piston).unwrap();
+    let serialized_nbt = fastnbt::to_value(&piston).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

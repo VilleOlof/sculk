@@ -130,7 +130,7 @@ fn extended_test() {
     assert_eq!(property.value.as_ref(), "<base64>");
     assert_eq!(property.signature.as_ref().unwrap(), "my signature");
 
-    let nbt = fastnbt::to_value(&skull).unwrap();
+    let serialized_nbt = fastnbt::to_value(&skull).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

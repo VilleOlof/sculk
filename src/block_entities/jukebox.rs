@@ -32,7 +32,7 @@ fn test() {
     assert_eq!(jukebox.record_item.count, 1);
     assert_eq!(jukebox.ticks_since_song_started, 0);
 
-    let nbt = fastnbt::to_value(&jukebox).unwrap();
+    let serialized_nbt = fastnbt::to_value(&jukebox).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

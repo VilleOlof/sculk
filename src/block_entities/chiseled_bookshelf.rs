@@ -58,7 +58,7 @@ fn test() {
     assert_eq!(chiseled_bookshelf.items[0].count, 1);
     assert_eq!(chiseled_bookshelf.last_interacted_slot, 3);
 
-    let nbt = fastnbt::to_value(&chiseled_bookshelf).unwrap();
+    let serialized_nbt = fastnbt::to_value(&chiseled_bookshelf).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

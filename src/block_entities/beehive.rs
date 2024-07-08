@@ -27,6 +27,7 @@ fn test() {
                     "Air": 32i16,
                     "CustomName": "Cool Bee",
                     "FallDistance": 0.0f32,
+                    "Fire": -1i16,
                     "Glowing": false,
                     "HasVisualFire": true,
                     "id": "minecraft:bee",
@@ -62,7 +63,7 @@ fn test() {
     );
     assert_eq!(beehive.flower_pos, [1, 2, 3]);
 
-    let nbt = fastnbt::to_value(&beehive).unwrap();
+    let serialized_nbt = fastnbt::to_value(&beehive).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

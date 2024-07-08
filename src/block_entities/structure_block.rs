@@ -111,20 +111,21 @@ impl From<&str> for StructureBlockMode {
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 #[serde(from = "&str")]
 #[serde(rename_all = "UPPERCASE")]
+#[allow(non_camel_case_types)]
 pub enum StructureBlockRotation {
     None,
-    Clockwise90,
-    Clockwise180,
-    CounterClockwise90,
+    Clockwise_90,
+    Clockwise_180,
+    CounterClockwise_90,
 }
 
 impl From<&str> for StructureBlockRotation {
     fn from(s: &str) -> Self {
         match s {
             "NONE" => Self::None,
-            "CLOCKWISE_90" => Self::Clockwise90,
-            "CLOCKWISE_180" => Self::Clockwise180,
-            "COUNTERCLOCKWISE_90" => Self::CounterClockwise90,
+            "CLOCKWISE_90" => Self::Clockwise_90,
+            "CLOCKWISE_180" => Self::Clockwise_180,
+            "COUNTERCLOCKWISE_90" => Self::CounterClockwise_90,
             _ => panic!("Invalid value for StructureBlockRotation: {}", s),
         }
     }
@@ -170,7 +171,7 @@ fn test() {
     assert_eq!(structure_block.powered, true);
     assert_eq!(
         structure_block.rotation,
-        StructureBlockRotation::Clockwise90
+        StructureBlockRotation::Clockwise_90
     );
     assert_eq!(structure_block.seed, 0);
     assert_eq!(structure_block.show_bounding_box, true);
@@ -178,7 +179,7 @@ fn test() {
     assert_eq!(structure_block.size_y, 1);
     assert_eq!(structure_block.size_z, 1);
 
-    let nbt = fastnbt::to_value(&structure_block).unwrap();
+    let serialized_nbt = fastnbt::to_value(&structure_block).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

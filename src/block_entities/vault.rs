@@ -133,7 +133,7 @@ fn test() {
     assert_eq!(vault.shared_data.connected_players, vec![]);
     assert_eq!(vault.shared_data.connected_particles_range, 0.0);
 
-    let nbt = fastnbt::to_value(&vault).unwrap();
+    let serialized_nbt = fastnbt::to_value(&vault).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

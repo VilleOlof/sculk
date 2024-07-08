@@ -48,7 +48,7 @@ fn test() {
     assert_eq!(end_gateway.exit_portal.y, 2);
     assert_eq!(end_gateway.exit_portal.z, 3);
 
-    let nbt = fastnbt::to_value(&end_gateway).unwrap();
+    let serialized_nbt = fastnbt::to_value(&end_gateway).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

@@ -53,9 +53,9 @@ fn basic_test() {
         Pattern::ID(ResourceName::Mojang)
     );
 
-    let nbt = fastnbt::to_value(&banner).unwrap();
+    let serialized_nbt = fastnbt::to_value(&banner).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }
 
 #[cfg(test)]

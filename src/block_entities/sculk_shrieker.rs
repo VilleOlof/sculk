@@ -82,7 +82,7 @@ fn test() {
         Some(79228162551157825753847955460)
     );
 
-    let nbt = fastnbt::to_value(&sculk_shrieker).unwrap();
+    let serialized_nbt = fastnbt::to_value(&sculk_shrieker).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

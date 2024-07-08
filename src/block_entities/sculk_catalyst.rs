@@ -84,7 +84,7 @@ fn empty_test() {
 
     assert_eq!(sculk_catalyst.cursors.len(), 0);
 
-    let nbt = fastnbt::to_value(&sculk_catalyst).unwrap();
+    let serialized_nbt = fastnbt::to_value(&sculk_catalyst).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

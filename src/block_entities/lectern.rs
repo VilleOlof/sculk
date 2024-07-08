@@ -37,7 +37,7 @@ fn test() {
     assert_eq!(book.count, 1);
     assert_eq!(lectern.page.unwrap(), 0);
 
-    let nbt = fastnbt::to_value(&lectern).unwrap();
+    let serialized_nbt = fastnbt::to_value(&lectern).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

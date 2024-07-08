@@ -49,6 +49,7 @@ pub mod suspicious_block;
 pub mod trail_spawner;
 pub mod vault;
 
+// TODO: Maybe put wall signs & banners in their own tag?
 /// Represents unique data specific to a block entity.
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 #[serde(tag = "id")]
@@ -70,7 +71,12 @@ pub enum BlockEntityData<'a> {
         alias = "minecraft:brown_banner",
         alias = "minecraft:green_banner",
         alias = "minecraft:red_banner",
-        alias = "minecraft:black_banner",
+        alias = "minecraft:black_banner"
+    )]
+    Banners(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(
         alias = "minecraft:white_wall_banner",
         alias = "minecraft:orange_wall_banner",
         alias = "minecraft:magenta_wall_banner",
@@ -88,7 +94,7 @@ pub enum BlockEntityData<'a> {
         alias = "minecraft:red_wall_banner",
         alias = "minecraft:black_wall_banner"
     )]
-    Banners(banners::Banner<'a>),
+    WallBanner(banners::Banner<'a>),
 
     #[serde(borrow)]
     #[serde(alias = "minecraft:barrel")]
@@ -212,7 +218,12 @@ pub enum BlockEntityData<'a> {
         alias = "minecraft:bamboo_hanging_sign",
         alias = "minecraft:crimson_hanging_sign",
         alias = "minecraft:warped_hanging_sign",
-        alias = "minecraft:oak_wall_hanging_sign",
+        alias = "minecraft:oak_wall_hanging_sign"
+    )]
+    HangingSing(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(
         alias = "minecraft:spruce_wall_hanging_sign",
         alias = "minecraft:birch_wall_hanging_sign",
         alias = "minecraft:jungle_wall_hanging_sign",
@@ -224,7 +235,7 @@ pub enum BlockEntityData<'a> {
         alias = "minecraft:crimson_wall_hanging_sign",
         alias = "minecraft:warped_wall_hanging_sign"
     )]
-    HangingSing(sign::Sign<'a>),
+    HangingWallSign(sign::Sign<'a>),
 
     #[serde(borrow)]
     #[serde(alias = "minecraft:hopper")]
@@ -295,7 +306,12 @@ pub enum BlockEntityData<'a> {
         alias = "minecraft:cherry_sign",
         alias = "minecraft:bamboo_sign",
         alias = "minecraft:crimson_sign",
-        alias = "minecraft:warped_sign",
+        alias = "minecraft:warped_sign"
+    )]
+    Sign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(
         alias = "minecraft:oak_wall_sign",
         alias = "minecraft:spruce_wall_sign",
         alias = "minecraft:birch_wall_sign",
@@ -308,7 +324,7 @@ pub enum BlockEntityData<'a> {
         alias = "minecraft:crimson_wall_sign",
         alias = "minecraft:warped_wall_sign"
     )]
-    Sign(sign::Sign<'a>),
+    WallSign(sign::Sign<'a>),
 
     #[serde(borrow)]
     #[serde(
@@ -318,7 +334,12 @@ pub enum BlockEntityData<'a> {
         alias = "minecraft:player_head",
         alias = "minecraft:creeper_head",
         alias = "minecraft:dragon_head",
-        alias = "minecraft:piglin_head",
+        alias = "minecraft:piglin_head"
+    )]
+    Skull(skull::Skull<'a>),
+
+    #[serde(borrow)]
+    #[serde(
         alias = "minecraft:skeleton_wall_skull",
         alias = "minecraft:wither_skeleton_wall_skull",
         alias = "minecraft:zombie_wall_head",
@@ -327,7 +348,7 @@ pub enum BlockEntityData<'a> {
         alias = "minecraft:dragon_wall_head",
         alias = "minecraft:piglin_wall_head"
     )]
-    Skull(skull::Skull<'a>),
+    WallSkull(skull::Skull<'a>),
 
     #[serde(borrow)]
     #[serde(alias = "minecraft:structure_block")]

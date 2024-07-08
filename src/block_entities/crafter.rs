@@ -77,9 +77,9 @@ fn basic_test() {
     assert_eq!(crafter.triggered, true);
     assert_eq!(crafter.disabled_slots, vec![3, 4, 5]);
 
-    let nbt = fastnbt::to_value(&crafter).unwrap();
+    let serialized_nbt = fastnbt::to_value(&crafter).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }
 
 #[cfg(test)]
@@ -103,7 +103,7 @@ fn empty_test() {
     assert_eq!(crafter.loot_table, None);
     assert_eq!(crafter.loot_table_seed, None);
 
-    let nbt = fastnbt::to_value(&crafter).unwrap();
+    let serialized_nbt = fastnbt::to_value(&crafter).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

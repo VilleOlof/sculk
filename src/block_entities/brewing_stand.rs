@@ -84,7 +84,7 @@ fn test() {
     assert_eq!(brewing_stand.items.len(), 5);
     assert_eq!(brewing_stand.lock, Some(Cow::Borrowed("key")));
 
-    let nbt = fastnbt::to_value(&brewing_stand).unwrap();
+    let serialized_nbt = fastnbt::to_value(&brewing_stand).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

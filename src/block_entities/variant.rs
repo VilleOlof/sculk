@@ -3,6 +3,7 @@ use super::BlockEntityData;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum BlockEntityVariant {
     Banners,
+    WallBanner,
     Barrels,
     Beacons,
     Beds,
@@ -28,6 +29,7 @@ pub enum BlockEntityVariant {
     EndPortal,
     Furnace,
     HangingSign,
+    HangingWallSign,
     Hopper,
     Jigsaw,
     Jukebox,
@@ -39,7 +41,9 @@ pub enum BlockEntityVariant {
     SculkShrieker,
     ShulkerBox,
     Sign,
+    WallSign,
     Skull,
+    WallSkull,
     StructureBlock,
     Smoker,
     SoulCampfire,
@@ -54,6 +58,7 @@ impl<'a> BlockEntityData<'a> {
     pub fn variant(&self) -> BlockEntityVariant {
         match self {
             BlockEntityData::Banners(_) => BlockEntityVariant::Banners,
+            BlockEntityData::WallBanner(_) => BlockEntityVariant::WallBanner,
             BlockEntityData::Barrel(_) => BlockEntityVariant::Barrels,
             BlockEntityData::Beacon(_) => BlockEntityVariant::Beacons,
             BlockEntityData::Bed => BlockEntityVariant::Beds,
@@ -79,6 +84,7 @@ impl<'a> BlockEntityData<'a> {
             BlockEntityData::EndPortal => BlockEntityVariant::EndPortal,
             BlockEntityData::Furnace(_) => BlockEntityVariant::Furnace,
             BlockEntityData::HangingSing(_) => BlockEntityVariant::HangingSign,
+            BlockEntityData::HangingWallSign(_) => BlockEntityVariant::HangingWallSign,
             BlockEntityData::Hopper(_) => BlockEntityVariant::Hopper,
             BlockEntityData::Jigsaw(_) => BlockEntityVariant::Jigsaw,
             BlockEntityData::Jukebox(_) => BlockEntityVariant::Jukebox,
@@ -90,7 +96,9 @@ impl<'a> BlockEntityData<'a> {
             BlockEntityData::SculkShrieker(_) => BlockEntityVariant::SculkShrieker,
             BlockEntityData::ShulkerBox(_) => BlockEntityVariant::ShulkerBox,
             BlockEntityData::Sign(_) => BlockEntityVariant::Sign,
+            BlockEntityData::WallSign(_) => BlockEntityVariant::WallSign,
             BlockEntityData::Skull(_) => BlockEntityVariant::Skull,
+            BlockEntityData::WallSkull(_) => BlockEntityVariant::WallSkull,
             BlockEntityData::StructureBlock(_) => BlockEntityVariant::StructureBlock,
             BlockEntityData::Smoker(_) => BlockEntityVariant::Smoker,
             BlockEntityData::SoulCampfire(_) => BlockEntityVariant::SoulCampfire,

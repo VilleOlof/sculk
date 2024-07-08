@@ -71,9 +71,9 @@ fn basic_test() {
     assert_eq!(barrel.loot_table, None);
     assert_eq!(barrel.loot_table_seed, None);
 
-    let nbt = fastnbt::to_value(&barrel).unwrap();
+    let serialized_nbt = fastnbt::to_value(&barrel).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }
 
 #[cfg(test)]
@@ -81,7 +81,9 @@ fn basic_test() {
 fn empty_test() {
     use fastnbt::nbt;
 
-    let nbt = nbt!({});
+    let nbt = nbt!({
+        "Items": []
+    });
 
     let barrel: Barrel = fastnbt::from_value(&nbt).unwrap();
 
@@ -91,9 +93,9 @@ fn empty_test() {
     assert_eq!(barrel.loot_table, None);
     assert_eq!(barrel.loot_table_seed, None);
 
-    let nbt = fastnbt::to_value(&barrel).unwrap();
+    let serialized_nbt = fastnbt::to_value(&barrel).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }
 
 #[cfg(test)]
@@ -137,7 +139,7 @@ fn extended_test() {
     );
     assert_eq!(barrel.loot_table_seed, Some(1234567890));
 
-    let nbt = fastnbt::to_value(&barrel).unwrap();
+    let serialized_nbt = fastnbt::to_value(&barrel).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }

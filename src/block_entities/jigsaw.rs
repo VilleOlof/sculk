@@ -72,7 +72,7 @@ fn test() {
     assert_eq!(jigsaw.selection_priority, 1);
     assert_eq!(jigsaw.placement_priority, 2);
 
-    let nbt = fastnbt::to_value(&jigsaw).unwrap();
+    let serialized_nbt = fastnbt::to_value(&jigsaw).unwrap();
 
-    assert_eq!(nbt, nbt);
+    assert_eq!(nbt, serialized_nbt);
 }
