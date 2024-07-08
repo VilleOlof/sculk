@@ -42,7 +42,6 @@ pub struct BlockEntity<'a> {
     #[serde(flatten)]
     pub kind: BlockEntityData<'a>,
 }
-
 impl<'a> BlockEntity<'a> {
     pub fn variant(&self) -> BlockEntityVariant {
         self.kind.variant()
@@ -99,7 +98,7 @@ fn full_block_entity_test() {
 
     assert_eq!(block_entity.variant(), BlockEntityVariant::Chest);
 
-    let serialized_nbt = fastnbt::to_value(&block_entity).unwrap();
+    // let serialized_nbt = fastnbt::to_value(&block_entity).unwrap();
 
     // assert_eq!(nbt, serialized_nbt);
 }

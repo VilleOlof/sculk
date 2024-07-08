@@ -55,74 +55,12 @@ pub mod vault;
 #[serde(tag = "id")]
 pub enum BlockEntityData<'a> {
     #[serde(borrow)]
-    #[serde(
-        alias = "minecraft:white_banner",
-        alias = "minecraft:orange_banner",
-        alias = "minecraft:magenta_banner",
-        alias = "minecraft:light_blue_banner",
-        alias = "minecraft:yellow_banner",
-        alias = "minecraft:lime_banner",
-        alias = "minecraft:pink_banner",
-        alias = "minecraft:gray_banner",
-        alias = "minecraft:light_gray_banner",
-        alias = "minecraft:cyan_banner",
-        alias = "minecraft:purple_banner",
-        alias = "minecraft:blue_banner",
-        alias = "minecraft:brown_banner",
-        alias = "minecraft:green_banner",
-        alias = "minecraft:red_banner",
-        alias = "minecraft:black_banner"
-    )]
-    Banners(banners::Banner<'a>),
-
-    #[serde(borrow)]
-    #[serde(
-        alias = "minecraft:white_wall_banner",
-        alias = "minecraft:orange_wall_banner",
-        alias = "minecraft:magenta_wall_banner",
-        alias = "minecraft:light_blue_wall_banner",
-        alias = "minecraft:yellow_wall_banner",
-        alias = "minecraft:lime_wall_banner",
-        alias = "minecraft:pink_wall_banner",
-        alias = "minecraft:gray_wall_banner",
-        alias = "minecraft:light_gray_wall_banner",
-        alias = "minecraft:cyan_wall_banner",
-        alias = "minecraft:purle_wall_banner",
-        alias = "minecraft_blue_wall_banner",
-        alias = "minecraft:brown_wall_banner",
-        alias = "minecraft_green_wall_banner",
-        alias = "minecraft:red_wall_banner",
-        alias = "minecraft:black_wall_banner"
-    )]
-    WallBanner(banners::Banner<'a>),
-
-    #[serde(borrow)]
     #[serde(alias = "minecraft:barrel")]
     Barrel(barrel::Barrel<'a>),
 
     #[serde(borrow)]
     #[serde(alias = "minecraft:beacon")]
     Beacon(beacon::Beacon<'a>),
-
-    #[serde(
-        alias = "minecraft:white_bed",
-        alias = "minecraft:orange_bed",
-        alias = "minecraft:magenta_bed",
-        alias = "minecraft:light_blue_bed",
-        alias = "minecraft:yellow_bed",
-        alias = "minecraft:lime_bed",
-        alias = "minecraft:pink_bed",
-        alias = "minecraft:gray_bed",
-        alias = "minecraft:light_gray_bed",
-        alias = "minecraft:cyan_bed",
-        alias = "minecraft:purple_bed",
-        alias = "minecraft:blue_bed",
-        alias = "minecraft:brown_bed",
-        alias = "minecraft:green_bed",
-        alias = "minecraft:red_bed",
-        alias = "minecraft:black_bed"
-    )]
-    Bed,
 
     #[serde(borrow)]
     #[serde(alias = "minecraft:beehive")]
@@ -206,38 +144,6 @@ pub enum BlockEntityData<'a> {
     Furnace(furnace::Furnace<'a>),
 
     #[serde(borrow)]
-    #[serde(
-        alias = "minecraft:oak_hanging_sign",
-        alias = "minecraft:spruce_hanging_sign",
-        alias = "minecraft:birch_hanging_sign",
-        alias = "minecraft:jungle_hanging_sign",
-        alias = "minecraft:acacia_hanging_sign",
-        alias = "minecraft:dark_oak_hanging_sign",
-        alias = "minecraft:mangrove_hanging_sign",
-        alias = "minecraft:cherry_hanging_sign",
-        alias = "minecraft:bamboo_hanging_sign",
-        alias = "minecraft:crimson_hanging_sign",
-        alias = "minecraft:warped_hanging_sign",
-        alias = "minecraft:oak_wall_hanging_sign"
-    )]
-    HangingSing(sign::Sign<'a>),
-
-    #[serde(borrow)]
-    #[serde(
-        alias = "minecraft:spruce_wall_hanging_sign",
-        alias = "minecraft:birch_wall_hanging_sign",
-        alias = "minecraft:jungle_wall_hanging_sign",
-        alias = "minecraft:acacia_wall_hanging_sign",
-        alias = "minecraft:dark_oak_wall_hanging_sign",
-        alias = "minecraft:mangrove_wall_hanging_sign",
-        alias = "minecraft:cherry_wall_hanging_sign",
-        alias = "minecraft:bamboo_wall_hanging_sign",
-        alias = "minecraft:crimson_wall_hanging_sign",
-        alias = "minecraft:warped_wall_hanging_sign"
-    )]
-    HangingWallSign(sign::Sign<'a>),
-
-    #[serde(borrow)]
     #[serde(alias = "minecraft:hopper")]
     Hopper(hopper::Hopper<'a>),
 
@@ -273,84 +179,6 @@ pub enum BlockEntityData<'a> {
     SculkShrieker(sculk_shrieker::SculkShrieker<'a>),
 
     #[serde(borrow)]
-    #[serde(
-        alias = "minecraft:shulker_box",
-        alias = "minecraft:white_shulker_box",
-        alias = "minecraft:orange_shulker_box",
-        alias = "minecract:magenta_shulker_box",
-        alias = "minecraft:light_blue_shulker_box",
-        alias = "minecraft:yellow_shulker_box",
-        alias = "minecraft:lime_shulker_box",
-        alias = "minecraft:pink_shulker_box",
-        alias = "minecraft:gray_shulker_box",
-        alias = "minecraft:light_gray_shulker_box",
-        alias = "minecraft:cyan_shulker_box",
-        alias = "minecraft:purple_shulker_box",
-        alias = "minecraft:blue_shulker_box",
-        alias = "minecraft:brown_shulker_box",
-        alias = "minecraft:green_shulker_box",
-        alias = "minecraft:red_shulker_box",
-        alias = "minecraft:black_shulker_box"
-    )]
-    ShulkerBox(shulker_box::ShulkerBox<'a>),
-
-    #[serde(borrow)]
-    #[serde(
-        alias = "minecraft:oak_sign",
-        alias = "minecraft:spruce_sign",
-        alias = "minecraft:birch_sign",
-        alias = "minecraft:jungle_sign",
-        alias = "minecraft:acacia_sign",
-        alias = "minecraft:dark_oak_sign",
-        alias = "minecraft:mangrove_sign",
-        alias = "minecraft:cherry_sign",
-        alias = "minecraft:bamboo_sign",
-        alias = "minecraft:crimson_sign",
-        alias = "minecraft:warped_sign"
-    )]
-    Sign(sign::Sign<'a>),
-
-    #[serde(borrow)]
-    #[serde(
-        alias = "minecraft:oak_wall_sign",
-        alias = "minecraft:spruce_wall_sign",
-        alias = "minecraft:birch_wall_sign",
-        alias = "minecraft:jungle_wall_sign",
-        alias = "minecraft:acacia_wall_sign",
-        alias = "minecraft:dark_oak_wall_sign",
-        alias = "minecraft:mangrove_wall_sign",
-        alias = "minecraft:cherry_wall_sign",
-        alias = "minecraft:bamboo_wall_sign",
-        alias = "minecraft:crimson_wall_sign",
-        alias = "minecraft:warped_wall_sign"
-    )]
-    WallSign(sign::Sign<'a>),
-
-    #[serde(borrow)]
-    #[serde(
-        alias = "minecraft:skeleton_skull",
-        alias = "minecraft:wither_skeleton_skull",
-        alias = "minecraft:zombie_head",
-        alias = "minecraft:player_head",
-        alias = "minecraft:creeper_head",
-        alias = "minecraft:dragon_head",
-        alias = "minecraft:piglin_head"
-    )]
-    Skull(skull::Skull<'a>),
-
-    #[serde(borrow)]
-    #[serde(
-        alias = "minecraft:skeleton_wall_skull",
-        alias = "minecraft:wither_skeleton_wall_skull",
-        alias = "minecraft:zombie_wall_head",
-        alias = "minecraft:player_wall_head",
-        alias = "minecraft:creeper_wall_head",
-        alias = "minecraft:dragon_wall_head",
-        alias = "minecraft:piglin_wall_head"
-    )]
-    WallSkull(skull::Skull<'a>),
-
-    #[serde(borrow)]
     #[serde(alias = "minecraft:structure_block")]
     StructureBlock(structure_block::StructureBlock<'a>),
 
@@ -381,4 +209,436 @@ pub enum BlockEntityData<'a> {
     #[serde(borrow)]
     #[serde(alias = "minecraft:vault")]
     Vault(vault::Vault<'a>),
+
+    //
+    // After this there is just a bunch of boilerplate fields for different
+    // versions of skulls, banner, signs etc.
+    // These could probably be proc macro'd or something.
+    //
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:skeleton_skull")]
+    SkeletonSkull(skull::Skull<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:skeleton_wall_skull")]
+    SkeletonWallSkull(skull::Skull<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:wither_skeleton_skull")]
+    WitherSkeletonSkull(skull::Skull<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:wither_skeleton_wall_skull")]
+    WitherSkeletonWallSkull(skull::Skull<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:zombie_head")]
+    ZombieHead(skull::Skull<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:zombie_wall_head")]
+    ZombieWallHead(skull::Skull<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:player_head")]
+    PlayerHead(skull::Skull<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:player_wall_head")]
+    PlayerWallHead(skull::Skull<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:creeper_head")]
+    CreeperHead(skull::Skull<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:creeper_wall_head")]
+    CreeperWallHead(skull::Skull<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:dragon_head")]
+    DragonHead(skull::Skull<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:dragon_wall_head")]
+    DragonWallHead(skull::Skull<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:piglin_head")]
+    PiglinHead(skull::Skull<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:piglin_wall_head")]
+    PiglinWallHead(skull::Skull<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:oak_hanging_sign")]
+    OakHangingSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:oak_wall_hanging_sign")]
+    OakWallHangingSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:spruce_hanging_sign")]
+    SpruceHangingSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:spruce_wall_hanging_sign")]
+    SpruceWallHangingSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:birch_hanging_sign")]
+    BirchHangingSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:birch_wall_hanging_sign")]
+    BirchWallHangingSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:jungle_hanging_sign")]
+    JungleHangingSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:jungle_wall_hanging_sign")]
+    JungleWallHangingSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:acacia_hanging_sign")]
+    AcaciaHangingSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:acacia_wall_hanging_sign")]
+    AcaciaWallHangingSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:dark_oak_hanging_sign")]
+    DarkOakHangingSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:dark_oak_wall_hanging_sign")]
+    DarkOakWallHangingSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:mangrove_hanging_sign")]
+    MangroveHangingSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:mangrove_wall_hanging_sign")]
+    MangroveWallHangingSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:cherry_hanging_sign")]
+    CherryHangingSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:cherry_wall_hanging_sign")]
+    CherryWallHangingSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:bamboo_hanging_sign")]
+    BambooHangingSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:bamboo_wall_hanging_sign")]
+    BambooWallHangingSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:crimson_hanging_sign")]
+    CrimsonHangingSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:crimson_wall_hanging_sign")]
+    CrimsonWallHangingSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:warped_hanging_sign")]
+    WarpedHangingSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:warped_wall_hanging_sign")]
+    WarpedWallHangingSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:oak_sign")]
+    OakSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:oak_wall_sign")]
+    OakWallSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:spruce_sign")]
+    SpruceSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:spruce_wall_sign")]
+    SpruceWallSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:birch_sign")]
+    BirchSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:birch_wall_sign")]
+    BirchWallSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:jungle_sign")]
+    JungleSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:jungle_wall_sign")]
+    JungleWallSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:acacia_sign")]
+    AcaciaSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:acacia_wall_sign")]
+    AcaciaWallSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:dark_oak_sign")]
+    DarkOakSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:dark_oak_wall_sign")]
+    DarkOakWallSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:mangrove_sign")]
+    MangroveSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:mangrove_wall_sign")]
+    MangroveWallSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:cherry_sign")]
+    CherrySign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:cherry_wall_sign")]
+    CherryWallSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:bamboo_sign")]
+    BambooSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:bamboo_wall_sign")]
+    BambooWallSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:crimson_sign")]
+    CrimsonSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:crimson_wall_sign")]
+    CrimsonWallSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:warped_sign")]
+    WarpedSign(sign::Sign<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:warped_wall_sign")]
+    WarpedWallSign(sign::Sign<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:white_shulker_box")]
+    WhiteShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:orange_shulker_box")]
+    OrangeShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:magenta_shulker_box")]
+    MagentaShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:light_blue_shulker_box")]
+    LightBlueShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:yellow_shulker_box")]
+    YellowShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:lime_shulker_box")]
+    LimeShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:pink_shulker_box")]
+    PinkShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:gray_shulker_box")]
+    GrayShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:light_gray_shulker_box")]
+    LightGrayShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:cyan_shulker_box")]
+    CyanShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:purple_shulker_box")]
+    PurpleShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:blue_shulker_box")]
+    BlueShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:brown_shulker_box")]
+    BrownShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:green_shulker_box")]
+    GreenShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:red_shulker_box")]
+    RedShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:black_shulker_box")]
+    BlackShulkerBox(shulker_box::ShulkerBox<'a>),
+
+    #[serde(alias = "minecraft:white_bed")]
+    WhiteBed,
+
+    #[serde(alias = "minecraft:orange_bed")]
+    OrangeBed,
+
+    #[serde(alias = "minecraft:magenta_bed")]
+    MagentaBed,
+
+    #[serde(alias = "minecraft:light_blue_bed")]
+    LightBlueBed,
+
+    #[serde(alias = "minecraft:yellow_bed")]
+    YellowBed,
+
+    #[serde(alias = "minecraft:lime_bed")]
+    LimeBed,
+
+    #[serde(alias = "minecraft:pink_bed")]
+    PinkBed,
+
+    #[serde(alias = "minecraft:gray_bed")]
+    GrayBed,
+
+    #[serde(alias = "minecraft:light_gray_bed")]
+    LightGrayBed,
+
+    #[serde(alias = "minecraft:cyan_bed")]
+    CyanBed,
+
+    #[serde(alias = "minecraft:purple_bed")]
+    PurpleBed,
+
+    #[serde(alias = "minecraft:blue_bed")]
+    BlueBed,
+
+    #[serde(alias = "minecraft:brown_bed")]
+    BrownBed,
+
+    #[serde(alias = "minecraft:green_bed")]
+    GreenBed,
+
+    #[serde(alias = "minecraft:red_bed")]
+    RedBed,
+
+    #[serde(alias = "minecraft:black_bed")]
+    BlackBed,
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:white_banner")]
+    WhiteBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:white_wall_banner")]
+    WhiteWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:orange_banner")]
+    OrangeBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:orange_wall_banner")]
+    OrangeWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:magenta_banner")]
+    MagentaBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:magenta_wall_banner")]
+    MagentaWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:light_blue_banner")]
+    LightBlueBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:light_blue_wall_banner")]
+    LightBlueWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:yellow_banner")]
+    YellowBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:yellow_wall_banner")]
+    YellowWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:lime_banner")]
+    LimeBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:lime_wall_banner")]
+    LimeWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:pink_banner")]
+    PinkBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:pink_wall_banner")]
+    PinkWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:gray_banner")]
+    GrayBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:gray_wall_banner")]
+    GrayWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:light_gray_banner")]
+    LightGrayBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:light_gray_wall_banner")]
+    LightGrayWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:cyan_banner")]
+    CyanBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:cyan_wall_banner")]
+    CyanWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:purple_banner")]
+    PurpleBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:purple_wall_banner")]
+    PurpleWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:blue_banner")]
+    BlueBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:blue_wall_banner")]
+    BlueWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:brown_banner")]
+    BrownBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:brown_wall_banner")]
+    BrownWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:green_banner")]
+    GreenBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:green_wall_banner")]
+    GreenWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:red_banner")]
+    RedBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:red_wall_banner")]
+    RedWallBanner(banners::Banner<'a>),
+
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:black_banner")]
+    BlackBanner(banners::Banner<'a>),
+    #[serde(borrow)]
+    #[serde(alias = "minecraft:black_wall_banner")]
+    BlackWallBanner(banners::Banner<'a>),
 }

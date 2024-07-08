@@ -103,5 +103,6 @@ pub struct Entity<'a> {
     /// This entity's Universally Unique IDentifier.
     #[serde(rename = "UUID")]
     pub uuid: i128,
+    //
     // TODO: Add entity specific data field like block entites, low priority as it allows very specific narrow block entity -> entity data handling
 }
