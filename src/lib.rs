@@ -1,9 +1,9 @@
-mod block_entities;
-mod block_entity;
-mod color;
-mod components;
-mod entity;
-mod item;
+pub mod block_entities;
+pub mod block_entity;
+pub mod color;
+pub mod components;
+pub mod entity;
+pub mod item;
 mod serialize;
 mod util;
 

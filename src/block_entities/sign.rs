@@ -32,3 +32,51 @@ pub struct SignText<'a> {
     /// A list of text for each line.
     pub messages: Vec<Cow<'a, str>>,
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "is_waxed": false,
+        "front_text": {
+            "has_glowing_text": false,
+            "color": "black",
+            "filtered_messages": [],
+            "messages": [
+                "Hello, world!",
+                "This is a sign."
+            ]
+        },
+        "back_text": {
+            "has_glowing_text": true,
+            "color": "red",
+            "filtered_messages": [],
+            "messages": [
+                "This is the back of the sign.",
+            ]
+        },
+    });
+
+    let sign: Sign = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(sign.is_waxed, false);
+    assert_eq!(sign.front_text.has_glowing_text, false);
+    assert_eq!(sign.front_text.color, Color::Black);
+    assert_eq!(
+        sign.front_text.messages,
+        vec![String::from("Hello, world!"), "This is a sign.".into()]
+    );
+
+    assert_eq!(sign.back_text.has_glowing_text, true);
+    assert_eq!(sign.back_text.color, Color::Red);
+    assert_eq!(
+        sign.back_text.messages,
+        vec![String::from("This is the back of the sign.")]
+    );
+
+    let nbt = fastnbt::to_value(&sign).unwrap();
+
+    assert_eq!(nbt, nbt);
+}

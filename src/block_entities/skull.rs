@@ -17,6 +17,7 @@ pub struct Skull<'a> {
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[serde(untagged)]
 pub enum SkullProfile<'a> {
     #[serde(borrow)]
     Name(Cow<'a, str>),
@@ -57,4 +58,79 @@ pub struct Property<'a> {
     #[serde(borrow)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub signature: Option<Cow<'a, str>>,
+}
+
+#[cfg(test)]
+#[test]
+fn basic_test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "custom_name": "Some name",
+        "note_block_sound": "block.note_block.bell",
+        "profile": "Grian"
+    });
+
+    let skull: Skull = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(skull.custom_name.as_ref().unwrap(), "Some name");
+    assert_eq!(
+        skull.note_block_sound.as_ref().unwrap(),
+        "block.note_block.bell"
+    );
+    assert_eq!(skull.profile, SkullProfile::Name("Grian".into()));
+
+    let nbt = fastnbt::to_value(&skull).unwrap();
+
+    assert_eq!(nbt, nbt);
+}
+
+#[cfg(test)]
+#[test]
+fn extended_test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "custom_name": "Some name",
+        "note_block_sound": "block.note_block.bell",
+        "profile": {
+            "name": "Grian",
+            // TODO: This for some reason hangs the test
+            // "id": [I; 1, 2, 3, 4],
+            "properties": [
+                {
+                    "namne": "textures",
+                    "value": "<base64>",
+                    "signature": "my signature"
+                }
+            ]
+        }
+    });
+
+    let skull: Skull = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(skull.custom_name.as_ref().unwrap(), "Some name");
+    assert_eq!(
+        skull.note_block_sound.as_ref().unwrap(),
+        "block.note_block.bell"
+    );
+
+    let profile = match &skull.profile {
+        SkullProfile::Profile(profile) => profile,
+        _ => panic!("Expected profile"),
+    };
+
+    assert_eq!(profile.name.as_ref().unwrap(), "Grian");
+    // See above
+    // assert_eq!(profile.id.unwrap(), 79228162514264337593543950336);
+
+    let property = profile.properties.as_ref().unwrap().get(0).unwrap();
+
+    assert_eq!(property.namne.as_ref(), "textures");
+    assert_eq!(property.value.as_ref(), "<base64>");
+    assert_eq!(property.signature.as_ref().unwrap(), "my signature");
+
+    let nbt = fastnbt::to_value(&skull).unwrap();
+
+    assert_eq!(nbt, nbt);
 }

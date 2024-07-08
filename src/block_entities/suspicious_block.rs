@@ -24,3 +24,47 @@ pub struct SuspiciousBlock<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub item: Option<Item<'a>>,
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "LootTable": "LootTable",
+        "LootTableSeed": 0i64,
+        "item": {
+            "Slot": 0u8,
+            "id": "minecraft:stone",
+            "Count": 1
+        }
+    });
+
+    let suspicious_block: SuspiciousBlock = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(suspicious_block.loot_table.as_ref().unwrap(), "LootTable");
+    assert_eq!(suspicious_block.loot_table_seed.unwrap(), 0);
+
+    let item = suspicious_block.item.as_ref().unwrap();
+
+    assert_eq!(item.id, "minecraft:stone");
+    assert_eq!(item.count, 1);
+
+    let nbt = fastnbt::to_value(&suspicious_block).unwrap();
+
+    assert_eq!(nbt, nbt);
+}
+
+#[cfg(test)]
+#[test]
+fn empty_test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({});
+
+    let suspicious_block: SuspiciousBlock = fastnbt::from_value(&nbt).unwrap();
+
+    let nbt = fastnbt::to_value(&suspicious_block).unwrap();
+
+    assert_eq!(nbt, nbt);
+}

@@ -37,7 +37,7 @@ fn test() {
                     "PortalCooldown": 0,
                     "Pos": [5.5f64, 6.3f64, 2.1f64],
                     "Rotation": [0.0f32, 0.0f32],
-                    "UUID": [I; 1, 2, 3, 4,]
+                    "UUID": [I; 1, 2, 3, 4]
                 },
                 "min_ticks_in_hive": 5,
                 "ticks_in_hive": 10

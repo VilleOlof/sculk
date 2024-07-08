@@ -33,5 +33,6 @@ pub struct ItemWithNoSlot<'a> {
     pub count: i32,
 
     /// Optional map of data components. Additional information about the item.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub components: Option<ComponentMap<'a>>,
 }

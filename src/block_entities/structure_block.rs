@@ -129,3 +129,56 @@ impl From<&str> for StructureBlockRotation {
         }
     }
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "author": "Scar",
+        "ignoreEntities": 0i8,
+        "integrity": 1.0f32,
+        "metadata": "minecraft:dirt",
+        "mirror": "NONE",
+        "mode": "SAVE",
+        "name": "test",
+        "posX": 0,
+        "posY": 0,
+        "posZ": 0,
+        "powered": 1i8,
+        "rotation": "CLOCKWISE_90",
+        "seed": 0i64,
+        "showboundingbox": 1i8,
+        "sizeX": 1,
+        "sizeY": 1,
+        "sizeZ": 1
+    });
+
+    let structure_block: StructureBlock = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(structure_block.author, "Scar");
+    assert_eq!(structure_block.ignore_entities, false);
+    assert_eq!(structure_block.integrity, 1.0);
+    assert_eq!(structure_block.metadata, "minecraft:dirt");
+    assert_eq!(structure_block.mirror, StructureBlockMirror::None);
+    assert_eq!(structure_block.mode, StructureBlockMode::Save);
+    assert_eq!(structure_block.name, "test");
+    assert_eq!(structure_block.pos_x, 0);
+    assert_eq!(structure_block.pos_y, 0);
+    assert_eq!(structure_block.pos_z, 0);
+    assert_eq!(structure_block.powered, true);
+    assert_eq!(
+        structure_block.rotation,
+        StructureBlockRotation::Clockwise90
+    );
+    assert_eq!(structure_block.seed, 0);
+    assert_eq!(structure_block.show_bounding_box, true);
+    assert_eq!(structure_block.size_x, 1);
+    assert_eq!(structure_block.size_y, 1);
+    assert_eq!(structure_block.size_z, 1);
+
+    let nbt = fastnbt::to_value(&structure_block).unwrap();
+
+    assert_eq!(nbt, nbt);
+}

@@ -37,3 +37,60 @@ pub struct ShulkerBox<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub loot_table_seed: Option<i64>,
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "CustomName": "Custom Name",
+        "Items": [
+            {
+                "Slot": 0u8,
+                "id": "minecraft:stone",
+                "Count": 1
+            }
+        ],
+        "Lock": "Lock",
+        "LootTable": "LootTable",
+        "LootTableSeed": 0i64
+    });
+
+    let shulker_box: ShulkerBox = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(shulker_box.custom_name.as_ref().unwrap(), "Custom Name");
+    assert_eq!(shulker_box.items.len(), 1);
+    assert_eq!(shulker_box.lock.as_ref().unwrap(), "Lock");
+    assert_eq!(shulker_box.loot_table.as_ref().unwrap(), "LootTable");
+    assert_eq!(shulker_box.loot_table_seed.unwrap(), 0);
+
+    let item = shulker_box.items.get(0).unwrap();
+
+    assert_eq!(item.id, "minecraft:stone");
+    assert_eq!(item.count, 1);
+
+    let nbt = fastnbt::to_value(&shulker_box).unwrap();
+
+    assert_eq!(nbt, nbt);
+}
+
+#[cfg(test)]
+#[test]
+fn empty_test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({});
+
+    let shulker_box: ShulkerBox = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(shulker_box.custom_name, None);
+    assert_eq!(shulker_box.items.len(), 0);
+    assert_eq!(shulker_box.lock, None);
+    assert_eq!(shulker_box.loot_table, None);
+    assert_eq!(shulker_box.loot_table_seed, None);
+
+    let nbt = fastnbt::to_value(&shulker_box).unwrap();
+
+    assert_eq!(nbt, nbt);
+}

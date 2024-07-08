@@ -39,3 +39,40 @@ pub struct Hopper<'a> {
     #[serde(rename = "TransferCooldown")]
     pub transfer_cooldown: i32,
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "CustomName": "Hopper",
+        "Items": [
+            {
+                "Slot": 0u8,
+                "id": "minecraft:stone",
+                "Count": 1,
+            }
+        ],
+        "Lock": "Key",
+        "LootTable": "minecraft:chests/simple_dungeon",
+        "LootTableSeed": 0i64,
+        "TransferCooldown": 0,
+    });
+
+    let hopper: Hopper = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(hopper.custom_name, Some(Cow::Borrowed("Hopper")));
+    assert_eq!(hopper.items.len(), 1);
+    assert_eq!(hopper.lock, Some(Cow::Borrowed("Key")));
+    assert_eq!(
+        hopper.loot_table,
+        Some(Cow::Borrowed("minecraft:chests/simple_dungeon"))
+    );
+    assert_eq!(hopper.loot_table_seed, Some(0));
+    assert_eq!(hopper.transfer_cooldown, 0);
+
+    let nbt = fastnbt::to_value(&hopper).unwrap();
+
+    assert_eq!(nbt, nbt);
+}

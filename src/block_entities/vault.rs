@@ -71,3 +71,69 @@ pub struct VaultSharedData<'a> {
     /// The range in blocks when the vault emits particles.
     pub connected_particles_range: f64,
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "config": {
+            "loot_table": "minecraft:chests/trial_chambers/reward",
+            "override_loot_table_to_display": "minecraft:chests/trial_chambers/reward",
+            "activation_range": 4,
+            "deactivation_range": 4,
+            "key_item": {
+                "Slot": 0u8,
+                "id": "minecraft:trial_key",
+                "Count": 1
+            }
+        },
+        "server_data": {
+            "rewarded_plauyers": [],
+            "state_updating_resumes_at": 0i64,
+            "items_to_eject": [],
+            "total_ejections_needed": 0
+        },
+        "shared_data": {
+            "display_item": {
+                "Slot": 0u8,
+                "id": "minecraft:stone",
+                "Count": 1
+            },
+            "connected_players": [],
+            "connected_particles_range": 0.0f64
+        }
+    });
+
+    let vault: Vault = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(
+        vault.config.loot_table.as_ref().unwrap(),
+        "minecraft:chests/trial_chambers/reward"
+    );
+    assert_eq!(
+        vault
+            .config
+            .override_loot_table_to_display
+            .as_ref()
+            .unwrap(),
+        "minecraft:chests/trial_chambers/reward"
+    );
+    assert_eq!(vault.config.activation_range.unwrap(), 4);
+    assert_eq!(vault.config.deactivation_range.unwrap(), 4);
+    assert_eq!(vault.config.key_item.id, "minecraft:trial_key");
+
+    assert_eq!(vault.server_data.rewarded_plauyers, vec![]);
+    assert_eq!(vault.server_data.state_updating_resumes_at, 0);
+    assert_eq!(vault.server_data.items_to_eject, vec![]);
+    assert_eq!(vault.server_data.total_ejections_needed, 0);
+
+    assert_eq!(vault.shared_data.display_item.id, "minecraft:stone");
+    assert_eq!(vault.shared_data.connected_players, vec![]);
+    assert_eq!(vault.shared_data.connected_particles_range, 0.0);
+
+    let nbt = fastnbt::to_value(&vault).unwrap();
+
+    assert_eq!(nbt, nbt);
+}

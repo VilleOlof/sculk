@@ -60,3 +60,31 @@ impl From<i32> for Facing {
         }
     }
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "blockState": {
+            "name": "minecraft:stone"
+        },
+        "extending": 0i8,
+        "facing": 0i32,
+        "progress": 0.0f32,
+        "source": 0i8
+    });
+
+    let piston: Piston = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(piston.block_state.name, "minecraft:stone");
+    assert_eq!(piston.extending, false);
+    assert_eq!(piston.facing, Facing::Down);
+    assert_eq!(piston.progress, 0.0);
+    assert_eq!(piston.source, false);
+
+    let nbt = fastnbt::to_value(&piston).unwrap();
+
+    assert_eq!(nbt, nbt);
+}

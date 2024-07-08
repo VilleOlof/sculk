@@ -43,3 +43,83 @@ pub struct Furnace<'a> {
     #[serde(rename = "RecipesUsed")]
     pub recipes_used: HashMap<Cow<'a, str>, i32>,
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "BurnTime": 100i16,
+        "CookTime": 50i16,
+        "CookTimeTotal": 200i16,
+        "CustomName": "Furnace",
+        "Items": [
+            {
+                "Slot": 0u8,
+                "id": "minecraft:stone",
+                "Count": 1,
+            },
+            {
+                "Slot": 1u8,
+                "id": "minecraft:coal",
+                "Count": 1,
+            },
+            {
+                "Slot": 2u8,
+                "id": "minecraft:stone",
+                "Count": 1,
+            }
+        ],
+        "Lock": "Key",
+        "RecipesUsed": {
+            "minecraft:stone": 1,
+            "minecraft:coal": 2,
+        }
+    });
+
+    let furnace: Furnace = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(furnace.burn_time, 100);
+    assert_eq!(furnace.cook_time, 50);
+    assert_eq!(furnace.cook_time_total, 200);
+    assert_eq!(furnace.custom_name, Some(Cow::Borrowed("Furnace")));
+    assert_eq!(
+        furnace.items,
+        vec![
+            Item {
+                slot: 0,
+                id: Cow::Borrowed("minecraft:stone"),
+                count: 1,
+                components: None,
+            },
+            Item {
+                slot: 1,
+                id: Cow::Borrowed("minecraft:coal"),
+                count: 1,
+                components: None,
+            },
+            Item {
+                slot: 2,
+                id: Cow::Borrowed("minecraft:stone"),
+                count: 1,
+                components: None,
+            }
+        ]
+    );
+    assert_eq!(furnace.lock, Some(Cow::Borrowed("Key")));
+    assert_eq!(
+        furnace.recipes_used,
+        [
+            (Cow::Borrowed("minecraft:stone"), 1),
+            (Cow::Borrowed("minecraft:coal"), 2),
+        ]
+        .iter()
+        .cloned()
+        .collect()
+    );
+
+    let nbt = fastnbt::to_value(&furnace).unwrap();
+
+    assert_eq!(nbt, nbt);
+}

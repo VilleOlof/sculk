@@ -98,3 +98,156 @@ pub struct LootTable<'a> {
     #[serde(borrow)]
     pub data: Cow<'a, str>,
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "required_player_range": 14,
+        "target_cooldown_length": 36000,
+        "normal_config": {
+            "spawn_range": 4,
+            "total_mobs": 6.0f32,
+            "simultaneous_mobs": 2,
+            "total_mobs_added_per_player": 2.0f32,
+            "simultaneous_mobs_added_per_player": 1.0f32,
+            "ticks_between_spawn": 40,
+            "spawn_potentials": [
+                {
+                    "weight": 1,
+                    "data": {
+                        "entity": {
+                            "Air": 32i16,
+                            "CustomName": "Cool Breeze",
+                            "FallDistance": 0.0f32,
+                            "Glowing": true,
+                            "HasVisualFire": true,
+                            "id": "minecraft:breeze",
+                            "Invulnerable": false,
+                            "Motion": [0.0f64, 0.0f64, 0.0f64],
+                            "NoGravity": false,
+                            "OnGround": true,
+                            "PortalCooldown": 0,
+                            "Pos": [5.5f64, 6.3f64, 2.1f64],
+                            "Rotation": [0.0f32, 0.0f32],
+                            "UUID": [I; 1, 2, 3, 4,]
+                        },
+                        "custom_spawn_rules": {
+                            "block_light_limit": 10,
+                            "sky_light_limit": 15
+                        },
+                        "equipment": {
+                            "loot_table": "minecraft:entities/breeze",
+                            "slot_drop_chances": {
+                                "feet": 0.045,
+                                "chest": 0.1,
+                                "mainhand": 0.085
+                            }
+                        }
+                    },
+                }
+            ],
+            "loot_tables_to_eject": [
+                {
+                    "weight": 1,
+                    "data": "minecraft:spawners/trial_chamber/consumables"
+                },
+                {
+                    "weight": 1,
+                    "data": "minecraft:spawners/trial_chamber/key"
+                }
+            ],
+            "items_to_drop_when_ominous": "minecraft:spawners/trial_chamber/items_to_drop_when_ominous"
+        },
+        "registered_players": [
+            [I; 1, 2, 3, 4],
+            [I; 5, 6, 7, 8]
+        ],
+        "current_mobs": [
+            [I; 9, 10, 11, 12],
+            [I; 13, 14, 15, 16]
+        ],
+        "cooldown_ends_at": 0i64,
+        "next_mob_spawns_at": 0i64,
+        "total_mobs_spawned": 0,
+        "spawn_data": {
+            "entity": {
+                "Air": 32i16,
+                "CustomName": "Cool Breeze",
+                "FallDistance": 0.0f32,
+                "Glowing": true,
+                "HasVisualFire": true,
+                "id": "minecraft:breeze",
+                "Invulnerable": false,
+                "Motion": [0.0f64, 0.0f64, 0.0f64],
+                "NoGravity": false,
+                "OnGround": true,
+                "PortalCooldown": 0,
+                "Pos": [5.5f64, 6.3f64, 2.1f64],
+                "Rotation": [0.0f32, 0.0f32],
+                "UUID": [I; 1, 2, 3, 4,]
+            },
+            "custom_spawn_rules": {
+                "block_light_limit": 10,
+                "sky_light_limit": 15
+            },
+            "equipment": {
+                "loot_table": "minecraft:entities/breeze",
+                "slot_drop_chances": {
+                    "feet": 0.045,
+                    "chest": 0.1,
+                    "mainhand": 0.085
+                }
+            }
+        },
+        "ejecting_loot_table": "minecraft:spawners/trial_chamber/loot_table"
+    });
+
+    let trail_spawner: TrailSpawner = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(trail_spawner.required_player_range, 14);
+    assert_eq!(trail_spawner.target_cooldown_length, 36000);
+
+    let normal_config = trail_spawner.normal_config.as_ref().unwrap();
+
+    assert_eq!(normal_config.spawn_range.unwrap(), 4);
+    assert_eq!(normal_config.total_mobs.unwrap(), 6.0);
+    assert_eq!(normal_config.simultaneous_mobs.unwrap(), 2);
+    assert_eq!(normal_config.total_mobs_added_per_player.unwrap(), 2.0);
+    assert_eq!(
+        normal_config.simultaneous_mobs_added_per_player.unwrap(),
+        1.0
+    );
+    assert_eq!(normal_config.ticks_between_spawn.unwrap(), 40);
+    assert_eq!(normal_config.spawn_potentials.as_ref().unwrap().len(), 1);
+    assert_eq!(
+        normal_config.loot_tables_to_eject.as_ref().unwrap().len(),
+        2
+    );
+    assert_eq!(
+        normal_config.items_to_drop_when_ominous.as_ref().unwrap(),
+        "minecraft:spawners/trial_chamber/items_to_drop_when_ominous"
+    );
+
+    assert_eq!(trail_spawner.registered_players.len(), 2);
+    assert_eq!(trail_spawner.current_mobs.len(), 2);
+    assert_eq!(trail_spawner.cooldown_ends_at, 0);
+    assert_eq!(trail_spawner.next_mob_spawns_at, 0);
+    assert_eq!(trail_spawner.total_mobs_spawned, 0);
+    assert_eq!(
+        trail_spawner.spawn_data,
+        normal_config.spawn_potentials.as_ref().unwrap()[0]
+            .data
+            .clone()
+    );
+    assert_eq!(
+        trail_spawner.ejecting_loot_table.as_ref().unwrap(),
+        "minecraft:spawners/trial_chamber/loot_table"
+    );
+
+    let nbt = fastnbt::to_value(&trail_spawner).unwrap();
+
+    assert_eq!(nbt, nbt);
+}

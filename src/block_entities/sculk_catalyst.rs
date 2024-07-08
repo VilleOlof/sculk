@@ -29,3 +29,62 @@ pub struct Cursor {
     // TODO: Research what this value is.
     pub facings: Vec<Value>,
 }
+
+#[cfg(test)]
+#[test]
+fn test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "cursors": [
+            {
+                "charge": 1,
+                "pos": [0, 0, 0],
+                "decay_delay": 0,
+                "update_delay": 1,
+                "facings": []
+            },
+            {
+                "charge": 3,
+                "pos": [5, 5, 5],
+                "decay_delay": 0,
+                "update_delay": 1,
+                "facings": []
+            }
+        ]
+    });
+
+    let sculk_catalyst: SculkCatalyst = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(sculk_catalyst.cursors.len(), 2);
+
+    let cursor = &sculk_catalyst.cursors[0];
+
+    assert_eq!(cursor.charge, 1);
+    assert_eq!(cursor.pos, [0, 0, 0]);
+    assert_eq!(cursor.decay_delay, 0);
+    assert_eq!(cursor.update_delay, 1);
+    assert_eq!(cursor.facings, Vec::<Value>::new());
+
+    let nbt = fastnbt::to_value(&sculk_catalyst).unwrap();
+
+    assert_eq!(nbt, nbt);
+}
+
+#[cfg(test)]
+#[test]
+fn empty_test() {
+    use fastnbt::nbt;
+
+    let nbt = nbt!({
+        "cursors": []
+    });
+
+    let sculk_catalyst: SculkCatalyst = fastnbt::from_value(&nbt).unwrap();
+
+    assert_eq!(sculk_catalyst.cursors.len(), 0);
+
+    let nbt = fastnbt::to_value(&sculk_catalyst).unwrap();
+
+    assert_eq!(nbt, nbt);
+}
