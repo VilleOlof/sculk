@@ -1,7 +1,10 @@
-# block_entity_data
+# Sculk
 
-A Rust crate for handling block entity data in Minecraft.  
-This crate is mainly focused on *reading* block entity data  
+> [!IMPORTANT]  
+> Supported Minecraft version: `1.21`
+
+A Rust crate for handling data in Minecraft.  
+This crate is mainly focused on *reading* data  
 and deserialize it into Rust data structures.  
 
 But it can also serialize back into NBT format but there may be issues and or bloated NBT data.  

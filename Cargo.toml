@@ -1,11 +1,13 @@
 [package]
-name = "block_entity_data"
+name = "sculk"
+description = "A library for handling various data found in Minecraft's NBT files."
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+authors = ["VilleOlof"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-serde_with = "3.8.2"
 fastnbt = "2.5.0"
