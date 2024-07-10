@@ -10,4 +10,5 @@ authors = ["VilleOlof"]
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
+serde_with = "3.8.3"
 fastnbt = "2.5.0"

@@ -106,3 +106,18 @@ pub struct Entity<'a> {
     //
     // TODO: Add entity specific data field like block entites, low priority as it allows very specific narrow block entity -> entity data handling
 }
+
+// FUTURE ENTITY PLAN
+
+// Entity Enum
+// EntityBase - Common fields
+// EntityData - Specific data
+
+// Maybe have these inside every entity and just flatten everything?
+// EntityMob - Mob entity data (have an option of None)
+// EntityAngry - Angry entity data (have an option of None)
+// EntityBreed - Breed entity data (have an option of None)
+// EntityTame - Tame entity data (have an option of None)
+// EntityRaid - Raid entity data (have an option of None)
+// EntityZombie - Zombie entity data (have an option of None)
+// EntityHorse - Horse entity data (have an option of None)

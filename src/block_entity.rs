@@ -1,16 +1,27 @@
-use serde::{Deserialize, Serialize};
-
 use crate::{
     block_entities::{variant::BlockEntityVariant, BlockEntityData},
-    ComponentMap,
+    Component, ComponentMap,
 };
+use serde::{Deserialize, Serialize};
+use serde_with::serde_as;
+use std::borrow::Cow;
 
-/// Refer to `BlockEntity` for documentation.
-///
-/// This lacks the `id` field in a normal block entity.
-/// use `.variant()` and its `kind` field to determine the type of block entity.
+pub use crate::serialize::block_entity_serialize::*;
+
+/// The base fields of a block entity.
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[serde_as]
 pub struct BlockEntityBase<'a> {
+    /// ID of block entity.
+    ///
+    /// This is added after deserialization.
+    /// And this is the **ONLY** reason you have to use the libraries deserialization functions.
+    /// Otherwise this wouldnt exist.
+    #[serde(borrow)]
+    #[serde(default)]
+    #[serde(skip_deserializing)]
+    pub id: Cow<'a, str>,
+
     /// If true, this is an invalid block entity, and this block is not immediately placed when a loaded chunk is loaded. If false, this is a normal block entity that can be immediately placed.
     #[serde(rename = "keepPacked")]
     #[serde(deserialize_with = "crate::util::i8_to_bool")]
@@ -27,17 +38,21 @@ pub struct BlockEntityBase<'a> {
 
     /// Optional map of components.
     #[serde(borrow)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    // #[serde(skip_serializing_if = "Option::is_none")]
     // TODO: This should be a HashMap here and a custom deserializer.
-    pub components: Option<ComponentMap<'a>>,
+    // pub components: Option<ComponentMap<'a>>,
+    #[serde_as(as = "EnumMap")]
+    pub components: Vec<Component<'a>>,
 }
 
 /// Represents a block entity.
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct BlockEntity<'a> {
+    /// Common fields of a block entity.
     #[serde(flatten)]
     pub base: BlockEntityBase<'a>,
 
+    /// The specific data of the block entity.
     #[serde(borrow)]
     #[serde(flatten)]
     pub kind: BlockEntityData<'a>,

@@ -13,12 +13,22 @@ pub struct AttributeModifiers<'a> {
     pub modifiers: Vec<Modifier<'a>>,
 }
 
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[serde(untagged)]
+pub enum AttributeModifier<'a> {
+    #[serde(borrow)]
+    ModifierList(Vec<Modifier<'a>>),
+
+    #[serde(borrow)]
+    Compound(AttributeModifiers<'a>),
+}
+
 /// A single attribute modifier.
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct Modifier<'a> {
     /// The name of the attribute this modifier is to act upon.
-    #[serde(rename = "type")]
-    pub _type: Cow<'a, str>,
+    #[serde(rename = "type", alias = "type")]
+    pub r#type: Cow<'a, str>,
 
     /// Slot or slot type the item must be in for the modifier to take effect.
     pub slot: SlotType,

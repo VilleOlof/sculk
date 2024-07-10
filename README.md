@@ -17,3 +17,5 @@ But it can also serialize back into NBT format but there may be issues and or bl
 - [ ] Add all block entity & component default values if specified on wiki.
 - [ ] Add all components
 - [ ] Add tests for all components
+- [ ] Once done, rethink/look back on pub api
+- [ ] Criterion benchmarks
