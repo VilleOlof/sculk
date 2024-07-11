@@ -1,24 +1,21 @@
+use simdnbt::Mutf8Str;
+
+use crate::{color::Color, error::SculkParseError, traits::FromCompoundNbt, util::get_bool};
 use std::borrow::Cow;
 
-use serde::{Deserialize, Serialize};
-
-use crate::color::Color;
-
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Sign<'a> {
     /// true if the text is locked with honeycomb.
     pub is_waxed: bool,
 
     /// Discribes front text.
-    #[serde(borrow)]
     pub front_text: SignText<'a>,
 
     /// Discribes back text
-    #[serde(borrow)]
     pub back_text: SignText<'a>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct SignText<'a> {
     /// true if the sign has been dyed with a glow ink sac.
     pub has_glowing_text: bool,
@@ -27,56 +24,79 @@ pub struct SignText<'a> {
     pub color: Color,
 
     /// Only in Realms. The lines of text shown to players with the profanity filter turned on instead of the regular lines. This tag is automatically set to "" for lines containing blocked words and to the line's normal contents for the other lines when a player with the profanity filter turned off edits the sign, so players with the filter on cannot see the blocked words. If a player with the filter on tries to use blocked words in one or more lines, the line(s) in  messages containing blocked words are set to "", which makes them render completely blank, and this tag is also given the same contents. If multiple lines have been edited before the sign editing GUI is closed, only the lines containing blocked words are blanked.
-    pub filtered_messages: Vec<Cow<'a, str>>,
+    pub filtered_messages: Vec<Cow<'a, Mutf8Str>>,
 
     /// A list of text for each line.
-    pub messages: Vec<Cow<'a, str>>,
+    pub messages: Vec<Cow<'a, Mutf8Str>>,
 }
 
-#[cfg(test)]
-#[test]
-fn test() {
-    use fastnbt::nbt;
+impl<'a> FromCompoundNbt for Sign<'a> {
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
+    where
+        Self: Sized,
+    {
+        let is_waxed = get_bool(&nbt, "is_waxed");
 
-    let nbt = nbt!({
-        "is_waxed": false,
-        "front_text": {
-            "has_glowing_text": false,
-            "color": "black",
-            "filtered_messages": [],
-            "messages": [
-                "Hello, world!",
-                "This is a sign."
-            ]
-        },
-        "back_text": {
-            "has_glowing_text": true,
-            "color": "red",
-            "filtered_messages": [],
-            "messages": [
-                "This is the back of the sign.",
-            ]
-        },
-    });
+        let front_text = nbt
+            .compound("front_text")
+            .map(|nbt| SignText::from_compound_nbt(&nbt))
+            .ok_or(SculkParseError::MissingField("front_text".into()))??;
 
-    let sign: Sign = fastnbt::from_value(&nbt).unwrap();
+        let back_text = nbt
+            .compound("back_text")
+            .map(|nbt| SignText::from_compound_nbt(&nbt))
+            .ok_or(SculkParseError::MissingField("back_text".into()))??;
 
-    assert_eq!(sign.is_waxed, false);
-    assert_eq!(sign.front_text.has_glowing_text, false);
-    assert_eq!(sign.front_text.color, Color::Black);
-    assert_eq!(
-        sign.front_text.messages,
-        vec![String::from("Hello, world!"), "This is a sign.".into()]
-    );
+        Ok(Sign {
+            is_waxed,
+            front_text,
+            back_text,
+        })
+    }
+}
 
-    assert_eq!(sign.back_text.has_glowing_text, true);
-    assert_eq!(sign.back_text.color, Color::Red);
-    assert_eq!(
-        sign.back_text.messages,
-        vec![String::from("This is the back of the sign.")]
-    );
+impl<'a> FromCompoundNbt for SignText<'a> {
+    fn from_compound_nbt(
+        nbt: &simdnbt::borrow::NbtCompound,
+    ) -> Result<Self, crate::error::SculkParseError>
+    where
+        Self: Sized,
+    {
+        let has_glowing_text = get_bool(&nbt, "has_glowing_text");
 
-    let serialized_nbt = fastnbt::to_value(&sign).unwrap();
+        let color = nbt
+            .string("color")
+            .map(|s| {
+                Color::from_str(s.to_str().as_ref())
+                    .ok_or(SculkParseError::InvalidField("color".into()))
+            })
+            .ok_or(SculkParseError::MissingField("color".into()))??;
 
-    assert_eq!(nbt, serialized_nbt);
+        let filtered_messages_list = nbt
+            .list("filtered_messages")
+            .ok_or(SculkParseError::MissingField("filtered_messages".into()))?;
+        let mut filtered_messages: Vec<Cow<'a, Mutf8Str>> = vec![];
+
+        for message in filtered_messages_list.strings().into_iter() {
+            let str = (*message.first().unwrap()).to_owned();
+            filtered_messages.push(Cow::Owned(str));
+        }
+
+        let messages_list = nbt
+            .list("messages")
+            .ok_or(SculkParseError::MissingField("messages".into()))?;
+        let mut messages: Vec<Cow<'a, Mutf8Str>> = vec![];
+
+        for message in messages_list.strings().into_iter() {
+            let str = (*message.first().unwrap()).to_owned();
+            messages.push(Cow::Owned(str));
+        }
+
+        Ok(SignText {
+            has_glowing_text,
+            color,
+            filtered_messages,
+            messages,
+        })
+    }
 }

@@ -1,26 +1,24 @@
-use serde::{Deserialize, Serialize};
+use crate::{error::SculkParseError, traits::FromCompoundNbt};
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Comparator {
     /// Represents the strength of the analog signal output of this redstone comparator.
-    #[serde(rename = "OutputSignal")]
+    ///
+    /// `OutputSignal`
     pub output_signal: i32,
 }
 
-#[cfg(test)]
-#[test]
-fn test() {
-    use fastnbt::nbt;
-
-    let nbt = nbt!({
-        "OutputSignal": 5i32
-    });
-
-    let comparator: Comparator = fastnbt::from_value(&nbt).unwrap();
-
-    assert_eq!(comparator.output_signal, 5);
-
-    let serialized_nbt = fastnbt::to_value(&comparator).unwrap();
-
-    assert_eq!(nbt, serialized_nbt);
+impl FromCompoundNbt for Comparator {
+    fn from_compound_nbt(
+        nbt: &simdnbt::borrow::NbtCompound,
+    ) -> Result<Self, crate::error::SculkParseError>
+    where
+        Self: Sized,
+    {
+        Ok(Comparator {
+            output_signal: nbt
+                .int("OutputSignal")
+                .ok_or(SculkParseError::MissingField("OutputSignal".into()))?,
+        })
+    }
 }

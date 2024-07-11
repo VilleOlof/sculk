@@ -1,139 +1,185 @@
+use simdnbt::Mutf8Str;
+
+use crate::{
+    error::SculkParseError,
+    item::Item,
+    traits::FromCompoundNbt,
+    util::{get_owned_optional_mutf8str, get_t_compound_vec},
+    uuid::Uuid,
+};
 use std::borrow::Cow;
 
-use serde::{Deserialize, Serialize};
-
-use crate::item::Item;
-
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Vault<'a> {
     /// Configuration data that does not automatically change. All fields are optional.
-    #[serde(borrow)]
     pub config: VaultConfig<'a>,
 
     /// Data that is only stored on the server.
-    #[serde(borrow)]
     pub server_data: VaultServerData<'a>,
 
     /// Data that is synced between the server and client.
-    #[serde(borrow)]
     pub shared_data: VaultSharedData<'a>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct VaultConfig<'a> {
     ///  A resource location to the loot table that is ejected when unlocking the vault. Defaults to "minecraft:chests/trial_chambers/reward"
-    #[serde(borrow)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub loot_table: Option<Cow<'a, str>>,
+    pub loot_table: Option<Cow<'a, Mutf8Str>>,
 
     /// A resource location to the loot table that is used to display items in the vault. If not present, the game uses the loot_table field.
-    #[serde(borrow)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub override_loot_table_to_display: Option<Cow<'a, str>>,
+    pub override_loot_table_to_display: Option<Cow<'a, Mutf8Str>>,
 
     /// The range in blocks when the vault should activate. Defaults to 4.
     pub activation_range: Option<i32>,
 
     /// The range in blocks when the vault should deactivate. Defaults to 4.5.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub deactivation_range: Option<i32>,
 
     /// The key item that is used to check for valid keys. Defaults to "minecraft:trial_key"
-    #[serde(borrow)]
     pub key_item: Item<'a>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct VaultServerData<'a> {
     ///  A set of player UUIDs that have already received their rewards from this vault.
-    pub rewarded_plauyers: Vec<i128>,
+    pub rewarded_players: Vec<Uuid>,
 
     /// The game time when the vault processes block state changes, such as changing from unlocking to ejecting after a delay.
     pub state_updating_resumes_at: i64,
 
     /// List of item stacks that have been rolled by the loot table and are waiting to be ejected.
-    #[serde(borrow)]
     pub items_to_eject: Vec<Item<'a>>,
 
     /// The total amount of item stacks that need to be ejected.
     pub total_ejections_needed: i32,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct VaultSharedData<'a> {
     /// The item that is currently being displayed.
-    #[serde(borrow)]
     pub display_item: Item<'a>,
 
     /// A set of player UUIDs that are within range of the vault.
-    pub connected_players: Vec<i128>,
+    pub connected_players: Vec<Uuid>,
 
     /// The range in blocks when the vault emits particles.
     pub connected_particles_range: f64,
 }
 
-#[cfg(test)]
-#[test]
-fn test() {
-    use fastnbt::nbt;
+impl<'a> FromCompoundNbt for Vault<'a> {
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
+    where
+        Self: Sized,
+    {
+        let config = if let Some(nbt) = nbt.compound("config") {
+            VaultConfig::from_compound_nbt(&nbt)?
+        } else {
+            return Err(SculkParseError::MissingField("config".into()));
+        };
 
-    let nbt = nbt!({
-        "config": {
-            "loot_table": "minecraft:chests/trial_chambers/reward",
-            "override_loot_table_to_display": "minecraft:chests/trial_chambers/reward",
-            "activation_range": 4,
-            "deactivation_range": 4,
-            "key_item": {
-                "Slot": 0u8,
-                "id": "minecraft:trial_key",
-                "Count": 1
-            }
-        },
-        "server_data": {
-            "rewarded_plauyers": [],
-            "state_updating_resumes_at": 0i64,
-            "items_to_eject": [],
-            "total_ejections_needed": 0
-        },
-        "shared_data": {
-            "display_item": {
-                "Slot": 0u8,
-                "id": "minecraft:stone",
-                "Count": 1
-            },
-            "connected_players": [],
-            "connected_particles_range": 0.0f64
-        }
-    });
+        let server_data = if let Some(nbt) = nbt.compound("server_data") {
+            VaultServerData::from_compound_nbt(&nbt)?
+        } else {
+            return Err(SculkParseError::MissingField("server_data".into()));
+        };
 
-    let vault: Vault = fastnbt::from_value(&nbt).unwrap();
+        let shared_data = if let Some(nbt) = nbt.compound("shared_data") {
+            VaultSharedData::from_compound_nbt(&nbt)?
+        } else {
+            return Err(SculkParseError::MissingField("shared_data".into()));
+        };
 
-    assert_eq!(
-        vault.config.loot_table.as_ref().unwrap(),
-        "minecraft:chests/trial_chambers/reward"
-    );
-    assert_eq!(
-        vault
-            .config
-            .override_loot_table_to_display
-            .as_ref()
-            .unwrap(),
-        "minecraft:chests/trial_chambers/reward"
-    );
-    assert_eq!(vault.config.activation_range.unwrap(), 4);
-    assert_eq!(vault.config.deactivation_range.unwrap(), 4);
-    assert_eq!(vault.config.key_item.id, "minecraft:trial_key");
+        Ok(Vault {
+            config,
+            server_data,
+            shared_data,
+        })
+    }
+}
 
-    assert_eq!(vault.server_data.rewarded_plauyers, vec![]);
-    assert_eq!(vault.server_data.state_updating_resumes_at, 0);
-    assert_eq!(vault.server_data.items_to_eject, vec![]);
-    assert_eq!(vault.server_data.total_ejections_needed, 0);
+impl<'a> FromCompoundNbt for VaultConfig<'a> {
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
+    where
+        Self: Sized,
+    {
+        let loot_table = get_owned_optional_mutf8str(&nbt, "loot_table");
 
-    assert_eq!(vault.shared_data.display_item.id, "minecraft:stone");
-    assert_eq!(vault.shared_data.connected_players, vec![]);
-    assert_eq!(vault.shared_data.connected_particles_range, 0.0);
+        let override_loot_table_to_display =
+            get_owned_optional_mutf8str(&nbt, "override_loot_table_to_display");
 
-    let serialized_nbt = fastnbt::to_value(&vault).unwrap();
+        let activation_range = nbt.int("activation_range");
+        let deactivation_range = nbt.int("deactivation_range");
 
-    assert_eq!(nbt, serialized_nbt);
+        let key_item = if let Some(nbt) = nbt.compound("key_item") {
+            Item::from_compound_nbt(&nbt)?
+        } else {
+            return Err(SculkParseError::MissingField("key_item".into()));
+        };
+
+        Ok(VaultConfig {
+            loot_table,
+            override_loot_table_to_display,
+            activation_range,
+            deactivation_range,
+            key_item,
+        })
+    }
+}
+
+impl<'a> FromCompoundNbt for VaultServerData<'a> {
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
+    where
+        Self: Sized,
+    {
+        let rewarded_players = Uuid::from_nbt_to_vec(&nbt, "rewarded_players");
+
+        let state_updating_resumes_at =
+            nbt.long("state_updating_resumes_at")
+                .ok_or(SculkParseError::MissingField(
+                    "state_updating_resumes_at".into(),
+                ))?;
+
+        let items_to_eject = get_t_compound_vec(&nbt, "items_to_eject", Item::from_compound_nbt)?;
+
+        let total_ejections_needed =
+            nbt.int("total_ejections_needed")
+                .ok_or(SculkParseError::MissingField(
+                    "total_ejections_needed".into(),
+                ))?;
+
+        Ok(VaultServerData {
+            rewarded_players,
+            state_updating_resumes_at,
+            items_to_eject,
+            total_ejections_needed,
+        })
+    }
+}
+
+impl<'a> FromCompoundNbt for VaultSharedData<'a> {
+    fn from_compound_nbt(
+        nbt: &simdnbt::borrow::NbtCompound,
+    ) -> Result<Self, crate::error::SculkParseError>
+    where
+        Self: Sized,
+    {
+        let display_item = nbt
+            .compound("display_item")
+            .map(|nbt| Item::from_compound_nbt(&nbt))
+            .ok_or(SculkParseError::MissingField("display_item".into()))??;
+
+        let connected_players = Uuid::from_nbt_to_vec(&nbt, "connected_players");
+
+        let connected_particles_range =
+            nbt.double("connected_particles_range")
+                .ok_or(SculkParseError::MissingField(
+                    "connected_particles_range".into(),
+                ))?;
+
+        Ok(VaultSharedData {
+            display_item,
+            connected_players,
+            connected_particles_range,
+        })
+    }
 }

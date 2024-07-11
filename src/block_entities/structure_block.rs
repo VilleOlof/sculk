@@ -1,21 +1,28 @@
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+use simdnbt::Mutf8Str;
+
+use crate::{
+    error::SculkParseError,
+    traits::FromCompoundNbt,
+    util::{get_bool, get_owned_mutf8str},
+};
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct StructureBlock<'a> {
     /// Author of the structure; only set to "?" for most vanilla structures.
-    pub author: Cow<'a, str>,
+    pub author: Cow<'a, Mutf8Str>,
 
     /// Whether entities should be ignored in the structure.
-    #[serde(rename = "ignoreEntities")]
-    #[serde(deserialize_with = "crate::util::i8_to_bool")]
+    ///
+    /// `ignoreEntities`
     pub ignore_entities: bool,
 
     /// How complete the structure is that gets placed.
     pub integrity: f32,
 
     /// Value of the data structure block field.
-    pub metadata: Cow<'a, str>,
+    pub metadata: Cow<'a, Mutf8Str>,
 
     /// How the structure is mirrored, one of "NONE", "LEFT_RIGHT" (mirrored over X axis when not rotated), or "FRONT_BACK" (mirrored over Z axis when not rotated).
     pub mirror: StructureBlockMirror,
@@ -24,22 +31,24 @@ pub struct StructureBlock<'a> {
     pub mode: StructureBlockMode,
 
     /// Name of the structure.
-    pub name: Cow<'a, str>,
+    pub name: Cow<'a, Mutf8Str>,
 
     /// X-position of the structure.
-    #[serde(rename = "posX")]
+    ///
+    /// `posX`
     pub pos_x: i32,
 
     /// Y-position of the structure.
-    #[serde(rename = "posY")]
+    ///
+    /// `posY`
     pub pos_y: i32,
 
     /// Z-position of the structure.
-    #[serde(rename = "posZ")]
+    ///
+    /// `posZ`
     pub pos_z: i32,
 
     /// Whether this structure block is being powered by redstone.
-    #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub powered: bool,
 
     /// Rotation of the structure, one of "NONE", "CLOCKWISE_90", "CLOCKWISE_180", or "COUNTERCLOCKWISE_90".
@@ -49,26 +58,27 @@ pub struct StructureBlock<'a> {
     pub seed: i64,
 
     /// Whether to show the structure's bounding box to players in Creative mode.
-    #[serde(rename = "showboundingbox")]
-    #[serde(deserialize_with = "crate::util::i8_to_bool")]
+    ///
+    /// `showboundingbox`
     pub show_bounding_box: bool,
 
     /// X-size of the structure, its length.
-    #[serde(rename = "sizeX")]
+    ///
+    /// `sizeX`
     pub size_x: i32,
 
     /// Y-size of the structure, its height.
-    #[serde(rename = "sizeY")]
+    ///
+    /// `sizeY`
     pub size_y: i32,
 
     /// Z-size of the structure, its depth.
-    #[serde(rename = "sizeZ")]
+    ///
+    /// `sizeZ`
     pub size_z: i32,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
-#[serde(from = "&str")]
-#[serde(rename_all = "UPPERCASE")]
+#[derive(Debug, Clone, PartialEq)]
 pub enum StructureBlockMirror {
     None,
     LeftRight,
@@ -86,9 +96,7 @@ impl From<&str> for StructureBlockMirror {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
-#[serde(from = "&str")]
-#[serde(rename_all = "UPPERCASE")]
+#[derive(Debug, Clone, PartialEq)]
 pub enum StructureBlockMode {
     Save,
     Load,
@@ -108,78 +116,104 @@ impl From<&str> for StructureBlockMode {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
-#[serde(from = "&str")]
-#[serde(rename_all = "UPPERCASE")]
-#[allow(non_camel_case_types)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum StructureBlockRotation {
     None,
-    Clockwise_90,
-    Clockwise_180,
-    CounterClockwise_90,
+    Clockwise90,
+    Clockwise180,
+    CounterClockwise90,
 }
 
 impl From<&str> for StructureBlockRotation {
     fn from(s: &str) -> Self {
         match s {
             "NONE" => Self::None,
-            "CLOCKWISE_90" => Self::Clockwise_90,
-            "CLOCKWISE_180" => Self::Clockwise_180,
-            "COUNTERCLOCKWISE_90" => Self::CounterClockwise_90,
+            "CLOCKWISE_90" => Self::Clockwise90,
+            "CLOCKWISE_180" => Self::Clockwise180,
+            "COUNTERCLOCKWISE_90" => Self::CounterClockwise90,
             _ => panic!("Invalid value for StructureBlockRotation: {}", s),
         }
     }
 }
 
-#[cfg(test)]
-#[test]
-fn test() {
-    use fastnbt::nbt;
+impl<'a> FromCompoundNbt for StructureBlock<'a> {
+    fn from_compound_nbt(
+        nbt: &simdnbt::borrow::NbtCompound,
+    ) -> Result<Self, crate::error::SculkParseError>
+    where
+        Self: Sized,
+    {
+        let author = get_owned_mutf8str(&nbt, "author")?;
+        let ignore_entities = get_bool(&nbt, "ignoreEntities");
 
-    let nbt = nbt!({
-        "author": "Scar",
-        "ignoreEntities": 0i8,
-        "integrity": 1.0f32,
-        "metadata": "minecraft:dirt",
-        "mirror": "NONE",
-        "mode": "SAVE",
-        "name": "test",
-        "posX": 0,
-        "posY": 0,
-        "posZ": 0,
-        "powered": 1i8,
-        "rotation": "CLOCKWISE_90",
-        "seed": 0i64,
-        "showboundingbox": 1i8,
-        "sizeX": 1,
-        "sizeY": 1,
-        "sizeZ": 1
-    });
+        let integrity = nbt
+            .float("integrity")
+            .ok_or(SculkParseError::MissingField("integrity".into()))?;
 
-    let structure_block: StructureBlock = fastnbt::from_value(&nbt).unwrap();
+        let metadata = get_owned_mutf8str(&nbt, "metadata")?;
 
-    assert_eq!(structure_block.author, "Scar");
-    assert_eq!(structure_block.ignore_entities, false);
-    assert_eq!(structure_block.integrity, 1.0);
-    assert_eq!(structure_block.metadata, "minecraft:dirt");
-    assert_eq!(structure_block.mirror, StructureBlockMirror::None);
-    assert_eq!(structure_block.mode, StructureBlockMode::Save);
-    assert_eq!(structure_block.name, "test");
-    assert_eq!(structure_block.pos_x, 0);
-    assert_eq!(structure_block.pos_y, 0);
-    assert_eq!(structure_block.pos_z, 0);
-    assert_eq!(structure_block.powered, true);
-    assert_eq!(
-        structure_block.rotation,
-        StructureBlockRotation::Clockwise_90
-    );
-    assert_eq!(structure_block.seed, 0);
-    assert_eq!(structure_block.show_bounding_box, true);
-    assert_eq!(structure_block.size_x, 1);
-    assert_eq!(structure_block.size_y, 1);
-    assert_eq!(structure_block.size_z, 1);
+        let mirror = nbt
+            .string("mirror")
+            .map(|string| StructureBlockMirror::from(string.to_str().as_ref()))
+            .ok_or(SculkParseError::MissingField("mirror".into()))?;
 
-    let serialized_nbt = fastnbt::to_value(&structure_block).unwrap();
+        let mode = nbt
+            .string("mode")
+            .map(|string| StructureBlockMode::from(string.to_str().as_ref()))
+            .ok_or(SculkParseError::MissingField("mode".into()))?;
 
-    assert_eq!(nbt, serialized_nbt);
+        let name = get_owned_mutf8str(&nbt, "name")?;
+
+        let pos_x = nbt
+            .int("posX")
+            .ok_or(SculkParseError::MissingField("posX".into()))?;
+        let pos_y = nbt
+            .int("posY")
+            .ok_or(SculkParseError::MissingField("posY".into()))?;
+        let pos_z = nbt
+            .int("posZ")
+            .ok_or(SculkParseError::MissingField("posZ".into()))?;
+
+        let powered = get_bool(&nbt, "powered");
+
+        let rotation = nbt
+            .string("rotation")
+            .map(|string| StructureBlockRotation::from(string.to_str().as_ref()))
+            .ok_or(SculkParseError::MissingField("rotation".into()))?;
+
+        let seed = nbt
+            .long("seed")
+            .ok_or(SculkParseError::MissingField("seed".into()))?;
+        let show_bounding_box = get_bool(&nbt, "showboundingbox");
+
+        let size_x = nbt
+            .int("sizeX")
+            .ok_or(SculkParseError::MissingField("sizeX".into()))?;
+        let size_y = nbt
+            .int("sizeY")
+            .ok_or(SculkParseError::MissingField("sizeY".into()))?;
+        let size_z = nbt
+            .int("sizeZ")
+            .ok_or(SculkParseError::MissingField("sizeZ".into()))?;
+
+        Ok(StructureBlock {
+            author,
+            ignore_entities,
+            integrity,
+            metadata,
+            mirror,
+            mode,
+            name,
+            pos_x,
+            pos_y,
+            pos_z,
+            powered,
+            rotation,
+            seed,
+            show_bounding_box,
+            size_x,
+            size_y,
+            size_z,
+        })
+    }
 }

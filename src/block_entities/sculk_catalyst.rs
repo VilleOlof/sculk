@@ -1,7 +1,6 @@
-use fastnbt::Value;
-use serde::{Deserialize, Serialize};
+use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_int_array};
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct SculkCatalyst {
     /// List of sculk charge clusters associated with the sculk catalyst.
     cursors: Vec<Cursor>,
@@ -9,7 +8,7 @@ pub struct SculkCatalyst {
 
 /// A sculk charge cluster. Each cluster is stored within a single sculk block.
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Cursor {
     /// How many sculk charges are being carried in the cluster.
     pub charge: i32,
@@ -27,64 +26,74 @@ pub struct Cursor {
 
     /// If the block to replace is an air or water block, the block is replaced with sculk veins, and the faces where the sculk veins are placed are also stored in their block state. The sculk veins never grow directly on the faces of a sculk block. The same thing is done to any air or water blocks that are adjacent to blocks that are adjacent to this sculk block, if sculk veins can't grow in the blocks adjacent to this sculk block without growing directly on the faces of sculk blocks.
     // TODO: Research what this value is.
-    pub facings: Vec<Value>,
+    pub facings: Vec<simdnbt::owned::NbtCompound>,
 }
 
-#[cfg(test)]
-#[test]
-fn test() {
-    use fastnbt::nbt;
+impl FromCompoundNbt for SculkCatalyst {
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
+    where
+        Self: Sized,
+    {
+        let cursors_list = nbt
+            .list("cursors")
+            .ok_or(SculkParseError::MissingField("cursors".into()))?;
 
-    let nbt = nbt!({
-        "cursors": [
-            {
-                "charge": 1,
-                "pos": [0, 0, 0],
-                "decay_delay": 0,
-                "update_delay": 1,
-                "facings": []
-            },
-            {
-                "charge": 3,
-                "pos": [5, 5, 5],
-                "decay_delay": 0,
-                "update_delay": 1,
-                "facings": []
+        let cursors = if let Some(cursors) = cursors_list.compounds() {
+            cursors
+                .into_iter()
+                .map(|c| Cursor::from_compound_nbt(&c))
+                .collect::<Result<Vec<Cursor>, SculkParseError>>()?
+        } else {
+            vec![]
+        };
+
+        Ok(SculkCatalyst { cursors })
+    }
+}
+
+impl FromCompoundNbt for Cursor {
+    fn from_compound_nbt(
+        nbt: &simdnbt::borrow::NbtCompound,
+    ) -> Result<Self, crate::error::SculkParseError>
+    where
+        Self: Sized,
+    {
+        let charge = nbt
+            .int("charge")
+            .ok_or(SculkParseError::MissingField("charge".into()))?;
+
+        let pos = get_int_array(&nbt, "pos").and_then(|arr| {
+            if arr.len() == 3 {
+                Ok([arr[0], arr[1], arr[2]])
+            } else {
+                Err(SculkParseError::InvalidField("pos".into()))
             }
-        ]
-    });
+        })?;
 
-    let sculk_catalyst: SculkCatalyst = fastnbt::from_value(&nbt).unwrap();
+        let decay_delay = nbt
+            .int("decay_delay")
+            .ok_or(SculkParseError::MissingField("decay_delay".into()))?;
 
-    assert_eq!(sculk_catalyst.cursors.len(), 2);
+        let update_delay = nbt
+            .int("update_delay")
+            .ok_or(SculkParseError::MissingField("update_delay".into()))?;
 
-    let cursor = &sculk_catalyst.cursors[0];
+        let facings = if let Some(facings) = nbt.list("facings") {
+            let compounds = facings
+                .compounds()
+                .ok_or(SculkParseError::InvalidField("facings".into()))?;
 
-    assert_eq!(cursor.charge, 1);
-    assert_eq!(cursor.pos, [0, 0, 0]);
-    assert_eq!(cursor.decay_delay, 0);
-    assert_eq!(cursor.update_delay, 1);
-    assert_eq!(cursor.facings, Vec::<Value>::new());
+            compounds.into_iter().map(|c| c.to_owned()).collect()
+        } else {
+            vec![]
+        };
 
-    let nbt = fastnbt::to_value(&sculk_catalyst).unwrap();
-
-    assert_eq!(nbt, nbt);
-}
-
-#[cfg(test)]
-#[test]
-fn empty_test() {
-    use fastnbt::nbt;
-
-    let nbt = nbt!({
-        "cursors": []
-    });
-
-    let sculk_catalyst: SculkCatalyst = fastnbt::from_value(&nbt).unwrap();
-
-    assert_eq!(sculk_catalyst.cursors.len(), 0);
-
-    let serialized_nbt = fastnbt::to_value(&sculk_catalyst).unwrap();
-
-    assert_eq!(nbt, serialized_nbt);
+        Ok(Cursor {
+            charge,
+            pos,
+            decay_delay,
+            update_delay,
+            facings,
+        })
+    }
 }

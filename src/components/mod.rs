@@ -1,10 +1,10 @@
-use std::{borrow::Cow, collections::HashMap};
+use std::{collections::HashMap, ops::Deref};
 
 use attribute_modifiers::AttributeModifier;
-use fastnbt::Value;
-use serde::{Deserialize, Serialize};
+use banner_patterns::BannerPattern;
+use base_color::BaseColor;
 
-use crate::item::Item;
+use crate::{error::SculkParseError, item::Item, traits::FromCompoundNbt};
 
 pub mod attribute_modifiers;
 pub mod banner_patterns;
@@ -14,46 +14,91 @@ pub mod block_state;
 pub mod bucket_entity_data;
 pub mod can_break;
 
-pub type ComponentMap<'a> = HashMap<Cow<'a, str>, Component<'a>>;
+type InternalMap<'a> = HashMap<String, Component<'a>>;
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Components<'a>(InternalMap<'a>);
+
+impl<'a> Deref for Components<'a> {
+    type Target = InternalMap<'a>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl<'a> FromCompoundNbt for Components<'a> {
+    fn from_compound_nbt(
+        nbt: &simdnbt::borrow::NbtCompound,
+    ) -> Result<Self, crate::error::SculkParseError>
+    where
+        Self: Sized,
+    {
+        let nbt_components = nbt
+            .compound("components")
+            .ok_or(SculkParseError::MissingField("components".into()))?;
+
+        let mut map: InternalMap = HashMap::new();
+
+        for (key, value) in nbt_components.iter() {
+            let key = key.to_string();
+
+            let component: Component<'a> = match key.as_str() {
+                "minecraft:attribute_modifiers" => {
+                    // since the root value is either list or compound, we need to pass parent nbt.
+                    Component::AttributeModifiers(AttributeModifier::from_compound_nbt(&nbt)?)
+                }
+                "minecraft:banner_patterns" => {
+                    let patterns = value
+                        .list()
+                        .ok_or(SculkParseError::InvalidField(
+                            "minecraft:banner_patterns".into(),
+                        ))?
+                        .compounds()
+                        .ok_or(SculkParseError::InvalidField(
+                            "minecraft:banner_patterns".into(),
+                        ))?
+                        .into_iter()
+                        .map(|nbt| BannerPattern::from_compound_nbt(&nbt))
+                        .collect::<Result<Vec<BannerPattern>, SculkParseError>>()?;
+
+                    Component::BannerPatterns(patterns)
+                }
+                "minecraft:base_color" => Component::BaseColor(BaseColor::from_compound_nbt(&nbt)?),
+                _ => Component::Unknown(value.to_owned()),
+            };
+
+            map.insert(key, component);
+        }
+
+        Ok(Components(map))
+    }
+}
 
 /// Represents a component in a block entity.
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 // #[serde(untagged)]
 pub enum Component<'a> {
-    #[serde(borrow)]
-    #[serde(alias = "minecraft:attribute_modifiers")]
     AttributeModifiers(attribute_modifiers::AttributeModifier<'a>),
 
-    #[serde(borrow)]
-    #[serde(alias = "minecraft:banner_patterns")]
     BannerPatterns(Vec<banner_patterns::BannerPattern<'a>>),
 
-    #[serde(borrow)]
-    #[serde(rename = "minecraft:base_color")]
     BaseColor(base_color::BaseColor<'a>),
 
-    #[serde(borrow)]
-    #[serde(rename = "minecraft:bees")]
     Bees(Vec<bees::Bee<'a>>),
 
     // TODO: This should mimic `BlockEntity` except no x, y, z fields.
     // Would probably require a post-processing step for BlockEntityData.
-    // #[serde(rename = "minecraft:block_entity_data")]
     // BlockEntityData(Value),
-    #[serde(borrow)]
-    #[serde(rename = "minecraft:block_state")]
     BlockState(block_state::BlockState<'a>),
 
-    #[serde(rename = "minecraft:bucket_entity_data")]
     BucketEntityData(bucket_entity_data::BucketEntityData),
 
-    #[serde(borrow)]
-    #[serde(rename = "minecraft:bundle_contents")]
     BundleContents(Vec<Item<'a>>),
 
-    #[serde(borrow)]
-    #[serde(rename = "minecraft:can_break")]
     CanBreak(can_break::CanBreak<'a>),
+
+    Unknown(simdnbt::owned::NbtTag),
 }
 
 // impl<'a> Component<'a> {
@@ -94,41 +139,41 @@ pub enum Component<'a> {
 //     Ok(components)
 // }
 
-#[cfg(test)]
-#[test]
-fn component_test() {
-    use fastnbt::nbt;
+// #[cfg(test)]
+// #[test]
+// fn component_test() {
+//     use fastnbt::nbt;
 
-    let nbt = nbt!({
-        "id": "minecraft:white_banner",
-        "keepPacked": 0i8,
-        "x": 1,
-        "y": 2,
-        "z": 3,
-        "components": {
-            "minecraft:banner_patterns": [
-                {
-                    "color": "red",
-                    "pattern": "cross"
-                }
-            ],
-            // "minecraft:attribute_modifiers": {
-            //     "show_in_tooltip": true,
-            //     "modifiers": [
-            //         {
-            //             "type": "minecraft:generic.max_health",
-            //             "slot": "mainhand",
-            //             "amount": 2,
-            //             "operation": "add_value"
-            //         }
-            //     ]
-            // }
-        }
-    });
+//     let nbt = nbt!({
+//         "id": "minecraft:white_banner",
+//         "keepPacked": 0i8,
+//         "x": 1,
+//         "y": 2,
+//         "z": 3,
+//         "components": {
+//             "minecraft:banner_patterns": [
+//                 {
+//                     "color": "red",
+//                     "pattern": "cross"
+//                 }
+//             ],
+//             // "minecraft:attribute_modifiers": {
+//             //     "show_in_tooltip": true,
+//             //     "modifiers": [
+//             //         {
+//             //             "type": "minecraft:generic.max_health",
+//             //             "slot": "mainhand",
+//             //             "amount": 2,
+//             //             "operation": "add_value"
+//             //         }
+//             //     ]
+//             // }
+//         }
+//     });
 
-    println!("{:#?}", nbt);
+//     println!("{:#?}", nbt);
 
-    let block_entity: super::BlockEntity = fastnbt::from_value(&nbt).unwrap();
+//     let block_entity: super::BlockEntity = fastnbt::from_value(&nbt).unwrap();
 
-    println!("{:#?}", block_entity);
-}
+//     println!("{:#?}", block_entity);
+// }

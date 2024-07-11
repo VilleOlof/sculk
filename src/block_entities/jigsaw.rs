@@ -1,26 +1,25 @@
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+use simdnbt::Mutf8Str;
+
+use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_mutf8str};
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct Jigsaw<'a> {
     /// The block that this jigsaw block becomes.
-    #[serde(borrow)]
-    pub final_state: Cow<'a, str>,
+    pub final_state: Cow<'a, Mutf8Str>,
 
     /// The joint option value, either "rollable" or "aligned".
     pub joint: JigsawJoint,
 
     /// The jigsaw block's name. This jigsaw block gets aligned with another structure's jigsaw block that has this value in the target tag.
-    #[serde(borrow)]
-    pub name: Cow<'a, str>,
+    pub name: Cow<'a, Mutf8Str>,
 
     /// The jigsaw block's target pool to select a structure from.
-    #[serde(borrow)]
-    pub pool: Cow<'a, str>,
+    pub pool: Cow<'a, Mutf8Str>,
 
     /// The jigsaw block's target name. This jigsaw block gets aligned with another structure's jigsaw block that has this value in the name tag.
-    #[serde(borrow)]
-    pub target: Cow<'a, str>,
+    pub target: Cow<'a, Mutf8Str>,
 
     /// Priority of this jigsaw block being selected for generation. Jigsaw blocks with higher selection priority get selected first.
     pub selection_priority: i32,
@@ -29,9 +28,7 @@ pub struct Jigsaw<'a> {
     pub placement_priority: i32,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
-#[serde(rename_all = "lowercase")]
-#[serde(from = "&str")]
+#[derive(Debug, Clone, PartialEq)]
 pub enum JigsawJoint {
     Rollable,
     Aligned,
@@ -47,32 +44,37 @@ impl From<&str> for JigsawJoint {
     }
 }
 
-#[cfg(test)]
-#[test]
-fn test() {
-    use fastnbt::nbt;
+impl<'a> FromCompoundNbt for Jigsaw<'a> {
+    fn from_compound_nbt(
+        nbt: &simdnbt::borrow::NbtCompound,
+    ) -> Result<Self, crate::error::SculkParseError>
+    where
+        Self: Sized,
+    {
+        let final_state = get_owned_mutf8str(&nbt, "final_state")?;
+        let joint = nbt
+            .string("joint")
+            .map(|s| JigsawJoint::from(s.to_str().as_ref()))
+            .ok_or(SculkParseError::MissingField("joint".into()))?;
 
-    let nbt = nbt!({
-        "final_state": "minecraft:stone",
-        "joint": "aligned",
-        "name": "minecraft:stone",
-        "pool": "minecraft:village/plains/houses",
-        "target": "minecraft:stone",
-        "selection_priority": 1,
-        "placement_priority": 2
-    });
+        let name = get_owned_mutf8str(&nbt, "name")?;
+        let pool = get_owned_mutf8str(&nbt, "pool")?;
+        let target = get_owned_mutf8str(&nbt, "target")?;
+        let selection_priority = nbt
+            .int("selection_priority")
+            .ok_or(SculkParseError::MissingField("selection_priority".into()))?;
+        let placement_priority = nbt
+            .int("placement_priority")
+            .ok_or(SculkParseError::MissingField("placement_priority".into()))?;
 
-    let jigsaw: Jigsaw = fastnbt::from_value(&nbt).unwrap();
-
-    assert_eq!(jigsaw.final_state, "minecraft:stone");
-    assert_eq!(jigsaw.joint, JigsawJoint::Aligned);
-    assert_eq!(jigsaw.name, "minecraft:stone");
-    assert_eq!(jigsaw.pool, "minecraft:village/plains/houses");
-    assert_eq!(jigsaw.target, "minecraft:stone");
-    assert_eq!(jigsaw.selection_priority, 1);
-    assert_eq!(jigsaw.placement_priority, 2);
-
-    let serialized_nbt = fastnbt::to_value(&jigsaw).unwrap();
-
-    assert_eq!(nbt, serialized_nbt);
+        Ok(Jigsaw {
+            final_state,
+            joint,
+            name,
+            pool,
+            target,
+            selection_priority,
+            placement_priority,
+        })
+    }
 }

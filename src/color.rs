@@ -1,7 +1,4 @@
-use serde::{Deserialize, Serialize};
-
-#[derive(Debug, Deserialize, Clone, PartialEq)]
-#[serde(from = "&str")]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Color {
     White = 0,
     Orange = 1,
@@ -19,16 +16,6 @@ pub enum Color {
     Green = 13,
     Red = 14,
     Black = 15,
-}
-
-impl Serialize for Color {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let s = self.to_str();
-        serializer.serialize_str(s)
-    }
 }
 
 impl From<u8> for Color {

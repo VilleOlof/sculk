@@ -1,6 +1,6 @@
 use std::{borrow::Cow, collections::HashMap};
 
-use serde::{Deserialize, Serialize};
+use simdnbt::Mutf8Str;
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
-pub struct BlockState<'a>(HashMap<Cow<'a, str>, Cow<'a, str>>);
+#[derive(Debug, Clone, PartialEq)]
+pub struct BlockState<'a>(HashMap<Cow<'a, str>, Cow<'a, Mutf8Str>>);

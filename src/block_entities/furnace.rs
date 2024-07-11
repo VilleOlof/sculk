@@ -1,125 +1,103 @@
-use serde::{Deserialize, Serialize};
 use std::{borrow::Cow, collections::HashMap};
 
-use crate::item::Item;
+use simdnbt::Mutf8Str;
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+use crate::{
+    error::SculkParseError,
+    item::Item,
+    traits::FromCompoundNbt,
+    util::{get_optional_lock, get_optional_name, get_t_compound_vec},
+};
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct Furnace<'a> {
     /// Number of ticks left before the current fuel runs out.
-    #[serde(rename = "BurnTime")]
+    ///
+    /// `BurnTime`
     pub burn_time: i16,
 
     /// Number of ticks the item has been smelting for. The item finishes smelting when this value reaches 200 (10 seconds). Is reset to 0 if BurnTime reaches 0.
-    #[serde(rename = "CookTime")]
+    ///
+    /// `CookTime`
     pub cook_time: i16,
 
     /// Number of ticks It takes for the item to be smelted.
-    #[serde(rename = "CookTimeTotal")]
+    ///
+    /// `CookTimeTotal`
     pub cook_time_total: i16,
 
     /// Optional. The name of this container in JSON text component, which appears in its GUI where the default name ordinarily appears.
-    #[serde(rename = "CustomName")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_name: Option<Cow<'a, str>>,
+    ///
+    /// `CustomName`
+    pub custom_name: Option<Cow<'a, Mutf8Str>>,
 
     /// List of items in this container.  
     ///
     /// Slot 0: The item(s) being smelted.  
     /// Slot 1: The item(s) to use as the next fuel source.  
     /// Slot 2: The item(s) in the result slot.  
-    #[serde(borrow)]
-    #[serde(default)]
-    #[serde(rename = "Items")]
+    ///
+    /// `Items`
     pub items: Vec<Item<'a>>,
 
     /// Optional. When not blank, prevents the container from being opened unless the opener is holding an item whose name matches this string.
-    #[serde(rename = "Lock")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub lock: Option<Cow<'a, str>>,
+    ///
+    /// `Lock`
+    pub lock: Option<Cow<'a, Mutf8Str>>,
 
     /// Recipes that have been used since the last time a recipe result item was manually removed from the GUI. Used to calculate experience given to the player when taking out the resulting item.
     ///
-    /// Map entry: How many times this specific recipe has been used. The recipe ID is the identifier of the smelting recipe, as a resource location, as used in the /recipe command.
-    #[serde(rename = "RecipesUsed")]
+    /// Map entry: How many times this specific recipe has been used. The recipe ID is the identifier of the smelting recipe, as a resource location, as used in the /recipe command.  
+    ///
+    /// **NOTE**  
+    /// This is a normal [`Cow<'a, str>`] because [`Mutf8Str`] doesn't implement [`Hash`].
+    ///
+    /// `RecipesUsed`
     pub recipes_used: HashMap<Cow<'a, str>, i32>,
 }
 
-#[cfg(test)]
-#[test]
-fn test() {
-    use fastnbt::nbt;
+impl<'a> FromCompoundNbt for Furnace<'a> {
+    fn from_compound_nbt(
+        nbt: &simdnbt::borrow::NbtCompound,
+    ) -> Result<Self, crate::error::SculkParseError>
+    where
+        Self: Sized,
+    {
+        let burn_time = nbt
+            .short("BurnTime")
+            .ok_or(SculkParseError::MissingField("BurnTime".into()))?;
+        let cook_time = nbt
+            .short("CookTime")
+            .ok_or(SculkParseError::MissingField("CookTime".into()))?;
+        let cook_time_total = nbt
+            .short("CookTimeTotal")
+            .ok_or(SculkParseError::MissingField("CookTimeTotal".into()))?;
 
-    let nbt = nbt!({
-        "BurnTime": 100i16,
-        "CookTime": 50i16,
-        "CookTimeTotal": 200i16,
-        "CustomName": "Furnace",
-        "Items": [
-            {
-                "Slot": 0u8,
-                "id": "minecraft:stone",
-                "Count": 1,
-            },
-            {
-                "Slot": 1u8,
-                "id": "minecraft:coal",
-                "Count": 1,
-            },
-            {
-                "Slot": 2u8,
-                "id": "minecraft:stone",
-                "Count": 1,
-            }
-        ],
-        "Lock": "Key",
-        "RecipesUsed": {
-            "minecraft:stone": 1,
-            "minecraft:coal": 2,
-        }
-    });
+        let custom_name = get_optional_name(&nbt);
+        let items = get_t_compound_vec(&nbt, "Items", Item::from_compound_nbt)?;
+        let lock = get_optional_lock(&nbt);
 
-    let furnace: Furnace = fastnbt::from_value(&nbt).unwrap();
+        let recipes_used = nbt
+            .compound("RecipesUsed")
+            .ok_or(SculkParseError::MissingField("RecipesUsed".into()))?
+            .iter()
+            .map(|(key, value)| {
+                let key: Cow<'a, str> = Cow::Owned(key.to_string());
+                let value = value
+                    .int()
+                    .ok_or(SculkParseError::InvalidField("RecipesUsed".into()))?;
+                Ok((key, value))
+            })
+            .collect::<Result<HashMap<Cow<'a, str>, i32>, SculkParseError>>()?;
 
-    assert_eq!(furnace.burn_time, 100);
-    assert_eq!(furnace.cook_time, 50);
-    assert_eq!(furnace.cook_time_total, 200);
-    assert_eq!(furnace.custom_name, Some(Cow::Borrowed("Furnace")));
-    assert_eq!(
-        furnace.items,
-        vec![
-            Item {
-                slot: 0,
-                id: Cow::Borrowed("minecraft:stone"),
-                count: 1,
-                components: None,
-            },
-            Item {
-                slot: 1,
-                id: Cow::Borrowed("minecraft:coal"),
-                count: 1,
-                components: None,
-            },
-            Item {
-                slot: 2,
-                id: Cow::Borrowed("minecraft:stone"),
-                count: 1,
-                components: None,
-            }
-        ]
-    );
-    assert_eq!(furnace.lock, Some(Cow::Borrowed("Key")));
-    assert_eq!(
-        furnace.recipes_used,
-        [
-            (Cow::Borrowed("minecraft:stone"), 1),
-            (Cow::Borrowed("minecraft:coal"), 2),
-        ]
-        .iter()
-        .cloned()
-        .collect()
-    );
-
-    let serialized_nbt = fastnbt::to_value(&furnace).unwrap();
-
-    assert_eq!(nbt, serialized_nbt);
+        Ok(Furnace {
+            burn_time,
+            cook_time,
+            cook_time_total,
+            custom_name,
+            items,
+            lock,
+            recipes_used,
+        })
+    }
 }

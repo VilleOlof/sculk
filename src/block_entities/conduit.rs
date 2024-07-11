@@ -1,25 +1,23 @@
-use serde::{Deserialize, Serialize};
+use crate::{error::SculkParseError, traits::FromCompoundNbt, uuid::Uuid};
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Conduit {
-    #[serde(rename = "Target")]
-    pub target: i128,
+    /// `Target`
+    pub target: Uuid,
 }
 
-#[cfg(test)]
-#[test]
-fn test() {
-    use fastnbt::nbt;
-
-    let nbt = nbt!({
-        "Target": [I; 1, 2, 3, 4]
-    });
-
-    let conduit: Conduit = fastnbt::from_value(&nbt).unwrap();
-
-    assert_eq!(conduit.target, 79228162551157825753847955460);
-
-    let serialized_nbt = fastnbt::to_value(&conduit).unwrap();
-
-    assert_eq!(nbt, serialized_nbt);
+impl FromCompoundNbt for Conduit {
+    fn from_compound_nbt(
+        nbt: &simdnbt::borrow::NbtCompound,
+    ) -> Result<Self, crate::error::SculkParseError>
+    where
+        Self: Sized,
+    {
+        Ok(Conduit {
+            target: nbt
+                .int_array("target")
+                .map(Uuid::from)
+                .ok_or(SculkParseError::MissingField("target".into()))?,
+        })
+    }
 }

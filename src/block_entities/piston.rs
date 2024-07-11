@@ -1,16 +1,21 @@
 use std::{borrow::Cow, collections::HashMap};
 
-use serde::{Deserialize, Serialize};
+use simdnbt::Mutf8Str;
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+use crate::{
+    error::SculkParseError,
+    traits::FromCompoundNbt,
+    util::{get_bool, get_owned_mutf8str},
+};
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct Piston<'a> {
     /// The moving block represented by this block entity.
-    #[serde(borrow)]
-    #[serde(rename = "blockState")]
+    ///
+    /// `blockState`
     pub block_state: BlockState<'a>,
 
     /// true if the piston is extending instead of withdrawing.
-    #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub extending: bool,
 
     /// Direction that the piston pushes
@@ -20,24 +25,19 @@ pub struct Piston<'a> {
     pub progress: f32,
 
     ///  true if the block represents the piston head itself, false if it represents a block being pushed.
-    #[serde(deserialize_with = "crate::util::i8_to_bool")]
     pub source: bool,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct BlockState<'a> {
     /// The identifier of the block to use.
-    #[serde(borrow)]
-    pub name: Cow<'a, str>,
+    pub name: Cow<'a, Mutf8Str>,
 
     /// (Optional, can be empty) Block properties. Unspecified properties of the specified block will be set to their default values.
-    #[serde(borrow)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub properties: Option<HashMap<Cow<'a, str>, Cow<'a, str>>>,
+    pub properties: Option<HashMap<Cow<'a, String>, Cow<'a, Mutf8Str>>>,
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
-#[serde(from = "i32")]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Facing {
     Down = 0,
     Up = 1,
@@ -45,15 +45,6 @@ pub enum Facing {
     South = 3,
     West = 4,
     East = 5,
-}
-
-impl Serialize for Facing {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        (self.clone() as i32).serialize(serializer)
-    }
 }
 
 impl From<i32> for Facing {
@@ -70,30 +61,71 @@ impl From<i32> for Facing {
     }
 }
 
-#[cfg(test)]
-#[test]
-fn test() {
-    use fastnbt::nbt;
+impl<'a> FromCompoundNbt for Piston<'a> {
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
+    where
+        Self: Sized,
+    {
+        let block_state = BlockState::from_compound_nbt(
+            &nbt.compound("blockState")
+                .ok_or(SculkParseError::MissingField("blockState".into()))?,
+        )?;
 
-    let nbt = nbt!({
-        "blockState": {
-            "name": "minecraft:stone"
-        },
-        "extending": 0i8,
-        "facing": 0i32,
-        "progress": 0.0f32,
-        "source": 0i8
-    });
+        let extending = get_bool(&nbt, "extending");
+        let facing = if let Some(facing) = nbt.int("facing") {
+            Ok(Facing::from(facing))
+        } else {
+            Err(SculkParseError::MissingField("facing".into()))
+        }?;
 
-    let piston: Piston = fastnbt::from_value(&nbt).unwrap();
+        let progress = nbt
+            .float("progress")
+            .ok_or(SculkParseError::MissingField("progress".into()))?;
 
-    assert_eq!(piston.block_state.name, "minecraft:stone");
-    assert_eq!(piston.extending, false);
-    assert_eq!(piston.facing, Facing::Down);
-    assert_eq!(piston.progress, 0.0);
-    assert_eq!(piston.source, false);
+        let source = nbt
+            .byte("source")
+            .map(|b| b != 0)
+            .ok_or(SculkParseError::MissingField("source".into()))?;
 
-    let serialized_nbt = fastnbt::to_value(&piston).unwrap();
+        Ok(Piston {
+            block_state,
+            extending,
+            facing,
+            progress,
+            source,
+        })
+    }
+}
 
-    assert_eq!(nbt, serialized_nbt);
+impl<'a> FromCompoundNbt for BlockState<'a> {
+    fn from_compound_nbt(
+        nbt: &simdnbt::borrow::NbtCompound,
+    ) -> Result<Self, crate::error::SculkParseError>
+    where
+        Self: Sized,
+    {
+        let name = get_owned_mutf8str(&nbt, "name")?;
+
+        let properties = if let Some(props) = nbt.compound("properties") {
+            let mut map = HashMap::new();
+
+            for (key, value) in props.iter() {
+                let key: Cow<'a, String> = Cow::Owned(key.to_string());
+                let value: Cow<'a, Mutf8Str> = Cow::Owned(
+                    value
+                        .string()
+                        .map(|s| s.to_owned())
+                        .ok_or(SculkParseError::InvalidField("properties".into()))?,
+                );
+
+                map.insert(key, value);
+            }
+
+            Some(map)
+        } else {
+            None
+        };
+
+        Ok(BlockState { name, properties })
+    }
 }
