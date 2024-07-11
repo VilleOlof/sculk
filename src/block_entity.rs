@@ -34,6 +34,24 @@ pub struct BlockEntityBase<'a> {
 }
 
 /// The base fields of a block entity.  
+/// This is used in components that excludes x, y, z coordinates.  
+///
+/// Gotta love minecraft data structures.  
+#[derive(Debug, Clone, PartialEq)]
+pub struct NoCoordinatesBlockEntityBase<'a> {
+    /// ID of block entity.
+    pub id: Cow<'a, Mutf8Str>,
+
+    /// If true, this is an invalid block entity, and this block is not immediately placed when a loaded chunk is loaded. If false, this is a normal block entity that can be immediately placed.
+    ///
+    /// `keepPacked`
+    pub keep_packed: bool,
+
+    /// Optional map of components.
+    pub components: Option<Components<'a>>,
+}
+
+/// The base fields of a block entity.  
 /// This is used for `lazy` block entities.  
 /// So it does not contain the `components` field.  
 #[derive(Debug, Clone, PartialEq)]
@@ -66,6 +84,17 @@ pub struct BlockEntity<'a> {
     pub kind: BlockEntityKind<'a>,
 }
 
+/// Represents a block entity.  
+/// But with no coordinates.  
+#[derive(Debug, Clone, PartialEq)]
+pub struct NoCoordinatesBlockEntity<'a> {
+    /// Common fields of a block entity.
+    pub base: NoCoordinatesBlockEntityBase<'a>,
+
+    /// The specific data of the block entity.
+    pub kind: BlockEntityKind<'a>,
+}
+
 /// Represents a `lazy` block entity.  
 /// This will only parse [`BlockEntityKind`] when it is accessed.  
 /// You can access the [`BlockEntityKind`] data by calling `.kind()`´  
@@ -75,7 +104,7 @@ pub struct BlockEntity<'a> {
 ///
 /// This is useful if you only need to check the id of the block entity.  
 /// And do further data processing only if the id matches a specific value.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct LazyBlockEntity<'a> {
     /// Common fields of a block entity.
     pub base: BlockEntityBase<'a>,
@@ -111,6 +140,24 @@ impl<'a> FromCompoundNbt for BlockEntityBase<'a> {
             x,
             y,
             z,
+            components,
+        })
+    }
+}
+
+impl<'a> FromCompoundNbt for NoCoordinatesBlockEntityBase<'a> {
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
+    where
+        Self: Sized,
+    {
+        let id = get_owned_mutf8str(&nbt, "id")?;
+        let keep_packed = get_bool(&nbt, "keepPacked");
+
+        let components = get_optional_components(&nbt)?;
+
+        Ok(Self {
+            id,
+            keep_packed,
             components,
         })
     }
@@ -162,6 +209,31 @@ impl<'a> FromNbt for BlockEntity<'a> {
     }
 }
 
+impl<'a> FromCompoundNbt for BlockEntity<'a> {
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
+    where
+        Self: Sized,
+    {
+        let base = BlockEntityBase::from_compound_nbt(&nbt)?;
+        let kind = BlockEntityKind::from_compound_nbt(&nbt)?;
+
+        Ok(Self { base, kind })
+    }
+}
+
+impl<'a> FromCompoundNbt for NoCoordinatesBlockEntity<'a> {
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
+    where
+        Self: Sized,
+    {
+        let base = NoCoordinatesBlockEntityBase::from_compound_nbt(&nbt)?;
+        let kind = BlockEntityKind::from_compound_nbt(&nbt)?;
+
+        Ok(Self { base, kind })
+    }
+}
+
+// It got its own silly implementation :3
 impl<'a> LazyBlockEntity<'a> {
     fn from_nbt(nbt: simdnbt::borrow::Nbt<'a>, bytes: &'a [u8]) -> Result<Self, SculkParseError>
     where

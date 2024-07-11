@@ -25,6 +25,7 @@ pub mod components;
 pub mod entity;
 mod error;
 pub mod item;
+mod rarity;
 mod traits;
 mod util;
 mod uuid;

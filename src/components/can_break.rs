@@ -1,3 +1,7 @@
+use simdnbt::Mutf8Str;
+
+use crate::{error::SculkParseError, traits::FromCompoundNbt, BlockEntity};
+
 use super::block_state::BlockState;
 use std::borrow::Cow;
 
@@ -16,8 +20,7 @@ pub enum CanBreak<'a> {
         blocks: Blocks<'a>,
 
         /// Block entity NBT to match.
-        // TODO: BlockEntity nbt
-        nbt: Option<simdnbt::owned::NbtCompound>,
+        nbt: Option<BlockEntity<'a>>,
 
         /// The block state properties to match.
         state: Option<BlockState<'a>>,
@@ -33,8 +36,7 @@ pub struct Predicate<'a> {
     pub blocks: Blocks<'a>,
 
     /// Block entity NBT to match.
-    // TODO: BlockEntity nbt
-    pub nbt: Option<simdnbt::owned::NbtCompound>,
+    pub nbt: Option<BlockEntity<'a>>,
 
     /// The block state properties to match.
     pub state: Option<BlockState<'a>>,
@@ -42,7 +44,107 @@ pub struct Predicate<'a> {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Blocks<'a> {
-    Block(Cow<'a, str>),
+    Block(Cow<'a, Mutf8Str>),
 
-    Blocks(Vec<Cow<'a, str>>),
+    Blocks(Vec<Cow<'a, Mutf8Str>>),
+}
+
+impl<'a> FromCompoundNbt for CanBreak<'a> {
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
+    where
+        Self: Sized,
+    {
+        if let Some(_) = nbt.compound("state") {
+            // Single
+            let blocks = Blocks::from_compound_nbt(nbt)?;
+            let struct_nbt = if let Some(nbt) = nbt.compound("nbt") {
+                Some(BlockEntity::from_compound_nbt(&nbt)?)
+            } else {
+                None
+            };
+            let state = if let Some(nbt) = nbt.compound("state") {
+                Some(BlockState::from_compound_nbt(&nbt)?)
+            } else {
+                None
+            };
+            let show_in_tooltip = nbt.byte("show_in_tooltip").map(|b| b != 0).unwrap_or(true);
+
+            return Ok(CanBreak::Single {
+                blocks,
+                nbt: struct_nbt,
+                state,
+                show_in_tooltip,
+            });
+        } else if let Some(_) = nbt.list("predicates") {
+            // List
+            let predicates = nbt
+                .list("predicates")
+                .ok_or(SculkParseError::MissingField("predicates".into()))?
+                .compounds()
+                .ok_or(SculkParseError::InvalidField("predicates".into()))?
+                .into_iter()
+                .map(|nbt| Predicate::from_compound_nbt(&nbt))
+                .collect::<Result<Vec<Predicate>, SculkParseError>>()?;
+
+            let show_in_tooltip = nbt.byte("show_in_tooltip").map(|b| b != 0).unwrap_or(true);
+
+            return Ok(CanBreak::List {
+                predicates,
+                show_in_tooltip,
+            });
+        } else {
+            return Err(SculkParseError::MissingField("state or predicates".into()));
+        }
+    }
+}
+
+impl<'a> FromCompoundNbt for Predicate<'a> {
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
+    where
+        Self: Sized,
+    {
+        let blocks = Blocks::from_compound_nbt(nbt)?;
+
+        let struct_nbt = if let Some(nbt) = nbt.compound("nbt") {
+            Some(BlockEntity::from_compound_nbt(&nbt)?)
+        } else {
+            None
+        };
+
+        let state = if let Some(nbt) = nbt.compound("state") {
+            Some(BlockState::from_compound_nbt(&nbt)?)
+        } else {
+            None
+        };
+
+        Ok(Predicate {
+            blocks,
+            nbt: struct_nbt,
+            state,
+        })
+    }
+}
+
+impl<'a> FromCompoundNbt for Blocks<'a> {
+    fn from_compound_nbt(
+        nbt: &simdnbt::borrow::NbtCompound,
+    ) -> Result<Self, crate::error::SculkParseError>
+    where
+        Self: Sized,
+    {
+        if let Some(string) = nbt.string("blocks") {
+            return Ok(Blocks::Block(Cow::<'a, Mutf8Str>::Owned(string.to_owned())));
+        } else if let Some(list) = nbt.list("blocks") {
+            let blocks = list
+                .strings()
+                .ok_or(SculkParseError::InvalidField("blocks".into()))?
+                .into_iter()
+                .map(|string| Cow::<'a, Mutf8Str>::Owned((*string).to_owned()))
+                .collect::<Vec<Cow<'a, Mutf8Str>>>();
+
+            return Ok(Blocks::Blocks(blocks));
+        } else {
+            return Err(SculkParseError::MissingField("blocks".into()));
+        };
+    }
 }

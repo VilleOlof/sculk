@@ -1,3 +1,7 @@
+use simdnbt::borrow::NbtCompound;
+
+use crate::traits::FromCompoundNbt;
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct BucketEntityData {
     /// Turns into NoAI entity tag for all bucketable entities.
@@ -49,4 +53,41 @@ pub struct BucketEntityData {
     ///
     /// `BucketVariantTag`
     pub bucket_variant_tag: Option<i32>,
+}
+
+impl FromCompoundNbt for BucketEntityData {
+    fn from_compound_nbt(
+        nbt: &simdnbt::borrow::NbtCompound,
+    ) -> Result<Self, crate::error::SculkParseError>
+    where
+        Self: Sized,
+    {
+        fn bool(nbt: &NbtCompound, key: &'static str) -> Option<bool> {
+            nbt.int(key).map(|b| b != 0)
+        }
+
+        let no_ai = bool(&nbt, "NoAI");
+        let silent = bool(&nbt, "Silent");
+        let no_gravity = bool(&nbt, "NoGravity");
+        let glowing = bool(&nbt, "Glowing");
+        let invulnerable = bool(&nbt, "Invulnerable");
+        let health = nbt.float("Health");
+        let age = nbt.int("Age");
+        let variant = nbt.int("Variant");
+        let hunting_cooldown = nbt.long("HuntingCooldown");
+        let bucket_variant_tag = nbt.int("BucketVariantTag");
+
+        Ok(BucketEntityData {
+            no_ai,
+            silent,
+            no_gravity,
+            glowing,
+            invulnerable,
+            health,
+            age,
+            variant,
+            hunting_cooldown,
+            bucket_variant_tag,
+        })
+    }
 }

@@ -1,12 +1,12 @@
-use std::borrow::Cow;
-
-use simdnbt::{borrow::NbtCompound, Mutf8Str};
-
 use crate::{error::SculkParseError, traits::FromCompoundNbt, Components};
+use simdnbt::{borrow::NbtCompound, Mutf8Str};
+use std::{borrow::Cow, collections::HashMap};
 
 /// The version of Minecraft that this library is designed to work with.  
 /// Formatted exactly as minecraft versions are.
 pub const MC_VERSION: &str = "1.21";
+
+pub type KeyValuePair<'a> = HashMap<Cow<'a, String>, Cow<'a, Mutf8Str>>;
 
 pub struct LootTableData<'a> {
     pub loot_table: Option<Cow<'a, Mutf8Str>>,
