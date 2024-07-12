@@ -1,11 +1,11 @@
-use std::{borrow::Cow, collections::HashMap};
+use std::borrow::Cow;
 
 use simdnbt::Mutf8Str;
 
-use crate::{error::SculkParseError, traits::FromCompoundNbt, util::KeyValuePair};
+use crate::{kv::KVPair, traits::FromCompoundNbt};
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct BlockState<'a>(KeyValuePair<'a>);
+pub struct BlockState<'a>(KVPair<'a, Cow<'a, Mutf8Str>>);
 
 impl<'a> FromCompoundNbt for BlockState<'a> {
     fn from_compound_nbt(
@@ -14,20 +14,6 @@ impl<'a> FromCompoundNbt for BlockState<'a> {
     where
         Self: Sized,
     {
-        let mut map = HashMap::new();
-
-        for (key, value) in nbt.iter() {
-            let key = key.to_string();
-            let value = value
-                .string()
-                .ok_or(SculkParseError::InvalidField(key.clone().into()))?;
-
-            map.insert(
-                Cow::<'a, String>::Owned(key),
-                Cow::<'a, Mutf8Str>::Owned(value.to_owned()),
-            );
-        }
-
-        Ok(BlockState(map))
+        Ok(BlockState(KVPair::from_compound_nbt(&nbt)?))
     }
 }

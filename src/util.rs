@@ -1,12 +1,13 @@
 use crate::{error::SculkParseError, traits::FromCompoundNbt, Components};
-use simdnbt::{borrow::NbtCompound, Mutf8Str};
-use std::{borrow::Cow, collections::HashMap};
+use simdnbt::{
+    borrow::{NbtCompound, NbtList},
+    Mutf8Str,
+};
+use std::borrow::Cow;
 
 /// The version of Minecraft that this library is designed to work with.  
 /// Formatted exactly as minecraft versions are.
 pub const MC_VERSION: &str = "1.21";
-
-pub type KeyValuePair<'a> = HashMap<Cow<'a, String>, Cow<'a, Mutf8Str>>;
 
 pub struct LootTableData<'a> {
     pub loot_table: Option<Cow<'a, Mutf8Str>>,
@@ -111,6 +112,19 @@ pub fn get_t_compound_vec<T>(
     }
 
     Ok(vec)
+}
+
+pub fn get_t_list<T>(
+    nbt: &NbtList,
+    key: &'static str,
+    nbt_conversion: fn(nbt: &NbtCompound) -> Result<T, SculkParseError>,
+) -> Result<Vec<T>, SculkParseError> {
+    Ok(nbt
+        .compounds()
+        .ok_or(SculkParseError::InvalidField(key.into()))?
+        .into_iter()
+        .map(|nbt| nbt_conversion(&nbt))
+        .collect::<Result<Vec<T>, SculkParseError>>()?)
 }
 
 pub fn get_optional_components<'a>(

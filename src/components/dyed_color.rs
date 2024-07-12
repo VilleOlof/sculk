@@ -1,9 +1,9 @@
-use crate::{error::SculkParseError, traits::FromCompoundNbt};
+use crate::{color::RGB, error::SculkParseError, traits::FromCompoundNbt};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum DyedColor {
-    Int(i32),
-    Compound { rgb: i32, show_in_tooltip: bool },
+    Int(RGB),
+    Compound { rgb: RGB, show_in_tooltip: bool },
 }
 
 impl FromCompoundNbt for DyedColor {
@@ -14,10 +14,11 @@ impl FromCompoundNbt for DyedColor {
         Self: Sized,
     {
         if let Some(rgb) = nbt.int("minecraft:dyed_color") {
-            return Ok(DyedColor::Int(rgb));
+            return Ok(DyedColor::Int(RGB::new(rgb)));
         } else if let Some(compound) = nbt.compound("minecraft:dyed_color") {
             let rgb = compound
                 .int("rgb")
+                .map(|rgb| RGB::new(rgb))
                 .ok_or(SculkParseError::MissingField("rgb".into()))?;
 
             let show_in_tooltip = compound

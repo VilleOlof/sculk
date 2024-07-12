@@ -1,7 +1,7 @@
 use crate::{
     error::SculkParseError,
     traits::FromCompoundNbt,
-    util::{get_bool, get_owned_mutf8str},
+    util::{get_bool, get_owned_mutf8str, get_t_list},
 };
 use simdnbt::Mutf8Str;
 use std::borrow::Cow;
@@ -87,12 +87,11 @@ impl<'a> FromCompoundNbt for AttributeModifier<'a> {
         Self: Sized,
     {
         if let Some(modifiers) = nbt.list("minecraft:attribute_modifiers") {
-            let mods = modifiers
-                .compounds()
-                .ok_or(SculkParseError::InvalidField("modifiers".into()))?
-                .into_iter()
-                .map(|nbt| Modifier::from_compound_nbt(&nbt))
-                .collect::<Result<Vec<Modifier>, SculkParseError>>()?;
+            let mods = get_t_list(
+                &modifiers,
+                "minecraft:attribute_modifiers",
+                Modifier::from_compound_nbt,
+            )?;
 
             Ok(AttributeModifier::ModifierList(mods))
         } else if let Some(compounded) = nbt.compound("minecraft:attribute_modifiers") {
@@ -115,12 +114,7 @@ impl<'a> FromCompoundNbt for AttributeModifiers<'a> {
         let show_in_tooltip = get_bool(&nbt, "show_in_tooltip");
 
         let modifiers: Vec<Modifier<'a>> = match nbt.list("modifiers") {
-            Some(modifiers) => modifiers
-                .compounds()
-                .ok_or(SculkParseError::InvalidField("modifiers".into()))?
-                .into_iter()
-                .map(|nbt| Modifier::from_compound_nbt(&nbt))
-                .collect::<Result<Vec<Modifier>, SculkParseError>>()?,
+            Some(modifiers) => get_t_list(&modifiers, "modifiers", Modifier::from_compound_nbt)?,
             None => vec![],
         };
 

@@ -122,3 +122,32 @@ impl Color {
         }
     }
 }
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct RGB(i32);
+
+impl From<RGB> for i32 {
+    fn from(rgb: RGB) -> Self {
+        rgb.0
+    }
+}
+
+impl RGB {
+    pub fn new(i: i32) -> Self {
+        RGB(i)
+    }
+
+    pub fn to_hex(&self) {
+        let r = (self.0 >> 16) & 0xFF;
+        let g = (self.0 >> 8) & 0xFF;
+        let b = self.0 & 0xFF;
+
+        println!("#{:02X}{:02X}{:02X}", r, g, b);
+    }
+
+    pub fn from_u8(r: u8, g: u8, b: u8) -> Self {
+        // Formula: Red<<16 + Green<<8 + Blue
+        // see: https://minecraft.wiki/w/Data_component_format#dyed_color
+        RGB((r as i32) << 16 | (g as i32) << 8 | b as i32)
+    }
+}

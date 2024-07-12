@@ -1,6 +1,6 @@
 use simdnbt::Mutf8Str;
 
-use crate::{error::SculkParseError, traits::FromCompoundNbt, BlockEntity};
+use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_t_list, BlockEntity};
 
 use super::block_state::BlockState;
 use std::borrow::Cow;
@@ -77,14 +77,12 @@ impl<'a> FromCompoundNbt for CanBreak<'a> {
             });
         } else if let Some(_) = nbt.list("predicates") {
             // List
-            let predicates = nbt
-                .list("predicates")
-                .ok_or(SculkParseError::MissingField("predicates".into()))?
-                .compounds()
-                .ok_or(SculkParseError::InvalidField("predicates".into()))?
-                .into_iter()
-                .map(|nbt| Predicate::from_compound_nbt(&nbt))
-                .collect::<Result<Vec<Predicate>, SculkParseError>>()?;
+            let predicates = get_t_list(
+                &nbt.list("predicates")
+                    .ok_or(SculkParseError::InvalidField("predicates".into()))?,
+                "predicates",
+                Predicate::from_compound_nbt,
+            )?;
 
             let show_in_tooltip = nbt.byte("show_in_tooltip").map(|b| b != 0).unwrap_or(true);
 
