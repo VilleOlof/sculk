@@ -137,12 +137,12 @@ impl RGB {
         RGB(i)
     }
 
-    pub fn to_hex(&self) {
+    pub fn to_hex(&self) -> String {
         let r = (self.0 >> 16) & 0xFF;
         let g = (self.0 >> 8) & 0xFF;
         let b = self.0 & 0xFF;
 
-        println!("#{:02X}{:02X}{:02X}", r, g, b);
+        format!("#{:02X}{:02X}{:02X}", r, g, b)
     }
 
     pub fn from_u8(r: u8, g: u8, b: u8) -> Self {

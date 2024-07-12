@@ -9,6 +9,9 @@ use crate::{
 };
 use std::{borrow::Cow, io::Cursor};
 
+/// A trait for all ground block entities.
+pub trait BlockEntityTrait {}
+
 /// The base fields of a block entity.
 #[derive(Debug, Clone, PartialEq)]
 pub struct BlockEntityBase<'a> {
@@ -83,6 +86,7 @@ pub struct BlockEntity<'a> {
     /// The specific data of the block entity.
     pub kind: BlockEntityKind<'a>,
 }
+impl<'a> BlockEntityTrait for BlockEntity<'a> {}
 
 /// Represents a block entity.  
 /// But with no coordinates.  
@@ -93,6 +97,16 @@ pub struct NoCoordinatesBlockEntity<'a> {
 
     /// The specific data of the block entity.
     pub kind: BlockEntityKind<'a>,
+}
+
+/// Represents a `lazy` byte variant.  
+/// When directly going from bytes > lazy block entity, we can borrow.  
+/// But when we go through chunk data its trickier, i dont even know if its possible to borrow there.  
+/// But for now we can own the bytes, sacrificing some memory.
+#[derive(Debug, Clone, PartialEq)]
+pub enum LazyByteVariant<'a> {
+    Borrowed(&'a [u8]),
+    Owned(Vec<u8>),
 }
 
 /// Represents a `lazy` block entity.  
@@ -107,11 +121,29 @@ pub struct NoCoordinatesBlockEntity<'a> {
 #[derive(Debug, Clone, PartialEq)]
 pub struct LazyBlockEntity<'a> {
     /// Common fields of a block entity.
-    pub base: BlockEntityBase<'a>,
+    pub base: LazyBlockEntityBase<'a>,
 
     /// The bytes that was used to parse the block entity.
     // This is a bit ugly but i found no other way with `borrow::Nbt` or `borrow::BaseNbt` to work
-    nbt_bytes: &'a [u8],
+    nbt_bytes: LazyByteVariant<'a>,
+}
+impl<'a> BlockEntityTrait for LazyBlockEntity<'a> {}
+
+impl<'a> FromCompoundNbt for LazyBlockEntity<'a> {
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
+    where
+        Self: Sized,
+    {
+        let base = LazyBlockEntityBase::from_compound_nbt(&nbt)?;
+
+        let mut buf: Vec<u8> = Vec::new();
+        nbt.to_owned().write(&mut buf);
+
+        Ok(Self {
+            base,
+            nbt_bytes: LazyByteVariant::Owned(buf),
+        })
+    }
 }
 
 impl<'a> FromCompoundNbt for BlockEntityBase<'a> {
@@ -247,9 +279,25 @@ impl<'a> LazyBlockEntity<'a> {
         let compound_nbt = base_nbt.as_compound();
 
         Ok(Self {
-            base: BlockEntityBase::from_compound_nbt(&compound_nbt)?,
-            nbt_bytes: bytes,
+            base: LazyBlockEntityBase::from_compound_nbt(&compound_nbt)?,
+            nbt_bytes: LazyByteVariant::Borrowed(bytes),
         })
+    }
+}
+
+impl<'a> LazyBlockEntity<'a> {
+    pub fn to_owned(&self) -> Result<BlockEntity, SculkParseError> {
+        let bytes = match &self.nbt_bytes {
+            LazyByteVariant::Borrowed(bytes) => bytes,
+            LazyByteVariant::Owned(bytes) => bytes.as_slice(),
+        };
+
+        let nbt = match simdnbt::borrow::read(&mut Cursor::new(bytes)) {
+            Ok(nbt) => nbt,
+            Err(err) => return Err(SculkParseError::NbtError(err)),
+        };
+
+        BlockEntity::from_nbt(nbt)
     }
 }
 
@@ -271,7 +319,12 @@ impl<'a> BlockEntity<'a> {
 
 impl<'a> LazyBlockEntity<'a> {
     pub fn kind(&self) -> Result<BlockEntityKind, SculkParseError> {
-        let nbt = match simdnbt::borrow::read(&mut Cursor::new(self.nbt_bytes)) {
+        let bytes = match &self.nbt_bytes {
+            LazyByteVariant::Borrowed(bytes) => bytes,
+            LazyByteVariant::Owned(bytes) => bytes.as_slice(),
+        };
+
+        let nbt = match simdnbt::borrow::read(&mut Cursor::new(bytes)) {
             Ok(nbt) => nbt,
             Err(err) => return Err(SculkParseError::NbtError(err)),
         };
@@ -285,7 +338,12 @@ impl<'a> LazyBlockEntity<'a> {
     }
 
     pub fn get_components(&self) -> Result<Option<Components>, SculkParseError> {
-        let nbt = match simdnbt::borrow::read(&mut Cursor::new(self.nbt_bytes)) {
+        let bytes = match &self.nbt_bytes {
+            LazyByteVariant::Borrowed(bytes) => bytes,
+            LazyByteVariant::Owned(bytes) => bytes.as_slice(),
+        };
+
+        let nbt = match simdnbt::borrow::read(&mut Cursor::new(bytes)) {
             Ok(nbt) => nbt,
             Err(err) => return Err(SculkParseError::NbtError(err)),
         };

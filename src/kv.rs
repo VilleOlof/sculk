@@ -27,10 +27,10 @@ impl<'a> FromCompoundNbt for KVPair<'a, Cow<'a, Mutf8Str>> {
 
         for (key, value) in nbt.iter() {
             let key = key.to_string();
-            let value = value
-                .string()
-                .ok_or(SculkParseError::InvalidField(key.clone()))?
-                .to_owned();
+            let value = match value.string() {
+                Some(string) => string.to_owned(),
+                None => continue,
+            };
 
             map.insert(Cow::Owned(key), Cow::Owned(value));
         }
@@ -48,9 +48,10 @@ impl<'a> FromCompoundNbt for KVPair<'a, i32> {
 
         for (key, value) in nbt.iter() {
             let key = key.to_string();
-            let value = value
-                .int()
-                .ok_or(SculkParseError::InvalidField(key.clone()))?;
+            let value = match value.int() {
+                Some(int) => int,
+                None => continue,
+            };
 
             map.insert(Cow::Owned(key), value);
         }

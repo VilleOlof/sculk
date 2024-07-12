@@ -8,6 +8,9 @@ pub enum SculkParseError {
     #[error("Invalid field: {0}")]
     InvalidField(String),
 
+    #[error("Invalid value: {0}")]
+    InvalidValue(String),
+
     #[error("Simdnbt error: {0}")]
     NbtError(#[from] simdnbt::Error),
 

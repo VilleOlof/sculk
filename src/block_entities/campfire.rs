@@ -1,5 +1,4 @@
 use crate::{
-    error::SculkParseError,
     item::Item,
     traits::FromCompoundNbt,
     util::{get_int_array, get_t_compound_vec},
@@ -10,12 +9,12 @@ pub struct Campfire<'a> {
     /// How long each item has been cooking, first index is slot 0, etc.
     ///
     /// `CookingTimes`
-    pub cooking_times: [i32; 4],
+    pub cooking_times: Vec<i32>,
 
     /// How long each item has to cook, first index is slot 0, etc.
     ///
     /// `CookingTotalTimes`
-    pub cooking_total_times: [i32; 4],
+    pub cooking_total_times: Vec<i32>,
 
     /// List of up to 4 items currently cooking.
     ///
@@ -30,21 +29,8 @@ impl<'a> FromCompoundNbt for Campfire<'a> {
     where
         Self: Sized,
     {
-        let cooking_times = get_int_array(&nbt, "cooking_times").and_then(|arr| {
-            if arr.len() == 4 {
-                Ok([arr[0], arr[1], arr[2], arr[3]])
-            } else {
-                Err(SculkParseError::InvalidField("cooking_times".into()))
-            }
-        })?;
-
-        let cooking_total_times = get_int_array(&nbt, "cooking_total_times").and_then(|arr| {
-            if arr.len() == 4 {
-                Ok([arr[0], arr[1], arr[2], arr[3]])
-            } else {
-                Err(SculkParseError::InvalidField("cooking_total_times".into()))
-            }
-        })?;
+        let cooking_times = get_int_array(&nbt, "CookingTimes")?;
+        let cooking_total_times = get_int_array(&nbt, "CookingTotalTimes")?;
 
         let items = get_t_compound_vec(&nbt, "Items", Item::from_compound_nbt)?;
 

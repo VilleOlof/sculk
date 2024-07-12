@@ -20,7 +20,7 @@ impl<'a> FromCompoundNbt for Container<'a> {
         let item = ItemWithNoSlot::from_compound_nbt(&nbt)?;
         let slot = nbt
             .int("slot")
-            .ok_or(crate::error::SculkParseError::MissingField("Slot".into()))?;
+            .ok_or(crate::error::SculkParseError::MissingField("slot".into()))?;
 
         Ok(Container { item, slot })
     }

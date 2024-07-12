@@ -1,7 +1,7 @@
 use simdnbt::{borrow::NbtCompound, Mutf8Str};
 
 use crate::{
-    entity::Entity, error::SculkParseError, traits::FromCompoundNbt, util::get_owned_mutf8str,
+    entity::MaybeEntity, error::SculkParseError, traits::FromCompoundNbt, util::get_owned_mutf8str,
 };
 use std::borrow::Cow;
 
@@ -65,10 +65,10 @@ pub struct PotentialSpawn<'a> {
 #[derive(Debug, Clone, PartialEq)]
 pub struct SpawnData<'a> {
     /// An entity, including the entity id.
-    pub entity: Entity<'a>,
+    pub entity: MaybeEntity<'a>,
 
     /// Optional custom fields to override spawning requirements.
-    pub custom_spawn_rules: SpawnRules,
+    pub custom_spawn_rules: Option<SpawnRules>,
 
     /// Optional. Determines the equipment the entity will wear.
     pub equipment: Option<Equipment<'a>>,
@@ -152,17 +152,21 @@ impl<'a> FromCompoundNbt for MobSpawner<'a> {
             .ok_or(SculkParseError::MissingField("SpawnData".into()))??;
 
         let spawn_potentials = if let Some(spawn_potentials) = nbt.list("SpawnPotentials") {
-            let mut potentials = vec![];
+            if spawn_potentials.empty() {
+                None
+            } else {
+                let mut potentials = vec![];
 
-            // unsure if this is correct
-            for potential in spawn_potentials
-                .compounds()
-                .ok_or(SculkParseError::InvalidField("SpawnPotentials".into()))?
-            {
-                potentials.push(PotentialSpawn::from_compound_nbt(&potential)?);
+                // unsure if this is correct
+                for potential in spawn_potentials
+                    .compounds()
+                    .ok_or(SculkParseError::InvalidField("SpawnPotentials".into()))?
+                {
+                    potentials.push(PotentialSpawn::from_compound_nbt(&potential)?);
+                }
+
+                Some(potentials)
             }
-
-            Some(potentials)
         } else {
             None
         };
@@ -192,7 +196,10 @@ impl<'a> FromCompoundNbt for PotentialSpawn<'a> {
             weight: nbt
                 .int("weight")
                 .ok_or(SculkParseError::MissingField("weight".into()))?,
-            data: SpawnData::from_compound_nbt(nbt)?,
+            data: nbt
+                .compound("data")
+                .map(|nbt| SpawnData::from_compound_nbt(&nbt))
+                .ok_or(SculkParseError::MissingField("data".into()))??,
         })
     }
 }
@@ -204,12 +211,13 @@ impl<'a> FromCompoundNbt for SpawnData<'a> {
     {
         let entity = nbt
             .compound("entity")
-            .map(|nbt| Entity::from_compound_nbt(&nbt))
-            .ok_or(SculkParseError::MissingField("entity".into()))??;
-        let custom_spawn_rules = nbt
-            .compound("custom_spawn_rules")
-            .map(|nbt| SpawnRules::from_compound_nbt(&nbt))
-            .ok_or(SculkParseError::MissingField("custom_spawn_rules".into()))??;
+            .map(|nbt| MaybeEntity::from_compound_nbt(&nbt))
+            .ok_or(SculkParseError::MissingField("data-entity".into()))??;
+        let custom_spawn_rules = if let Some(nbt) = nbt.compound("custom_spawn_rules") {
+            Some(SpawnRules::from_compound_nbt(&nbt)?)
+        } else {
+            None
+        };
 
         let equipment = if let Some(equipment) = nbt.compound("equipment") {
             Some(Equipment::from_compound_nbt(&equipment)?)

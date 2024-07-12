@@ -4,6 +4,7 @@ use attribute_modifiers::AttributeModifier;
 use banner_patterns::BannerPattern;
 use base_color::BaseColor;
 use bees::Bee;
+use container::Container;
 use simdnbt::Mutf8Str;
 use suspicious_stew_effects::SuspiciousStewEffects;
 use trim::Trim;
@@ -160,10 +161,22 @@ impl<'a> FromCompoundNbt for Components<'a> {
                     Component::ChargedProjectiles(items)
                 }
                 "minecraft:container" => {
-                    let nbt = value
-                        .compound()
-                        .ok_or(SculkParseError::InvalidField("minecraft:container".into()))?;
-                    Component::Container(container::Container::from_compound_nbt(&nbt)?)
+                    let items = if let Some(list) = nbt.list("minecraft:container") {
+                        let list = list
+                            .compounds()
+                            .ok_or(SculkParseError::InvalidField("minecraft:container".into()))?;
+
+                        let mut items = vec![];
+
+                        for item_container in list {
+                            items.push(Container::from_compound_nbt(&item_container)?);
+                        }
+
+                        items
+                    } else {
+                        vec![]
+                    };
+                    Component::Container(items)
                 }
                 "minecraft:container_loot" => {
                     let nbt = value.compound().ok_or(SculkParseError::InvalidField(
@@ -528,7 +541,7 @@ pub enum Component<'a> {
 
     /// The items contained in this [container](https://minecraft.wiki/w/Container).  
     /// `minecraft:container`
-    Container(container::Container<'a>),
+    Container(Vec<container::Container<'a>>),
 
     /// The unresolved loot table and seed of this container item.  
     /// `minecraft:container_loot`

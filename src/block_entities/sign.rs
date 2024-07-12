@@ -24,7 +24,7 @@ pub struct SignText<'a> {
     pub color: Color,
 
     /// Only in Realms. The lines of text shown to players with the profanity filter turned on instead of the regular lines. This tag is automatically set to "" for lines containing blocked words and to the line's normal contents for the other lines when a player with the profanity filter turned off edits the sign, so players with the filter on cannot see the blocked words. If a player with the filter on tries to use blocked words in one or more lines, the line(s) in  messages containing blocked words are set to "", which makes them render completely blank, and this tag is also given the same contents. If multiple lines have been edited before the sign editing GUI is closed, only the lines containing blocked words are blanked.
-    pub filtered_messages: Vec<Cow<'a, Mutf8Str>>,
+    pub filtered_messages: Option<Vec<Cow<'a, Mutf8Str>>>,
 
     /// A list of text for each line.
     pub messages: Vec<Cow<'a, Mutf8Str>>,
@@ -72,15 +72,18 @@ impl<'a> FromCompoundNbt for SignText<'a> {
             })
             .ok_or(SculkParseError::MissingField("color".into()))??;
 
-        let filtered_messages_list = nbt
-            .list("filtered_messages")
-            .ok_or(SculkParseError::MissingField("filtered_messages".into()))?;
-        let mut filtered_messages: Vec<Cow<'a, Mutf8Str>> = vec![];
+        let filtered_messages = if let Some(list) = nbt.list("filtered_messages") {
+            let mut filtered_messages: Vec<Cow<'a, Mutf8Str>> = vec![];
 
-        for message in filtered_messages_list.strings().into_iter() {
-            let str = (*message.first().unwrap()).to_owned();
-            filtered_messages.push(Cow::Owned(str));
-        }
+            for message in list.strings().into_iter() {
+                let str = (*message.first().unwrap()).to_owned();
+                filtered_messages.push(Cow::Owned(str));
+            }
+
+            Some(filtered_messages)
+        } else {
+            None
+        };
 
         let messages_list = nbt
             .list("messages")

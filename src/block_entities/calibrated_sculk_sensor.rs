@@ -58,7 +58,7 @@ pub struct Selector<'a> {
     pub tick: i64,
 
     /// Candidate game event
-    pub event: Event<'a>,
+    pub event: Option<Event<'a>>,
 }
 
 impl<'a> FromCompoundNbt for CalibratedSculkSensor<'a> {
@@ -121,10 +121,11 @@ impl<'a> FromCompoundNbt for Selector<'a> {
             .long("tick")
             .ok_or(SculkParseError::MissingField("tick".into()))?;
 
-        let event = nbt
-            .compound("event")
-            .map(|nbt| Event::from_compound_nbt(&nbt))
-            .ok_or(SculkParseError::MissingField("event".into()))??;
+        let event = if let Some(nbt) = nbt.compound("event") {
+            Some(Event::from_compound_nbt(&nbt)?)
+        } else {
+            None
+        };
 
         Ok(Selector { tick, event })
     }

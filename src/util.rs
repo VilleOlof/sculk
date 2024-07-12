@@ -25,6 +25,9 @@ pub fn get_loot_table_data<'a>(nbt: &NbtCompound) -> LootTableData<'a> {
     }
 }
 
+// TODO: convert get_owned_mutf8str to borrowed Cow
+// Making this borrowed would save like 50µs per call.
+// But i just dont know how to deal with it and its lifetimes.
 pub fn get_owned_mutf8str<'a>(
     nbt: &NbtCompound,
     key: &'static str,
@@ -55,9 +58,10 @@ pub fn get_bool(nbt: &NbtCompound, key: &'static str) -> bool {
 }
 
 pub fn get_int_array(nbt: &NbtCompound, key: &'static str) -> Result<Vec<i32>, SculkParseError> {
-    let list = nbt
-        .list(key)
-        .ok_or(SculkParseError::MissingField(key.into()))?;
+    let list = match nbt.list(key) {
+        Some(list) => list,
+        None => return Ok(vec![]),
+    };
 
     let mut arr = vec![];
 
@@ -76,9 +80,10 @@ pub fn get_doubles_array(
     nbt: &NbtCompound,
     key: &'static str,
 ) -> Result<Vec<f64>, SculkParseError> {
-    let list = nbt
-        .list(key)
-        .ok_or(SculkParseError::MissingField(key.into()))?;
+    let list = match nbt.list(key) {
+        Some(list) => list,
+        None => return Ok(vec![]),
+    };
 
     let mut arr = vec![];
 
@@ -98,9 +103,14 @@ pub fn get_t_compound_vec<T>(
     key: &'static str,
     nbt_conversion: fn(nbt: &NbtCompound) -> Result<T, SculkParseError>,
 ) -> Result<Vec<T>, SculkParseError> {
-    let list = nbt
-        .list(key)
-        .ok_or(SculkParseError::MissingField(key.into()))?;
+    let list = match nbt.list(key) {
+        Some(list) => list,
+        None => return Ok(vec![]),
+    };
+
+    if list.empty() {
+        return Ok(vec![]);
+    }
 
     let mut vec = vec![];
 
@@ -137,4 +147,13 @@ pub fn get_optional_components<'a>(
         // Return the error if it's anything else
         Err(e) => return Err(e),
     }
+}
+
+#[allow(dead_code)]
+pub fn dump_nbt(nbt: &NbtCompound) {
+    for (key, value) in nbt.iter() {
+        println!("{:?}: {:?}", key, value.to_owned());
+    }
+
+    println!();
 }

@@ -51,9 +51,7 @@ impl<'a> FromCompoundNbt for Item<'a> {
 
         let id = get_owned_mutf8str(&nbt, "id")?;
 
-        let count = nbt
-            .int("Count")
-            .ok_or(crate::error::SculkParseError::MissingField("Count".into()))?;
+        let count = nbt.int("Count").unwrap_or(1);
 
         let components = get_optional_components(&nbt)?;
 
@@ -75,9 +73,7 @@ impl<'a> FromCompoundNbt for ItemWithNoSlot<'a> {
     {
         let id = get_owned_mutf8str(&nbt, "id")?;
 
-        let count = nbt
-            .int("Count")
-            .ok_or(crate::error::SculkParseError::MissingField("Count".into()))?;
+        let count = nbt.int("Count").unwrap_or(1);
 
         let components = get_optional_components(&nbt)?;
 

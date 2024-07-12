@@ -16,6 +16,7 @@
 
 pub mod block_entities;
 pub mod block_entity;
+pub mod chunk;
 pub mod color;
 pub mod components;
 pub mod entity;

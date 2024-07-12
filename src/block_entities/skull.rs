@@ -18,7 +18,7 @@ pub struct Skull<'a> {
     pub note_block_sound: Option<Cow<'a, Mutf8Str>>,
 
     /// Information about the owner of this player head. If defined as a string, corresponds to  name.
-    pub profile: SkullProfile<'a>,
+    pub profile: Option<SkullProfile<'a>>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -61,12 +61,11 @@ impl<'a> FromCompoundNbt for Skull<'a> {
         let custom_name = get_owned_optional_mutf8str(&nbt, "custom_name");
         let note_block_sound = get_owned_optional_mutf8str(&nbt, "note_block_sound");
 
-        let profile = nbt
-            .compound("profile")
-            // Here we use the parent nbt tag instead of the compound
-            // since its an enum that depends on the type of the profile tag
-            .map(|_| SkullProfile::from_compound_nbt(&nbt))
-            .ok_or(SculkParseError::MissingField("profile".into()))??;
+        let profile = match SkullProfile::from_compound_nbt(&nbt) {
+            Ok(profile) => Some(profile),
+            Err(SculkParseError::InvalidField(_)) => None,
+            Err(e) => return Err(e),
+        };
 
         Ok(Skull {
             custom_name,
