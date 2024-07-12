@@ -314,10 +314,10 @@ impl<'a> LazyBlockEntity<'a> {
 fn test() {
     use std::io::Read;
 
-    let file = std::fs::File::open("test_data/chest_banner.nbt").unwrap();
+    let file = std::fs::File::open("test_data/chest_tool.nbt").unwrap();
     let bytes = file.bytes().map(|b| b.unwrap()).collect::<Vec<u8>>();
 
     let instant = std::time::Instant::now();
-    let _ = LazyBlockEntity::from_bytes(bytes.as_slice()).unwrap();
+    let _ = BlockEntity::from_bytes(bytes.as_slice()).unwrap();
     println!("LazyBlockEntity: {:?}", instant.elapsed());
 }

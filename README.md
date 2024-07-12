@@ -18,8 +18,9 @@ And get fully typed data structures for all of them.
 - [X] Add test inside every block entity .rs file to test all their data  
 - [X] Own Block Entity for every banner type, shulker, sign, hanging sign, skull, wall   versions etc. so proper variant > id conversion can be done.  
 - [X] Fix broken components  
-- [ ] Add all components  
+- [X] Add all components  
 - [ ] Add Chunk module for chunk data
+- [ ] Add Player inventory / ender chest
 - [ ] Once done, rethink/look back on pub api  
 - [ ] Criterion benchmarks  
 - [ ] Fork mca-parser and make it barebones to uncompressed data only (based-mca)  

@@ -92,6 +92,24 @@ impl<'a> FromCompoundNbt for SkullProfile<'a> {
     }
 }
 
+impl<'a> SkullProfile<'a> {
+    pub fn from_component_compound_nbt(
+        nbt: &simdnbt::borrow::NbtCompound,
+    ) -> Result<Self, SculkParseError>
+    where
+        Self: Sized,
+    {
+        if let Some(name) = get_owned_optional_mutf8str(&nbt, "minecraft:profile") {
+            return Ok(SkullProfile::Name(name));
+        } else if let Some(compound) = nbt.compound("minecraft:profile") {
+            let profile = Profile::from_compound_nbt(&compound)?;
+            return Ok(SkullProfile::Profile(profile));
+        } else {
+            return Err(SculkParseError::InvalidField("minecraft:profile".into()));
+        }
+    }
+}
+
 impl<'a> FromCompoundNbt for Profile<'a> {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,

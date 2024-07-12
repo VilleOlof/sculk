@@ -7,16 +7,12 @@
 //! ```rust
 //! use sculk::BlockEntity;
 //! use sculk::BlockEntityVariant;
-//! use sculk::block_entity::deserialize_from_bytes;
 //!
 //! let bytes = include_bytes!("structure_block.nbt");
-//! let block_entity: BlockEntity = deserialize_from_bytes(bytes).unwrap();
+//! let block_entity: BlockEntity = BlockEntity::from_bytes(bytes).unwrap();
 //!
 //! assert_eq!(block_entity.variant(), BlockEntityVariant::StructureBlock);
 //! ```
-//! ## IMPORTANT
-//! When deserializing block entities, use the `deserialize_from_*` functions.  
-//! Otherwise the `block_entity.base.id` field will be empty.
 
 pub mod block_entities;
 pub mod block_entity;

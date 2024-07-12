@@ -5,11 +5,20 @@ use banner_patterns::BannerPattern;
 use base_color::BaseColor;
 use bees::Bee;
 use simdnbt::Mutf8Str;
+use suspicious_stew_effects::SuspiciousStewEffects;
+use trim::Trim;
 
 use crate::{
-    block_entities::skull, block_entity::NoCoordinatesBlockEntity, color::RGB, entity::Entity,
-    error::SculkParseError, item::ItemWithNoSlot, kv::KVPair, rarity::Rarity,
-    traits::FromCompoundNbt, util::get_t_list,
+    block_entities::skull::{self, SkullProfile},
+    block_entity::NoCoordinatesBlockEntity,
+    color::RGB,
+    entity::Entity,
+    error::SculkParseError,
+    item::ItemWithNoSlot,
+    kv::KVPair,
+    rarity::Rarity,
+    traits::FromCompoundNbt,
+    util::get_t_list,
 };
 
 pub mod attribute_modifiers;
@@ -131,6 +140,331 @@ impl<'a> FromCompoundNbt for Components<'a> {
                         .compound()
                         .ok_or(SculkParseError::InvalidField("minecraft:can_break".into()))?;
                     Component::CanBreak(can_break::CanBreak::from_compound_nbt(&nbt)?)
+                }
+                "minecraft:can_place_on" => {
+                    let nbt = value.compound().ok_or(SculkParseError::InvalidField(
+                        "minecraft:can_place_on".into(),
+                    ))?;
+                    Component::CanPlaceOn(can_break::CanBreak::from_compound_nbt(&nbt)?)
+                }
+                "minecraft:charged_projectiles" => {
+                    let list = value.list().ok_or(SculkParseError::InvalidField(
+                        "minecraft:charged_projectiles".into(),
+                    ))?;
+                    let items = get_t_list(
+                        &list,
+                        "minecraft:charged_projectiles",
+                        ItemWithNoSlot::from_compound_nbt,
+                    )?;
+
+                    Component::ChargedProjectiles(items)
+                }
+                "minecraft:container" => {
+                    let nbt = value
+                        .compound()
+                        .ok_or(SculkParseError::InvalidField("minecraft:container".into()))?;
+                    Component::Container(container::Container::from_compound_nbt(&nbt)?)
+                }
+                "minecraft:container_loot" => {
+                    let nbt = value.compound().ok_or(SculkParseError::InvalidField(
+                        "minecraft:container_loot".into(),
+                    ))?;
+                    Component::ContainerLoot(container_loot::ContainerLoot::from_compound_nbt(
+                        &nbt,
+                    )?)
+                }
+                "minecraft:custom_data" => {
+                    Component::CustomData(custom_data::CustomData::from_compound_nbt(&nbt)?)
+                }
+                "minecraft:custom_model_data" => {
+                    let value = value.int().ok_or(SculkParseError::InvalidField(
+                        "minecraft:custom_model_data".into(),
+                    ))?;
+                    Component::CustomModelData(value)
+                }
+                "custom_name" => {
+                    let value = value
+                        .string()
+                        .ok_or(SculkParseError::InvalidField("custom_name".into()))?;
+                    Component::CustomName(Cow::Owned(value.to_owned()))
+                }
+                "minecraft:damage" => {
+                    let value = value
+                        .int()
+                        .ok_or(SculkParseError::InvalidField("damage".into()))?;
+                    Component::Damage(value)
+                }
+                "minecraft:debug_stick_state" => {
+                    let nbt = value
+                        .compound()
+                        .ok_or(SculkParseError::InvalidField("debug_stick_state".into()))?;
+                    Component::DebugStickState(KVPair::from_compound_nbt(&nbt)?)
+                }
+                "minecraft:dyed_color" => {
+                    Component::DyedColor(dyed_color::DyedColor::from_compound_nbt(&nbt)?)
+                }
+                "minecraft:enchantment_glint_override" => {
+                    let value = value.byte().ok_or(SculkParseError::InvalidField(
+                        "enchantment_glint_override".into(),
+                    ))?;
+                    Component::EnchantmentGlintOverride(value != 0)
+                }
+                "minecraft:enchantments" => {
+                    let nbt = value
+                        .compound()
+                        .ok_or(SculkParseError::InvalidField("enchantments".into()))?;
+                    Component::Enchantments(enchantments::Enchantments::from_compound_nbt(&nbt)?)
+                }
+                "minecraft:entity_data" => {
+                    let nbt = value
+                        .compound()
+                        .ok_or(SculkParseError::InvalidField("entity_data".into()))?;
+                    Component::EntityData(Entity::from_compound_nbt(&nbt)?)
+                }
+                "minecraft:fire_resistant" => {
+                    let value = value.byte().ok_or(SculkParseError::InvalidField(
+                        "minecraft:fire_resistant".into(),
+                    ))?;
+                    Component::FireResistant(value != 0)
+                }
+                "minecraft:firework_explosion" => {
+                    let nbt = value
+                        .compound()
+                        .ok_or(SculkParseError::InvalidField("firework_explosion".into()))?;
+                    Component::FireworkExplosion(
+                        firework_explosion::FireworkExplosion::from_compound_nbt(&nbt)?,
+                    )
+                }
+                "minecraft:fireworks" => {
+                    let nbt = value
+                        .compound()
+                        .ok_or(SculkParseError::InvalidField("fireworks".into()))?;
+                    Component::Fireworks(fireworks::Fireworks::from_compound_nbt(&nbt)?)
+                }
+                "minecraft:food" => {
+                    let nbt = value
+                        .compound()
+                        .ok_or(SculkParseError::InvalidField("food".into()))?;
+                    Component::Food(food::Food::from_compound_nbt(&nbt)?)
+                }
+                "minecraft:hide_additional_tooltip" => {
+                    let value = value.byte().ok_or(SculkParseError::InvalidField(
+                        "minecraft:hide_additional_tooltip".into(),
+                    ))?;
+                    Component::HideAdditionalTooltip(value != 0)
+                }
+                "minecraft:hide_tooltip" => {
+                    let value = value.byte().ok_or(SculkParseError::InvalidField(
+                        "minecraft:hide_tooltip".into(),
+                    ))?;
+                    Component::HideTooltip(value != 0)
+                }
+                "minecraft:instrument" => {
+                    Component::Instrument(instrument::Instrument::from_compound_nbt(&nbt)?)
+                }
+                "minecraft:intangible_projectile" => {
+                    let value = value.byte().ok_or(SculkParseError::InvalidField(
+                        "minecraft:intangible_projectile".into(),
+                    ))?;
+                    Component::IntangibleProjectile(value != 0)
+                }
+                "minecraft:item_name" => {
+                    let value = value
+                        .string()
+                        .ok_or(SculkParseError::InvalidField("item_name".into()))?;
+                    Component::ItemName(Cow::Owned(value.to_owned()))
+                }
+                "minecraft:jukebox_playable" => {
+                    let nbt = value
+                        .compound()
+                        .ok_or(SculkParseError::InvalidField("jukebox_playable".into()))?;
+                    Component::JukeboxPlayable(
+                        jukebox_playable::JukeboxPlayable::from_compound_nbt(&nbt)?,
+                    )
+                }
+                "minecraft:lock" => {
+                    let value = value
+                        .string()
+                        .ok_or(SculkParseError::InvalidField("lock".into()))?;
+                    Component::Lock(Cow::Owned(value.to_owned()))
+                }
+                "minecraft:lodestone_tracker" => {
+                    let nbt = value
+                        .compound()
+                        .ok_or(SculkParseError::InvalidField("lodestone_tracker".into()))?;
+                    Component::LodestoneTracker(
+                        lodestone_tracker::LodestoneTracker::from_compound_nbt(&nbt)?,
+                    )
+                }
+                "minecraft:lore" => {
+                    let list = value
+                        .list()
+                        .ok_or(SculkParseError::InvalidField("lore".into()))?;
+
+                    let mut lore = vec![];
+
+                    for item in list
+                        .strings()
+                        .ok_or(SculkParseError::InvalidField("lore".into()))?
+                    {
+                        lore.push(Cow::Owned((*item).to_owned()));
+                    }
+
+                    Component::Lore(lore)
+                }
+                "minecraft:map_color" => {
+                    let int = value
+                        .int()
+                        .ok_or(SculkParseError::InvalidField("map_color".into()))?;
+                    Component::MapColor(RGB::new(int))
+                }
+                "minecraft:map_decorations" => {
+                    let nbt = value
+                        .compound()
+                        .ok_or(SculkParseError::InvalidField("map_decorations".into()))?;
+                    Component::MapDecorations(map_decorations::MapDecorations::from_compound_nbt(
+                        &nbt,
+                    )?)
+                }
+                "minecraft:map_id" => {
+                    let value = value
+                        .int()
+                        .ok_or(SculkParseError::InvalidField("map_id".into()))?;
+                    Component::MapId(value)
+                }
+                "minecraft:max_damage" => {
+                    let value = value
+                        .int()
+                        .ok_or(SculkParseError::InvalidField("max_damage".into()))?;
+                    Component::MaxDamage(value)
+                }
+                "minecraft:max_stack_size" => {
+                    let value = value
+                        .int()
+                        .ok_or(SculkParseError::InvalidField("max_stack_size".into()))?;
+                    Component::MaxStackSize(value)
+                }
+                "minecraft:note_block_sound" => {
+                    let value = value
+                        .string()
+                        .ok_or(SculkParseError::InvalidField("note_block_sound".into()))?;
+                    Component::NoteBlockSound(Cow::Owned(value.to_owned()))
+                }
+                "minecraft:ominous_bottle_amplifier" => {
+                    let value = value.int().ok_or(SculkParseError::InvalidField(
+                        "ominous_bottle_amplifier".into(),
+                    ))?;
+                    Component::OminousBottleAmplifier(value)
+                }
+                "minecraft:pot_decorations" => {
+                    let list = value
+                        .list()
+                        .ok_or(SculkParseError::InvalidField("pot_decorations".into()))?;
+
+                    let mut decorations = vec![];
+
+                    for item in list
+                        .strings()
+                        .ok_or(SculkParseError::InvalidField("pot_decorations".into()))?
+                    {
+                        decorations.push(Cow::Owned((*item).to_owned()));
+                    }
+
+                    Component::PotDecorations(decorations)
+                }
+                "minecraft:potion_contents" => Component::PotionContents(
+                    potion_contents::PotionContents::from_compound_nbt(&nbt)?,
+                ),
+                "minecraft:profile" => {
+                    Component::Profile(SkullProfile::from_component_compound_nbt(&nbt)?)
+                }
+                "minecraft:rarity" => {
+                    let value = value
+                        .string()
+                        .ok_or(SculkParseError::InvalidField("rarity".into()))?;
+                    Component::Rarity(Rarity::from_str(value.to_str().as_ref())?)
+                }
+                "minecraft:recipes" => {
+                    let list = value
+                        .list()
+                        .ok_or(SculkParseError::InvalidField("recipes".into()))?;
+
+                    let mut recipes = vec![];
+
+                    for item in list
+                        .strings()
+                        .ok_or(SculkParseError::InvalidField("recipes".into()))?
+                    {
+                        recipes.push(Cow::Owned((*item).to_owned()));
+                    }
+
+                    Component::Recipes(recipes)
+                }
+                "minecraft:repair_cost" => {
+                    let value = value
+                        .int()
+                        .ok_or(SculkParseError::InvalidField("repair_cost".into()))?;
+                    Component::RepairCost(value)
+                }
+                "minecraft:stored_enchantments" => {
+                    let nbt = value
+                        .compound()
+                        .ok_or(SculkParseError::InvalidField("stored_enchantments".into()))?;
+                    Component::StoredEnchantments(enchantments::Enchantments::from_compound_nbt(
+                        &nbt,
+                    )?)
+                }
+                "minecraft:suspicious_stew_effects" => {
+                    let effects = value.list().ok_or(SculkParseError::InvalidField(
+                        "suspicious_stew_effects".into(),
+                    ))?;
+
+                    let effects = get_t_list(
+                        &effects,
+                        "suspicious_stew_effects",
+                        SuspiciousStewEffects::from_compound_nbt,
+                    )?;
+
+                    Component::SuspiciousStewEffects(effects)
+                }
+                "minecraft:tool" => {
+                    let nbt = value
+                        .compound()
+                        .ok_or(SculkParseError::InvalidField("tool".into()))?;
+                    Component::Tool(tool::Tool::from_compound_nbt(&nbt)?)
+                }
+                "minecraft:trim" => {
+                    let nbt = value
+                        .compound()
+                        .ok_or(SculkParseError::InvalidField("trim".into()))?;
+                    Component::Trim(Trim::from_compound_nbt(&nbt)?)
+                }
+                "minecraft:unbreakable" => {
+                    if let Some(_) = nbt.compound("minecraft:unbreakable") {
+                        let nbt = value
+                            .compound()
+                            .ok_or(SculkParseError::InvalidField("unbreakable".into()))?;
+
+                        Component::Unbreakable(unbreakable::Unbreakable::from_compound_nbt(&nbt)?)
+                    } else {
+                        return Err(SculkParseError::InvalidField("unbreakable".into()));
+                    }
+                }
+                "minecraft:writable_book_content" => {
+                    let nbt = value.compound().ok_or(SculkParseError::InvalidField(
+                        "writable_book_content".into(),
+                    ))?;
+                    Component::WritableBookContent(
+                        writable_book_content::WritableBookContent::from_compound_nbt(&nbt)?,
+                    )
+                }
+                "minecraft:written_book_content" => {
+                    let nbt = value
+                        .compound()
+                        .ok_or(SculkParseError::InvalidField("written_book_content".into()))?;
+                    Component::WrittenBookContent(
+                        written_book_content::WrittenBookContent::from_compound_nbt(&nbt)?,
+                    )
                 }
                 _ => Component::Unknown(value.to_owned()),
             };
