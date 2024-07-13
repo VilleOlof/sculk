@@ -285,22 +285,6 @@ impl<'a> LazyBlockEntity<'a> {
     }
 }
 
-impl<'a> LazyBlockEntity<'a> {
-    pub fn to_owned(&self) -> Result<BlockEntity, SculkParseError> {
-        let bytes = match &self.nbt_bytes {
-            LazyByteVariant::Borrowed(bytes) => bytes,
-            LazyByteVariant::Owned(bytes) => bytes.as_slice(),
-        };
-
-        let nbt = match simdnbt::borrow::read(&mut Cursor::new(bytes)) {
-            Ok(nbt) => nbt,
-            Err(err) => return Err(SculkParseError::NbtError(err)),
-        };
-
-        BlockEntity::from_nbt(nbt)
-    }
-}
-
 impl<'a> BlockEntity<'a> {
     pub fn variant(&self) -> BlockEntityVariant {
         self.kind.variant()
@@ -354,6 +338,20 @@ impl<'a> LazyBlockEntity<'a> {
         let compound_nbt = base_nbt.as_compound();
 
         get_optional_components(&compound_nbt)
+    }
+
+    pub fn to_owned(&self) -> Result<BlockEntity, SculkParseError> {
+        let bytes = match &self.nbt_bytes {
+            LazyByteVariant::Borrowed(bytes) => bytes,
+            LazyByteVariant::Owned(bytes) => bytes.as_slice(),
+        };
+
+        let nbt = match simdnbt::borrow::read(&mut Cursor::new(bytes)) {
+            Ok(nbt) => nbt,
+            Err(err) => return Err(SculkParseError::NbtError(err)),
+        };
+
+        BlockEntity::from_nbt(nbt)
     }
 
     pub fn from_bytes(bytes: &'a [u8]) -> Result<Self, SculkParseError> {

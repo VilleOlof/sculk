@@ -91,6 +91,7 @@ dependencies = [
 name = "sculk"
 version = "0.1.0"
 dependencies = [
+ "flate2",
  "simdnbt",
  "thiserror",
 ]

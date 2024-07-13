@@ -1,8 +1,8 @@
 use std::io::Cursor;
 
 use crate::{
-    block_entity::LazyBlockEntity, entity::Entity, error::SculkParseError, traits::FromCompoundNbt,
-    util::get_t_compound_vec,
+    entity::Entity, error::SculkParseError, traits::FromCompoundNbt, util::get_t_compound_vec,
+    BlockEntity,
 };
 use section::ChunkSection;
 use status::ChunkStatus;
@@ -42,7 +42,7 @@ pub struct Chunk<'a> {
     pub sections: Vec<ChunkSection<'a>>,
 
     /// Each Compound in this list defines a block entity in the chunk.
-    pub block_entities: Vec<LazyBlockEntity<'a>>,
+    pub block_entities: Vec<BlockEntity<'a>>,
 
     /// Only for proto-chunks (not confirmed for 1.18 format).   
     /// `CarvingMasks`
@@ -118,6 +118,7 @@ pub struct CarvingMasks {
     pub liquid: Vec<i8>,
 }
 
+//
 impl<'a> FromCompoundNbt for Chunk<'a> {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
@@ -148,7 +149,7 @@ impl<'a> FromCompoundNbt for Chunk<'a> {
 
         let sections = get_t_compound_vec(&nbt, "sections", ChunkSection::from_compound_nbt)?;
         let block_entities =
-            get_t_compound_vec(&nbt, "block_entities", LazyBlockEntity::from_compound_nbt)?;
+            get_t_compound_vec(&nbt, "block_entities", BlockEntity::from_compound_nbt)?;
 
         let carving_masks = if let Some(nbt) = nbt.compound("CarvingMasks") {
             Some(CarvingMasks::from_compound_nbt(&nbt)?)

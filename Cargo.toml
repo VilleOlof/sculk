@@ -11,3 +11,6 @@ authors = ["VilleOlof"]
 [dependencies]
 simdnbt = "0.6.0"
 thiserror = "1.0.61"
+
+[dev-dependencies]
+flate2 = "1.0.30"

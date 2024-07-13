@@ -18,6 +18,12 @@ And currently when deserializing a chunk, it copies memory for every block entit
 And since so many fields are strings and theres a lot of block entities in chunks,  
 it slows it down by 30-100ms on my machine per 32x32 chunk (one region).  
 
+Currently chunks use `BlockEntity` instead of its `LazyBlockEntity`, because getting a lazy block entity  
+from a nbt compound tag currently requires copying it has a `Vec<u8>` which is so slow and inefficient.  
+But if you were to deserialize a LazyBlockEntity from bytes directly, its about 83% faster with relatively basic data.  
+So i want to make it deserialize with LazyBlockEntity, specially since it has a `to_owned` method.  
+But again, lifetime issues.  
+
 ## TODO
 
 - [X] Simdnbt Migration  
@@ -28,8 +34,9 @@ it slows it down by 30-100ms on my machine per 32x32 chunk (one region).
 - [X] Own Block Entity for every banner type, shulker, sign, hanging sign, skull, wall   versions etc. so proper variant > id conversion can be done.  
 - [X] Fix broken components  
 - [X] Add all components  
-- [X] Add Chunk module for chunk data
-- [ ] Add Player inventory / ender chest
+- [X] Add Chunk module for chunk data  
+- [X] Add Player inventory / ender chest  
+- [ ] Add level.dat  
 - [ ] Once done, rethink/look back on pub api  
 - [/] Criterion benchmarks  
 - [/] Fork mca-parser and make it barebones to uncompressed data only (based-mca)  
