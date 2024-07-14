@@ -30,6 +30,9 @@ mod traits;
 mod util;
 mod uuid;
 
+#[cfg(feature = "stats")]
+mod statistics;
+
 // Re-export the modules.
 pub use block_entities::variant::BlockEntityVariant;
 pub use block_entities::BlockEntityKind;

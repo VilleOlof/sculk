@@ -37,7 +37,7 @@ But again, lifetime issues.
 - [X] Add Chunk module for chunk data  
 - [X] Add Player inventory / ender chest  
 - [X] Add level.dat  
-- [ ] Player statistics?    
+- [X] Player statistics?    
 - [ ] Player advancements?    
 - [ ] Command storage, idcounts, map data, raids?    
 - [ ] Once done, rethink/look back on pub api  
