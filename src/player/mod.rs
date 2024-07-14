@@ -12,9 +12,9 @@ use recipe_book::RecipeBook;
 use simdnbt::Mutf8Str;
 use std::borrow::Cow;
 
-mod abilities;
-mod game_type;
-mod recipe_book;
+pub mod abilities;
+pub mod game_type;
+pub mod recipe_book;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Player<'a> {

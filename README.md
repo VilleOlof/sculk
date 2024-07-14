@@ -36,7 +36,10 @@ But again, lifetime issues.
 - [X] Add all components  
 - [X] Add Chunk module for chunk data  
 - [X] Add Player inventory / ender chest  
-- [ ] Add level.dat  
+- [X] Add level.dat  
+- [ ] Player statistics?    
+- [ ] Player advancements?    
+- [ ] Command storage, idcounts, map data, raids?    
 - [ ] Once done, rethink/look back on pub api  
 - [/] Criterion benchmarks  
 - [/] Fork mca-parser and make it barebones to uncompressed data only (based-mca)  

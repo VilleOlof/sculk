@@ -9,10 +9,10 @@ use status::ChunkStatus;
 use structure::Structures;
 use tile_tick::TileTick;
 
-mod section;
-mod status;
-mod structure;
-mod tile_tick;
+pub mod section;
+pub mod status;
+pub mod structure;
+pub mod tile_tick;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Chunk<'a> {

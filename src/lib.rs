@@ -23,6 +23,7 @@ pub mod entity;
 mod error;
 pub mod item;
 mod kv;
+mod level;
 mod player;
 mod rarity;
 mod traits;

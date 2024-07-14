@@ -35,7 +35,7 @@ impl<'a> FromCompoundNbt for KVPair<'a, Cow<'a, Mutf8Str>> {
             map.insert(Cow::Owned(key), Cow::Owned(value));
         }
 
-        Ok(KVPair(map))
+        Ok(KVPair::new(map))
     }
 }
 
@@ -56,6 +56,27 @@ impl<'a> FromCompoundNbt for KVPair<'a, i32> {
             map.insert(Cow::Owned(key), value);
         }
 
-        Ok(KVPair(map))
+        Ok(KVPair::new(map))
+    }
+}
+
+impl<'a> FromCompoundNbt for KVPair<'a, simdnbt::owned::NbtCompound> {
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
+    where
+        Self: Sized,
+    {
+        let mut map = HashMap::new();
+
+        for (key, value) in nbt.iter() {
+            let key = key.to_string();
+            let value = match value.compound() {
+                Some(compound) => compound.to_owned(),
+                None => continue,
+            };
+
+            map.insert(Cow::Owned(key), value);
+        }
+
+        Ok(KVPair::new(map))
     }
 }
