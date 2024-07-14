@@ -23,24 +23,3 @@ from a nbt compound tag currently requires copying it has a `Vec<u8>` which is s
 But if you were to deserialize a LazyBlockEntity from bytes directly, its about 83% faster with relatively basic data.  
 So i want to make it deserialize with LazyBlockEntity, specially since it has a `to_owned` method.  
 But again, lifetime issues.  
-
-## TODO
-
-- [X] Simdnbt Migration  
-    [X] Add a bare bones deserialize that only does the base block entity.  
-        Which can be useful to essentially lazy load components + block entity data  
-
-- [X] Add test inside every block entity .rs file to test all their data  
-- [X] Own Block Entity for every banner type, shulker, sign, hanging sign, skull, wall   versions etc. so proper variant > id conversion can be done.  
-- [X] Fix broken components  
-- [X] Add all components  
-- [X] Add Chunk module for chunk data  
-- [X] Add Player inventory / ender chest  
-- [X] Add level.dat  
-- [X] Player statistics?    
-- [-] Player advancements?    
-- [/] Command storage, idcounts, **map data**, raids?    
-- [ ] Once done, rethink/look back on pub api  
-- [ ] Examples folder  
-- [/] Criterion benchmarks  
-- [/] Fork mca-parser and make it barebones to uncompressed data only (based-mca)  
