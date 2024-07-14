@@ -1,5 +1,5 @@
 use crate::{
-    bees::Bee,
+    components::bees::Bee,
     traits::FromCompoundNbt,
     util::{get_int_array, get_t_compound_vec},
 };

@@ -1,8 +1,8 @@
 use std::io::Cursor;
 
 use crate::{
-    entity::Entity, error::SculkParseError, traits::FromCompoundNbt, util::get_t_compound_vec,
-    BlockEntity,
+    block_entity::BlockEntity, entity::Entity, error::SculkParseError, traits::FromCompoundNbt,
+    util::get_t_compound_vec,
 };
 use section::ChunkSection;
 use status::ChunkStatus;
@@ -14,6 +14,8 @@ pub mod status;
 pub mod structure;
 pub mod tile_tick;
 
+/// Represents a chunk in the world.  
+/// [Minecraft Wiki](https://minecraft.wiki/w/Chunk_format)  
 #[derive(Debug, Clone, PartialEq)]
 pub struct Chunk<'a> {
     /// Version of the chunk NBT structure.  

@@ -14,14 +14,14 @@
 //! assert_eq!(block_entity.variant(), BlockEntityVariant::StructureBlock);
 //! ```
 
-pub mod block_entities;
-pub mod block_entity;
-pub mod chunk;
-pub mod color;
-pub mod components;
-pub mod entity;
+mod block_entities;
+mod block_entity;
+mod chunk;
+mod color;
+mod components;
+mod entity;
 mod error;
-pub mod item;
+mod item;
 mod kv;
 mod level;
 mod map;
@@ -35,8 +35,3 @@ mod uuid;
 mod statistics;
 
 // Re-export the modules.
-pub use block_entities::variant::BlockEntityVariant;
-pub use block_entities::BlockEntityKind;
-pub use block_entity::BlockEntity;
-pub use components::*;
-pub use util::MC_VERSION;

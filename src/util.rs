@@ -1,4 +1,4 @@
-use crate::{error::SculkParseError, traits::FromCompoundNbt, Components};
+use crate::{components::Components, error::SculkParseError, traits::FromCompoundNbt};
 use simdnbt::{
     borrow::{NbtCompound, NbtList},
     Mutf8Str,

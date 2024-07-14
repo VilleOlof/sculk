@@ -2,10 +2,10 @@ use simdnbt::{borrow::BaseNbt, Mutf8Str};
 
 use crate::{
     block_entities::{variant::BlockEntityVariant, BlockEntityKind},
+    components::Components,
     error::SculkParseError,
     traits::{FromCompoundNbt, FromNbt},
     util::{get_bool, get_optional_components, get_owned_mutf8str},
-    Components,
 };
 use std::{borrow::Cow, io::Cursor};
 

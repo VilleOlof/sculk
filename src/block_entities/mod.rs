@@ -423,9 +423,7 @@ impl<'a> FromCompoundNbt for BlockEntityKind<'a> {
             | "minecraft:cherry_wall_sign"
             | "minecraft:bamboo_wall_sign"
             | "minecraft:crimson_wall_sign"
-            | "minecraft:warped_wall_sign" => {
-                BlockEntityKind::HangingSign(Sign::from_compound_nbt(&nbt)?)
-            }
+            | "minecraft:warped_wall_sign" => BlockEntityKind::Sign(Sign::from_compound_nbt(&nbt)?),
             // SKULL
             "minecraft:skull"
             | "minecraft:skeleton_skull"

@@ -1,13 +1,7 @@
-use std::borrow::Cow;
-
+use super::writable_book_content::{BookTextData, PageType};
+use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_mutf8str};
 use simdnbt::Mutf8Str;
-
-use crate::{
-    error::SculkParseError,
-    traits::FromCompoundNbt,
-    util::get_owned_mutf8str,
-    writable_book_content::{BookTextData, PageType},
-};
+use std::borrow::Cow;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct WrittenBookContent<'a> {

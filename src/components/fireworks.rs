@@ -1,7 +1,6 @@
-use crate::{
-    error::SculkParseError, firework_explosion::FireworkExplosion, traits::FromCompoundNbt,
-    util::get_t_list,
-};
+use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_t_list};
+
+use super::firework_explosion::FireworkExplosion;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Fireworks {

@@ -1,11 +1,12 @@
 use crate::{
     color::RGB,
-    food::EffectDetails,
     traits::FromCompoundNbt,
     util::{get_owned_optional_mutf8str, get_t_compound_vec},
 };
 use simdnbt::Mutf8Str;
 use std::borrow::Cow;
+
+use super::food::EffectDetails;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum PotionContents<'a> {

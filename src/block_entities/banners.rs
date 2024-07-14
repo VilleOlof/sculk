@@ -1,7 +1,7 @@
 use simdnbt::Mutf8Str;
 
 use crate::{
-    banner_patterns::BannerPattern,
+    components::banner_patterns::BannerPattern,
     traits::FromCompoundNbt,
     util::{get_optional_name, get_t_compound_vec},
 };

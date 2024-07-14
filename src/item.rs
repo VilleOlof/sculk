@@ -1,9 +1,9 @@
 use simdnbt::Mutf8Str;
 
 use crate::{
+    components::Components,
     traits::FromCompoundNbt,
     util::{get_optional_components, get_owned_mutf8str},
-    Components,
 };
 use std::borrow::Cow;
 

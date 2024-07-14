@@ -1,6 +1,8 @@
 use simdnbt::Mutf8Str;
 
-use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_t_list, BlockEntity};
+use crate::{
+    block_entity::BlockEntity, error::SculkParseError, traits::FromCompoundNbt, util::get_t_list,
+};
 
 use super::block_state::BlockState;
 use std::borrow::Cow;

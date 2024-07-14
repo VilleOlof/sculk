@@ -6,8 +6,9 @@ use crate::{
     error::SculkParseError,
     traits::FromCompoundNbt,
     util::{get_optional_components, get_owned_mutf8str, get_t_compound_vec},
-    Components,
 };
+
+use super::Components;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Food<'a> {
