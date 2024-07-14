@@ -24,6 +24,7 @@ mod error;
 pub mod item;
 mod kv;
 mod level;
+mod map;
 mod player;
 mod rarity;
 mod traits;

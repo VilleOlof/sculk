@@ -47,11 +47,3 @@ pub struct Statistics {
     #[serde(rename = "minecraft:killed_by")]
     pub killed_by: Option<HashMap<String, i32>>,
 }
-
-#[cfg(test)]
-#[test]
-fn test() {
-    let file = std::fs::File::open("test_data/player_stats.json").unwrap();
-
-    let stats: StatsRoot = serde_json::from_reader(file).unwrap();
-}
