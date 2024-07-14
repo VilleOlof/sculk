@@ -38,8 +38,8 @@ But again, lifetime issues.
 - [X] Add Player inventory / ender chest  
 - [X] Add level.dat  
 - [X] Player statistics?    
-- [ ] Player advancements?    
-- [ ] Command storage, idcounts, map data, raids?    
+- [-] Player advancements?    
+- [/] Command storage, idcounts, **map data**, raids?    
 - [ ] Once done, rethink/look back on pub api  
 - [/] Criterion benchmarks  
 - [/] Fork mca-parser and make it barebones to uncompressed data only (based-mca)  
