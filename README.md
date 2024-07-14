@@ -9,7 +9,12 @@ Using the fastest NBT parser in Rust, [`simdnbt`](https://crates.io/crates/simdn
 Deserialize block entities, entire chunks, item components, and more with ease.  
 And get fully typed data structures for all of them.  
 
-## Performance
+## Cargo Features
+
+- `stats` Enables the `Statistics` data structure and its deserialization.  
+    This enables `serde` as a dependency. Thus why its a feature.  
+
+## Performance rant
 
 Theres currently one big bottleneck and thats my skill issue with lifetimes.  
 All strings are `Cow<'a, Mutf8str` which are owned strings, that is first converted from borrowed strings.  
