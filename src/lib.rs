@@ -14,6 +14,7 @@
 //! assert_eq!(block_entity.variant(), BlockEntityVariant::StructureBlock);
 //! ```
 
+// Pub mod declarations.
 pub mod block_entities;
 pub mod block_entity;
 pub mod chunk;
@@ -28,6 +29,7 @@ pub mod player;
 pub mod rarity;
 pub mod uuid;
 
+// Internal modules.
 mod kv;
 mod traits;
 mod util;
