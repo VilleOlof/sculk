@@ -1,5 +1,8 @@
+//! Bee component for entities in a hive.
+
 use crate::{entity::Entity, error::SculkParseError, traits::FromCompoundNbt};
 
+/// A bee entity in a hive.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Bee<'a> {
     /// The NBT data of the entity in the hive.

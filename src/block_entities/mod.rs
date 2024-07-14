@@ -1,18 +1,5 @@
-//! ## BlockEntity rules.
-//!
-//! - Fields that use the `Option<T>` type need a `#[serde(skip_serializing_if = "Option::is_none")]` attribute.  
-//! - Fields that is a `bool` needs a `#[serde(deserialize_with = "crate::util::i8_to_bool")]` attribute.
-//! - Fields that is a `vec` needs a `#[serde(skip_serializing_if = "Vec::is_empty")]` attribute.
-//!
-//! ## Tests
-//! Tests are always within the same file as its own block entity.
-//! Tests can either be just `test`, or `basic_test`, `empty_test` or `extended_test`.
-//! Tests cover the basic functionality of the block entity, and the edge cases.
-//! And should always have a `assert_eq!(nbt, serialized_nbt);` at the end.
-
-use jukebox::Jukebox;
-
 use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_mutf8str};
+use jukebox::Jukebox;
 
 pub mod variant;
 

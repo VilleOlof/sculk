@@ -1,7 +1,9 @@
-use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_t_list};
+//! Firework rocket item component.
 
 use super::firework_explosion::FireworkExplosion;
+use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_t_list};
 
+/// A firework rocket item.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Fireworks {
     /// List of the explosion effects caused by this [firework rocket](https://minecraft.wiki/w/Firework_rocket). Has a maximum of 256 explosions.  

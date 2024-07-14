@@ -1,14 +1,16 @@
-use simdnbt::Mutf8Str;
+//! Can break block component.
 
+use super::block_state::BlockState;
 use crate::{
     block_entity::BlockEntity, error::SculkParseError, traits::FromCompoundNbt, util::get_t_list,
 };
-
-use super::block_state::BlockState;
+use simdnbt::Mutf8Str;
 use std::borrow::Cow;
 
+/// If an item can break blocks.
 #[derive(Debug, Clone, PartialEq)]
 pub enum CanBreak<'a> {
+    /// Multiple block predicates to match.
     List {
         /// A list of block predicates to match.
         predicates: Vec<Predicate<'a>>,
@@ -17,6 +19,7 @@ pub enum CanBreak<'a> {
         show_in_tooltip: bool,
     },
 
+    /// Single block predicate to match.
     Single {
         /// Can be a block ID or a block tag with a #, or a list of block IDs.
         blocks: Blocks<'a>,
@@ -32,6 +35,7 @@ pub enum CanBreak<'a> {
     },
 }
 
+/// A block predicate to match.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Predicate<'a> {
     /// Can be a block ID or a block tag with a #, or a list of block IDs.
@@ -44,10 +48,13 @@ pub struct Predicate<'a> {
     pub state: Option<BlockState<'a>>,
 }
 
+/// A list of block IDs or block tags with a #.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Blocks<'a> {
+    /// A single block ID or block tag with a #.
     Block(Cow<'a, Mutf8Str>),
 
+    /// A list of block IDs or block tags with a #.
     Blocks(Vec<Cow<'a, Mutf8Str>>),
 }
 

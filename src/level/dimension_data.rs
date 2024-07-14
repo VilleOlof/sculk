@@ -1,5 +1,8 @@
+//! Dimension specific data for a world.  
+
 use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_bool};
 
+/// Data for a dimension.
 #[derive(Debug, Clone, PartialEq)]
 pub struct DimensionData {
     /// Data for The End  
@@ -7,6 +10,7 @@ pub struct DimensionData {
     pub end: EndData,
 }
 
+/// Data for The End.
 #[derive(Debug, Clone, PartialEq)]
 pub struct EndData {
     /// Data for the ender dragon fight. Appears only after the End is entered.  
@@ -14,6 +18,7 @@ pub struct EndData {
     pub dragon_fight: DragonFight,
 }
 
+/// Data about the ender dragon fight.
 #[derive(Debug, Clone, PartialEq)]
 pub struct DragonFight {
     /// Location of the End's exit portal that the ender dragon flies to upon its death.   
@@ -44,6 +49,7 @@ pub struct DragonFight {
     pub previously_killed: bool,
 }
 
+/// Location of the End's exit portal that the ender dragon flies to upon its death.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ExitPortalLocation {
     /// The X coordinate of the portal.  

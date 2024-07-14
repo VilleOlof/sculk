@@ -1,5 +1,9 @@
+//! Players specific abilities.  
+//! Like if they can fly, if they are invulnerable, etc.
+
 use crate::{traits::FromCompoundNbt, util::get_bool};
 
+/// A player's abilities.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Abilities {
     /// if the player is currently flying.

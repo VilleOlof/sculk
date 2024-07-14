@@ -1,15 +1,16 @@
-use std::borrow::Cow;
-
-use simdnbt::Mutf8Str;
+//! Food component. Represents an item that can be eaten by a player.
 
 use crate::{
     error::SculkParseError,
     traits::FromCompoundNbt,
     util::{get_optional_components, get_owned_mutf8str, get_t_compound_vec},
 };
+use simdnbt::Mutf8Str;
+use std::borrow::Cow;
 
 use super::Components;
 
+/// The food component.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Food<'a> {
     /// The number of food points restored by this item when eaten. Must be a non-negative integer.
@@ -31,6 +32,7 @@ pub struct Food<'a> {
     pub effects: Vec<Effect<'a>>,
 }
 
+/// An item to convert to when eaten.
 #[derive(Debug, Clone, PartialEq)]
 pub struct FoodConvertedItem<'a> {
     /// The resource location of the item. Must not be air
@@ -40,6 +42,7 @@ pub struct FoodConvertedItem<'a> {
     pub components: Option<Components<'a>>,
 }
 
+/// An effect applied by an item when eaten.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Effect<'a> {
     /// A single effect.
@@ -49,6 +52,7 @@ pub struct Effect<'a> {
     pub probability: f32,
 }
 
+/// Details of an effect applied by an item when eaten.
 #[derive(Debug, Clone, PartialEq)]
 pub struct EffectDetails<'a> {
     /// The ID of the effect.

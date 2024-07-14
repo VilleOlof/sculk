@@ -1,3 +1,5 @@
+//! Base color of the banner applied on a shield.
+
 use crate::{traits::FromCompoundNbt, util::get_owned_mutf8str};
 use simdnbt::Mutf8Str;
 use std::borrow::Cow;

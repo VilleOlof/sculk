@@ -1,9 +1,12 @@
+//! Banner patterns are used in banners to determine the pattern of the banner.
+
 use crate::{
     color::Color, error::SculkParseError, traits::FromCompoundNbt, util::get_owned_mutf8str,
 };
 use simdnbt::Mutf8Str;
 use std::borrow::Cow;
 
+/// Represents a banner pattern.
 #[derive(Debug, Clone, PartialEq)]
 pub struct BannerPattern<'a> {
     /// Dye color of the section.
@@ -21,7 +24,9 @@ pub enum Pattern<'a> {
 
     /// The translation key for displaying the banner tooltip.
     Pattern {
+        /// The asset ID of the pattern.
         asset_id: Cow<'a, Mutf8Str>,
+        /// The translation key for displaying the banner tooltip.
         translation_key: Cow<'a, Mutf8Str>,
     },
 }

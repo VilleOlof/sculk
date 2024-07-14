@@ -1,8 +1,6 @@
-use std::borrow::Cow;
-
-use simdnbt::Mutf8Str;
-
 use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_mutf8str};
+use simdnbt::Mutf8Str;
+use std::borrow::Cow;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TileTick<'a> {

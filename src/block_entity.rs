@@ -1,5 +1,3 @@
-use simdnbt::{borrow::BaseNbt, Mutf8Str};
-
 use crate::{
     block_entities::{variant::BlockEntityVariant, BlockEntityKind},
     components::Components,
@@ -7,10 +5,8 @@ use crate::{
     traits::{FromCompoundNbt, FromNbt},
     util::{get_bool, get_optional_components, get_owned_mutf8str},
 };
+use simdnbt::{borrow::BaseNbt, Mutf8Str};
 use std::{borrow::Cow, io::Cursor};
-
-/// A trait for all ground block entities.
-pub trait BlockEntityTrait {}
 
 /// The base fields of a block entity.
 #[derive(Debug, Clone, PartialEq)]
@@ -86,7 +82,6 @@ pub struct BlockEntity<'a> {
     /// The specific data of the block entity.
     pub kind: BlockEntityKind<'a>,
 }
-impl<'a> BlockEntityTrait for BlockEntity<'a> {}
 
 /// Represents a block entity.  
 /// But with no coordinates.  
@@ -105,7 +100,9 @@ pub struct NoCoordinatesBlockEntity<'a> {
 /// But for now we can own the bytes, sacrificing some memory.
 #[derive(Debug, Clone, PartialEq)]
 pub enum LazyByteVariant<'a> {
+    /// Borrowed bytes.
     Borrowed(&'a [u8]),
+    /// Owned bytes.
     Owned(Vec<u8>),
 }
 
@@ -127,7 +124,6 @@ pub struct LazyBlockEntity<'a> {
     // This is a bit ugly but i found no other way with `borrow::Nbt` or `borrow::BaseNbt` to work
     nbt_bytes: LazyByteVariant<'a>,
 }
-impl<'a> BlockEntityTrait for LazyBlockEntity<'a> {}
 
 impl<'a> FromCompoundNbt for LazyBlockEntity<'a> {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
@@ -286,10 +282,12 @@ impl<'a> LazyBlockEntity<'a> {
 }
 
 impl<'a> BlockEntity<'a> {
+    /// Get the variant of the block entity.
     pub fn variant(&self) -> BlockEntityVariant {
         self.kind.variant()
     }
 
+    /// Converts from bytes to a block entity.
     pub fn from_bytes(bytes: &'a [u8]) -> Result<Self, SculkParseError> {
         let mut cursor = Cursor::new(bytes);
         let nbt = match simdnbt::borrow::read(&mut cursor) {
@@ -302,6 +300,7 @@ impl<'a> BlockEntity<'a> {
 }
 
 impl<'a> LazyBlockEntity<'a> {
+    /// Gets the specific data for the block entity.
     pub fn kind(&self) -> Result<BlockEntityKind, SculkParseError> {
         let bytes = match &self.nbt_bytes {
             LazyByteVariant::Borrowed(bytes) => bytes,
@@ -321,6 +320,7 @@ impl<'a> LazyBlockEntity<'a> {
         BlockEntityKind::from_compound_nbt(&compound_nbt)
     }
 
+    /// Get the components of the block entity.
     pub fn get_components(&self) -> Result<Option<Components>, SculkParseError> {
         let bytes = match &self.nbt_bytes {
             LazyByteVariant::Borrowed(bytes) => bytes,
@@ -340,6 +340,7 @@ impl<'a> LazyBlockEntity<'a> {
         get_optional_components(&compound_nbt)
     }
 
+    /// Converts a [`LazyBlockEntity`] to an owned [`BlockEntity`].
     pub fn to_owned(&self) -> Result<BlockEntity, SculkParseError> {
         let bytes = match &self.nbt_bytes {
             LazyByteVariant::Borrowed(bytes) => bytes,
@@ -354,6 +355,7 @@ impl<'a> LazyBlockEntity<'a> {
         BlockEntity::from_nbt(nbt)
     }
 
+    /// Converts from bytes to a block entity.
     pub fn from_bytes(bytes: &'a [u8]) -> Result<Self, SculkParseError> {
         let mut cursor = Cursor::new(bytes);
         let nbt = match simdnbt::borrow::read(&mut cursor) {

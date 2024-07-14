@@ -1,8 +1,11 @@
+//! The effects of a suspicious stew.
+
 use simdnbt::Mutf8Str;
 use std::borrow::Cow;
 
 use crate::{traits::FromCompoundNbt, util::get_owned_mutf8str};
 
+/// The effects of a suspicious stew.
 #[derive(Debug, Clone, PartialEq)]
 pub struct SuspiciousStewEffects<'a> {
     /// The ID of the effect.

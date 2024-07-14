@@ -1,8 +1,10 @@
+//! Tool component.
+
+use crate::{error::SculkParseError, traits::FromCompoundNbt};
 use simdnbt::Mutf8Str;
 use std::borrow::Cow;
 
-use crate::{error::SculkParseError, traits::FromCompoundNbt};
-
+/// A tool that can be used to mine blocks.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Tool<'a> {
     /// The default mining speed of this tool, used if no rules override it. Defaults to 1.0.
@@ -15,6 +17,7 @@ pub struct Tool<'a> {
     pub rules: Vec<ToolRules<'a>>,
 }
 
+/// Rules on how a tool behaves with certain blocks.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ToolRules<'a> {
     /// The blocks to match with. Can be a block ID or a block tag with a #, or a list of block IDs.  

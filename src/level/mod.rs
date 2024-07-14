@@ -206,6 +206,7 @@ pub struct Level<'a> {
     pub was_modded: bool,
 }
 
+/// More detailed information about the Minecraft version the world was saved in.
 #[derive(Debug, Clone, PartialEq)]
 pub struct VersionData<'a> {
     /// An integer displaying the data version.  
@@ -246,16 +247,23 @@ impl<'a> FromCompoundNbt for VersionData<'a> {
     }
 }
 
+/// The difficulty of the world.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Difficulty {
+    /// Peaceful difficulty.
     Peaceful,
+    /// Easy difficulty.
     Easy,
+    /// Normal difficulty.
     Normal,
+    /// Hard difficulty.
     Hard,
+    /// An unknown difficulty. (how tf)
     Unknown(i8),
 }
 
 impl Difficulty {
+    /// Converts an i8 to a Difficulty.
     pub fn from_i8(b: i8) -> Difficulty {
         match b {
             0 => Difficulty::Peaceful,

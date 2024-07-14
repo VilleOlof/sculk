@@ -1,14 +1,13 @@
-use std::borrow::Cow;
-
-use simdnbt::Mutf8Str;
-
 use crate::{
     color::Color,
     error::SculkParseError,
     traits::FromCompoundNbt,
     util::{get_bool, get_owned_mutf8str, get_owned_optional_mutf8str, get_t_compound_vec},
 };
+use simdnbt::Mutf8Str;
+use std::borrow::Cow;
 
+/// Represents a map in the game.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Map<'a> {
     /// How zoomed in the map is (it is in 2scale wide blocks square per pixel, even for 0, where the map is 1:1). Default 3, minimum 0 and maximum 4.   
@@ -47,6 +46,7 @@ pub struct Map<'a> {
     pub data_version: i32,
 }
 
+/// The position of a map marker/banner.
 #[derive(Debug, Clone, PartialEq)]
 pub struct MapPos {
     /// The x-position
@@ -60,6 +60,7 @@ pub struct MapPos {
     z: i32,
 }
 
+/// A banner on a map.
 #[derive(Debug, Clone, PartialEq)]
 pub struct MapBanner<'a> {
     ///  The color of the banner.  
@@ -75,6 +76,7 @@ pub struct MapBanner<'a> {
     pub pos: MapPos,
 }
 
+/// A frame on a map.
 #[derive(Debug, Clone, PartialEq)]
 pub struct MapFrame {
     /// Arbitrary unique value for the marker.  

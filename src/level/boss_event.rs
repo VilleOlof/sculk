@@ -1,6 +1,4 @@
-use std::{borrow::Cow, collections::HashMap};
-
-use simdnbt::Mutf8Str;
+//! Data about custom boss events.
 
 use crate::{
     error::SculkParseError,
@@ -9,7 +7,10 @@ use crate::{
     util::{get_bool, get_owned_mutf8str},
     uuid::Uuid,
 };
+use simdnbt::Mutf8Str;
+use std::{borrow::Cow, collections::HashMap};
 
+/// A custom boss bar event.
 #[derive(Debug, Clone, PartialEq)]
 pub struct CustomBossEvent<'a> {
     ///  A list of players that may see this boss bar.  
@@ -53,13 +54,20 @@ pub struct CustomBossEvent<'a> {
     pub visible: bool,
 }
 
+/// The overlay type to use for the boss bar.
 #[derive(Debug, Clone, PartialEq)]
 pub enum BossEventOverlay {
+    /// A smooth progress bar.
     Progress,
+    /// A notched progress bar with 6 segments.
     Notched6,
+    /// A notched progress bar with 10 segments.
     Notched10,
+    /// A notched progress bar with 12 segments.
     Notched12,
+    /// A notched progress bar with 20 segments.
     Notched20,
+    /// An unknown overlay type.
     Unknown(String),
 }
 

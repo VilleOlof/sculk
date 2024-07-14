@@ -1,5 +1,8 @@
+//! Enchantments on an item.
+
 use crate::{kv::KVPair, traits::FromCompoundNbt};
 
+/// Enchantments on an item.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Enchantments<'a> {
     /// Contains key-value pairs of levels of enchantments on this item that affect the way the item works.  

@@ -1,9 +1,11 @@
-use std::borrow::Cow;
-
-use simdnbt::Mutf8Str;
+//! Lists what datapacks are enabled and disabled in a world.  
+//! You may think at first this is the actual datapacks but nah nah.
 
 use crate::{error::SculkParseError, traits::FromCompoundNbt};
+use simdnbt::Mutf8Str;
+use std::borrow::Cow;
 
+/// What datapacks are enabled and disabled in a world.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Datapacks<'a> {
     /// List of disabled datapacks.  

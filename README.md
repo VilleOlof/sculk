@@ -41,5 +41,6 @@ But again, lifetime issues.
 - [-] Player advancements?    
 - [/] Command storage, idcounts, **map data**, raids?    
 - [ ] Once done, rethink/look back on pub api  
+- [ ] Examples folder  
 - [/] Criterion benchmarks  
 - [/] Fork mca-parser and make it barebones to uncompressed data only (based-mca)  

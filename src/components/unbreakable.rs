@@ -1,6 +1,8 @@
+//! Unbreakable component.
+
 use crate::traits::FromCompoundNbt;
 
-// funny silly small struct
+/// funny silly small struct
 #[derive(Clone, Debug, PartialEq)]
 pub struct Unbreakable {
     /// Show or hide the "Unbreakable" line on this item's tooltip. Defaults to true.  

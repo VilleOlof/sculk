@@ -16,6 +16,8 @@ pub mod abilities;
 pub mod game_type;
 pub mod recipe_book;
 
+/// Represents a player's data.  
+/// Often confined in a `[uuid].dat` file or in the `level.dat` file in singeplayer.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Player<'a> {
     // Entity, except for the tags: CustomName, CustomNameVisible, and Glowing.
@@ -143,6 +145,7 @@ pub struct Player<'a> {
     pub xp_total: i32,
 }
 
+/// Contains data about the warden spawning process for this player.
 #[derive(Debug, Clone, PartialEq)]
 pub struct WardenTracker {
     /// A warning level between 0, and 3 (inclusive). The warden spawns at level 3.
@@ -155,6 +158,7 @@ pub struct WardenTracker {
     pub ticks_since_last_warning: i32,
 }
 
+/// The root entity that the player is riding.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Vechile<'a> {
     /// The UUID of the entity the player is riding, stored as four ints.  
@@ -166,6 +170,7 @@ pub struct Vechile<'a> {
     pub entity: Entity<'a>,
 }
 
+/// The location of the player's last death.
 #[derive(Debug, Clone, PartialEq)]
 pub struct DeathLocation<'a> {
     /// Dimension of last death.
@@ -175,6 +180,7 @@ pub struct DeathLocation<'a> {
     pub pos: Vec<i32>,
 }
 
+/// The position the player entered the Nether from.
 #[derive(Debug, Clone, PartialEq)]
 pub struct NetherPosition {
     /// The X coordinate in the Overworld.

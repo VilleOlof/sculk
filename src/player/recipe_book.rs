@@ -1,8 +1,10 @@
+//! Structures and parsers for a player's recipe book.
+
+use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_bool};
 use simdnbt::Mutf8Str;
 use std::borrow::Cow;
 
-use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_bool};
-
+/// A player's recipe book.
 #[derive(Debug, Clone, PartialEq)]
 pub struct RecipeBook<'a> {
     /// A list of all recipes the player has seen.

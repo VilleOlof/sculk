@@ -1,11 +1,10 @@
-use std::io::Cursor;
-
 use crate::{
     block_entity::BlockEntity, entity::Entity, error::SculkParseError, traits::FromCompoundNbt,
     util::get_t_compound_vec,
 };
 use section::ChunkSection;
 use status::ChunkStatus;
+use std::io::Cursor;
 use structure::Structures;
 use tile_tick::TileTick;
 

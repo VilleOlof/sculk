@@ -1,7 +1,10 @@
-use simdnbt::borrow::NbtCompound;
+//! Bucket entity data component.
 
 use crate::traits::FromCompoundNbt;
+use simdnbt::borrow::NbtCompound;
 
+/// Represents the bucket entity data component.  
+/// Like axolotl in a bucket.
 #[derive(Debug, Clone, PartialEq)]
 pub struct BucketEntityData {
     /// Turns into NoAI entity tag for all bucketable entities.

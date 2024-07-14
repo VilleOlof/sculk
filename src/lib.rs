@@ -14,24 +14,26 @@
 //! assert_eq!(block_entity.variant(), BlockEntityVariant::StructureBlock);
 //! ```
 
-mod block_entities;
-mod block_entity;
-mod chunk;
-mod color;
-mod components;
-mod entity;
-mod error;
-mod item;
+pub mod block_entities;
+pub mod block_entity;
+pub mod chunk;
+pub mod color;
+pub mod components;
+pub mod entity;
+pub mod error;
+pub mod item;
+pub mod level;
+pub mod map;
+pub mod player;
+pub mod rarity;
+pub mod uuid;
+
 mod kv;
-mod level;
-mod map;
-mod player;
-mod rarity;
 mod traits;
 mod util;
-mod uuid;
 
 #[cfg(feature = "stats")]
 mod statistics;
 
 // Re-export the modules.
+pub use util::MC_VERSION;

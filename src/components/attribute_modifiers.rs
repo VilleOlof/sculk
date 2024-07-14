@@ -1,3 +1,5 @@
+//! Attribute modifiers component.
+
 use crate::{
     error::SculkParseError,
     traits::FromCompoundNbt,
@@ -6,6 +8,7 @@ use crate::{
 use simdnbt::Mutf8Str;
 use std::borrow::Cow;
 
+/// A compound of attribute modifiers.
 #[derive(Debug, Clone, PartialEq)]
 pub struct AttributeModifiers<'a> {
     /// Show or hide attribute modifiers on this item's tooltip. Defaults to `true`.
@@ -15,10 +18,13 @@ pub struct AttributeModifiers<'a> {
     pub modifiers: Vec<Modifier<'a>>,
 }
 
+/// An attribute modifier component.
 #[derive(Debug, Clone, PartialEq)]
 pub enum AttributeModifier<'a> {
+    /// A list of attribute modifiers.
     ModifierList(Vec<Modifier<'a>>),
 
+    /// A compound of attribute modifiers.
     Compound(AttributeModifiers<'a>),
 }
 

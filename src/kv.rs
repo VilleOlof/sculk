@@ -1,8 +1,6 @@
-use std::{borrow::Cow, collections::HashMap, ops::Deref};
-
-use simdnbt::{borrow::NbtCompound, Mutf8Str};
-
 use crate::{error::SculkParseError, traits::FromCompoundNbt};
+use simdnbt::{borrow::NbtCompound, Mutf8Str};
+use std::{borrow::Cow, collections::HashMap, ops::Deref};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct KVPair<'a, T>(HashMap<Cow<'a, String>, T>);

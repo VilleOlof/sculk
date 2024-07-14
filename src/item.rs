@@ -1,12 +1,12 @@
-use simdnbt::Mutf8Str;
-
 use crate::{
     components::Components,
     traits::FromCompoundNbt,
     util::{get_optional_components, get_owned_mutf8str},
 };
+use simdnbt::Mutf8Str;
 use std::borrow::Cow;
 
+/// Represents an item in an inventory slot.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Item<'a> {
     /// The inventory slot the item is in.  
@@ -25,6 +25,8 @@ pub struct Item<'a> {
     pub components: Option<Components<'a>>,
 }
 
+/// Represents an item in an inventory slot, without the slot number.  
+/// Often used for items in single-item inventories.  
 #[derive(Debug, Clone, PartialEq)]
 pub struct ItemWithNoSlot<'a> {
     /// The resource location of the item. Must not be `air`.

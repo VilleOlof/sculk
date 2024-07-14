@@ -7,6 +7,7 @@ use std::borrow::Cow;
 
 /// The version of Minecraft that this library is designed to work with.  
 /// Formatted exactly as minecraft versions are.
+#[allow(dead_code)]
 pub const MC_VERSION: &str = "1.21";
 
 pub struct LootTableData<'a> {

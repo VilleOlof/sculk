@@ -1,3 +1,5 @@
+//! Potion contents component.
+
 use crate::{
     color::RGB,
     traits::FromCompoundNbt,
@@ -8,12 +10,16 @@ use std::borrow::Cow;
 
 use super::food::EffectDetails;
 
+/// The contents of a potion item.
 #[derive(Debug, Clone, PartialEq)]
 pub enum PotionContents<'a> {
+    /// A resource location string representing the potion type.
     String(Cow<'a, Mutf8Str>),
+    /// More detailed information about a potion item.
     Compound(PotionData<'a>),
 }
 
+/// More detailed information about a potion item.
 #[derive(Debug, Clone, PartialEq)]
 pub struct PotionData<'a> {
     /// The ID of a potion type. Optional. See [Potion#Item data](https://minecraft.wiki/w/Potion#Item_data).

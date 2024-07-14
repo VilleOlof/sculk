@@ -1,9 +1,20 @@
+//! Dyed color component.
+
 use crate::{color::RGB, error::SculkParseError, traits::FromCompoundNbt};
 
+/// A dyed color component.  
+/// Used on stuff like leather armor.  
 #[derive(Debug, Clone, PartialEq)]
 pub enum DyedColor {
+    /// A simple RGB color.
     Int(RGB),
-    Compound { rgb: RGB, show_in_tooltip: bool },
+    /// Also if the color should be shown in the tooltip.
+    Compound {
+        /// The RGB color.
+        rgb: RGB,
+        /// If the color should be shown in the tooltip.
+        show_in_tooltip: bool,
+    },
 }
 
 impl FromCompoundNbt for DyedColor {

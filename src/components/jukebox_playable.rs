@@ -1,13 +1,16 @@
-use std::borrow::Cow;
-
-use simdnbt::Mutf8Str;
+//! Jukebox Playable component.
 
 use crate::{traits::FromCompoundNbt, util::get_owned_mutf8str};
+use simdnbt::Mutf8Str;
+use std::borrow::Cow;
 
+/// A Jukebox Playable component.
 #[derive(Debug, Clone, PartialEq)]
 pub struct JukeboxPlayable<'a> {
+    /// The song to play.
     pub song: Cow<'a, Mutf8Str>,
 
+    /// If `true`, the song is shown in the tooltip of the item. Defaults to `true`.
     pub show_in_tooltip: bool,
 }
 

@@ -1,5 +1,8 @@
+//! Settings used when generating the world.  
+
 use crate::{error::SculkParseError, kv::KVPair, traits::FromCompoundNbt};
 
+/// Settings about the world generation.
 #[derive(Debug, Clone, PartialEq)]
 pub struct WorldGenSettings<'a> {
     /// Used to determine if the bonus chest should appear near the spawn point when a world is first entered. Available only in single player.  

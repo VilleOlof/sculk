@@ -1,3 +1,5 @@
+//! Contains the `Container` component.
+
 use crate::{item::ItemWithNoSlot, traits::FromCompoundNbt};
 
 /// The items contained in this container.

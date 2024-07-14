@@ -1,22 +1,24 @@
+use crate::error::SculkParseError;
+use simdnbt::borrow::NbtCompound;
 use std::ops::Deref;
 
-use simdnbt::borrow::NbtCompound;
-
-use crate::error::SculkParseError;
-
+/// A UUID, internally represented as an array of 4 integers.
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub struct Uuid(pub [i32; 4]);
 
 impl Uuid {
+    /// Creates a new `Uuid` from an i128.
     #[allow(unused_variables)]
     pub fn from_i128(i: i128) -> Self {
         unimplemented!()
     }
 
+    /// Converts the `Uuid` to an i128.
     pub fn to_i128(&self) -> i128 {
         unimplemented!()
     }
 
+    /// Creates a hex string representation of the `Uuid`.
     pub fn to_hex_string(&self) -> String {
         unimplemented!()
     }
@@ -37,6 +39,7 @@ impl From<[i32; 4]> for Uuid {
 }
 
 impl Uuid {
+    /// Converts a list of int arrays to a list of `Uuid`s.
     pub fn from_nbt_to_vec(nbt: &NbtCompound, key: &'static str) -> Vec<Self> {
         nbt.list(key)
             .map_or_else(

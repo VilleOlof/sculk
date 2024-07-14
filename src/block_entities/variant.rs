@@ -1,4 +1,4 @@
-use super::BlockEntityKind;
+pub use crate::block_entities::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum BlockEntityVariant {

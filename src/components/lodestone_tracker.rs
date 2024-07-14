@@ -1,12 +1,13 @@
-use std::borrow::Cow;
-
-use simdnbt::Mutf8Str;
+//! Lodestone Tracker component. This component is present in lodestone compasses.
 
 use crate::{
     traits::FromCompoundNbt,
     util::{get_int_array, get_owned_mutf8str},
 };
+use simdnbt::Mutf8Str;
+use std::borrow::Cow;
 
+/// The Lodestone Tracker component.
 #[derive(Debug, Clone, PartialEq)]
 pub struct LodestoneTracker<'a> {
     /// Information about the lodestone. Optional. If not set, this compass spins randomly.
@@ -16,6 +17,7 @@ pub struct LodestoneTracker<'a> {
     pub tracked: bool,
 }
 
+/// The target of a lodestone.
 #[derive(Debug, Clone, PartialEq)]
 pub struct LodestoneTarget<'a> {
     /// The integer coordinates of the lodestone.

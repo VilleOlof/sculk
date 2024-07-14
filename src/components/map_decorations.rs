@@ -1,21 +1,28 @@
-use std::{borrow::Cow, collections::HashMap};
+//! Map decorations component.
 
 use crate::{error::SculkParseError, kv::KVPair, traits::FromCompoundNbt};
+use std::{borrow::Cow, collections::HashMap};
 
+/// Decorations on a map.
 #[derive(Debug, Clone, PartialEq)]
 pub struct MapDecorations<'a>(KVPair<'a, MapIcon>);
 
 /// The key-value pair of a single icon, where the key is an arbitrary unique string identifying the decoration.
 #[derive(Debug, Clone, PartialEq)]
 pub struct MapIcon {
+    /// The type of icon.
     pub r#type: MapIconType,
 
+    /// The x-coordinate of the icon.
     pub x: f64,
+    /// The z-coordinate of the icon.
     pub z: f64,
 
+    /// The rotation of the icon.
     pub rotation: f32,
 }
 
+/// The type of icon.
 #[derive(Debug, Clone, PartialEq)]
 pub enum MapIconType {
     Player,
@@ -56,6 +63,7 @@ pub enum MapIconType {
 }
 
 impl MapIconType {
+    /// Converts a string to a `MapIconType`.
     pub fn from_str(s: &str) -> Self {
         match s {
             "player" => Self::Player,

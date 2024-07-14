@@ -1,16 +1,19 @@
-use std::borrow::Cow;
-
-use simdnbt::Mutf8Str;
+//! Instrument component.
 
 use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_mutf8str};
+use simdnbt::Mutf8Str;
+use std::borrow::Cow;
 
 /// (referenced by ID or inlined)
 #[derive(Debug, Clone, PartialEq)]
 pub enum Instrument<'a> {
+    /// The ID of the instrument.
     ID(Cow<'a, Mutf8Str>),
+    /// The instrument data.
     Inline(InstrumentData<'a>),
 }
 
+/// Instrument data.
 #[derive(Debug, Clone, PartialEq)]
 pub struct InstrumentData<'a> {
     /// sound event (referenced by ID or inlined)
@@ -23,12 +26,16 @@ pub struct InstrumentData<'a> {
     pub range: f32,
 }
 
+/// (referenced by ID or inlined)
 #[derive(Debug, Clone, PartialEq)]
 pub enum SoundEvent<'a> {
+    /// The ID of the sound event.
     ID(Cow<'a, Mutf8Str>),
+    /// The sound event data.
     Inline(SoundEventData<'a>),
 }
 
+/// Sound event data.
 #[derive(Debug, Clone, PartialEq)]
 pub struct SoundEventData<'a> {
     /// A resource location that points to a sound file.

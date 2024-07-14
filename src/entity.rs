@@ -1,7 +1,3 @@
-use std::borrow::Cow;
-
-use simdnbt::Mutf8Str;
-
 use crate::{
     error::SculkParseError,
     traits::FromCompoundNbt,
@@ -11,7 +7,10 @@ use crate::{
     },
     uuid::Uuid,
 };
+use simdnbt::Mutf8Str;
+use std::borrow::Cow;
 
+/// An entity in the game.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Entity<'a> {
     ///  How much air the entity has, in game ticks. Decreases when unable to breathe (except suffocating in a block). Increases when it can breathe.  Air being <= -20 game ticks (while still unable to breathe) on a given game tick causes the entity to immediately lose 1 health to drowning damage. This resets  Air to 0 game ticks. Most mobs can have a maximum of 300 game ticks (15 seconds) of  Air, while dolphins can reach up to 4800 game ticks (240 seconds), and axolotls have 6000 game ticks (300 seconds).
@@ -118,6 +117,8 @@ pub struct Entity<'a> {
     // TODO: Add entity specific data field like block entites, low priority as it allows very specific narrow block entity -> entity data handling
 }
 
+/// A maybe entity.  
+/// All fields are optional.
 #[derive(Debug, Clone, PartialEq)]
 pub struct MaybeEntity<'a> {
     ///  How much air the entity has, in game ticks. Decreases when unable to breathe (except suffocating in a block). Increases when it can breathe.  Air being <= -20 game ticks (while still unable to breathe) on a given game tick causes the entity to immediately lose 1 health to drowning damage. This resets  Air to 0 game ticks. Most mobs can have a maximum of 300 game ticks (15 seconds) of  Air, while dolphins can reach up to 4800 game ticks (240 seconds), and axolotls have 6000 game ticks (300 seconds).

@@ -1,5 +1,8 @@
+//! Firework explosion component.
+
 use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_bool};
 
+/// The explosion of a firework.
 #[derive(Debug, Clone, PartialEq)]
 pub struct FireworkExplosion {
     /// The shape of the explosion.
@@ -18,12 +21,18 @@ pub struct FireworkExplosion {
     pub has_twinkle: bool,
 }
 
+/// The different shapes of a firework explosion.
 #[derive(Debug, Clone, PartialEq)]
 pub enum FireworkShape {
+    /// smol
     SmallBall,
+    /// chonk
     LargeBall,
+    /// star
     Star,
+    /// scary creepr
     Creeper,
+    /// boom
     Burst,
 }
 

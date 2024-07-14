@@ -51,6 +51,7 @@ pub mod written_book_content;
 
 type InternalMap<'a> = HashMap<String, Component<'a>>;
 
+/// A collection of components.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Components<'a>(InternalMap<'a>);
 

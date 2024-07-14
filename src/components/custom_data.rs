@@ -1,10 +1,15 @@
+//! Custom data component.
+
 use crate::{error::SculkParseError, kv::KVPair, traits::FromCompoundNbt};
 use simdnbt::Mutf8Str;
 use std::borrow::Cow;
 
+/// Custom data component.
 #[derive(Debug, Clone, PartialEq)]
 pub enum CustomData<'a> {
+    /// If its a string, it's the SNBT.
     Snbt(Cow<'a, Mutf8Str>),
+    /// If its a compound, it's a key-value pair.
     KeyValues(KVPair<'a, Cow<'a, Mutf8Str>>),
 }
 

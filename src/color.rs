@@ -1,20 +1,37 @@
+/// Represents a color in Minecraft.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Color {
+    /// yep uh thats white
     White = 0,
+    /// orange, thats like a fruit right?
     Orange = 1,
+    /// magenta is a beautiful color
     Magenta = 2,
+    /// water!!
     LightBlue = 3,
+    /// piss
     Yellow = 4,
+    /// green but slightly more white
     Lime = 5,
+    /// pinkie pie
     Pink = 6,
+    /// gray
     Gray = 7,
+    /// gray but not gray
     LightGray = 8,
+    /// still cyan
     Cyan = 9,
+    /// yep, thats another color
     Purple = 10,
+    /// blue?
     Blue = 11,
+    /// i hope you like brown
     Brown = 12,
+    /// actual green
     Green = 13,
+    /// red like my nightmares
     Red = 14,
+    /// me when i close my eyes
     Black = 15,
 }
 
@@ -31,6 +48,7 @@ impl From<&str> for Color {
 }
 
 impl Color {
+    /// Converts a color ID to a `Color`.
     #[allow(dead_code)]
     pub fn from_id(id: u8) -> Option<Self> {
         match id {
@@ -54,6 +72,7 @@ impl Color {
         }
     }
 
+    /// Converts a string to a `Color`.
     pub fn from_str(s: &str) -> Option<Self> {
         let s = s.to_lowercase();
         let s = s.as_str();
@@ -79,6 +98,7 @@ impl Color {
         }
     }
 
+    /// Converts a `Color` to a string.
     pub fn to_str(&self) -> &'static str {
         match self {
             Self::White => "white",
@@ -100,6 +120,7 @@ impl Color {
         }
     }
 
+    /// Converts a `Color` to its hex value.
     #[allow(dead_code)]
     pub fn to_hex(&self) -> &'static str {
         match self {
@@ -123,6 +144,7 @@ impl Color {
     }
 }
 
+/// Represents an RGB color.
 #[derive(Debug, Clone, PartialEq)]
 pub struct RGB(i32);
 
@@ -133,10 +155,12 @@ impl From<RGB> for i32 {
 }
 
 impl RGB {
+    /// Creates a new `RGB` color.
     pub fn new(i: i32) -> Self {
         RGB(i)
     }
 
+    /// Converts an `RGB` color to a hex string.
     pub fn to_hex(&self) -> String {
         let r = (self.0 >> 16) & 0xFF;
         let g = (self.0 >> 8) & 0xFF;
@@ -145,6 +169,7 @@ impl RGB {
         format!("#{:02X}{:02X}{:02X}", r, g, b)
     }
 
+    /// Converts each rgb value to an i32
     pub fn from_u8(r: u8, g: u8, b: u8) -> Self {
         // Formula: Red<<16 + Green<<8 + Blue
         // see: https://minecraft.wiki/w/Data_component_format#dyed_color
