@@ -62,7 +62,7 @@ impl FromCompoundNbt for CommandBlock {
         Self: Sized,
     {
         let auto = get_bool(&nbt, "auto");
-        let command = get_owned_string(&nbt, "command")?;
+        let command = get_owned_string(&nbt, "Command")?;
         let condition_met = get_bool(&nbt, "conditionMet");
         let custom_name = get_owned_optional_string(&nbt, "CustomName");
         let last_execution = nbt
