@@ -1,6 +1,7 @@
 use crate::{error::SculkParseError, traits::FromCompoundNbt};
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Comparator {
     /// Represents the strength of the analog signal output of this redstone comparator.
     ///

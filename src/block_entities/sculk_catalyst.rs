@@ -1,6 +1,7 @@
 use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_int_array};
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SculkCatalyst {
     /// List of sculk charge clusters associated with the sculk catalyst.
     cursors: Vec<Cursor>,
@@ -9,6 +10,7 @@ pub struct SculkCatalyst {
 /// A sculk charge cluster. Each cluster is stored within a single sculk block.
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Cursor {
     /// How many sculk charges are being carried in the cluster.
     pub charge: i32,
@@ -26,6 +28,7 @@ pub struct Cursor {
 
     /// If the block to replace is an air or water block, the block is replaced with sculk veins, and the faces where the sculk veins are placed are also stored in their block state. The sculk veins never grow directly on the faces of a sculk block. The same thing is done to any air or water blocks that are adjacent to blocks that are adjacent to this sculk block, if sculk veins can't grow in the blocks adjacent to this sculk block without growing directly on the faces of sculk blocks.
     // TODO: Research what this value is.
+    #[cfg_attr(feature = "serde", serde(skip))]
     pub facings: Vec<simdnbt::owned::NbtCompound>,
 }
 

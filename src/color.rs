@@ -1,5 +1,7 @@
 /// Represents a color in Minecraft.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(from = "&str", into = "&str"))]
 pub enum Color {
     /// yep uh thats white
     White = 0,
@@ -44,6 +46,12 @@ impl From<u8> for Color {
 impl From<&str> for Color {
     fn from(s: &str) -> Self {
         Self::from_str(s).unwrap()
+    }
+}
+
+impl From<Color> for &str {
+    fn from(value: Color) -> Self {
+        &value.to_str()
     }
 }
 
@@ -146,6 +154,7 @@ impl Color {
 
 /// Represents an RGB color.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RGB(i32);
 
 impl From<RGB> for i32 {

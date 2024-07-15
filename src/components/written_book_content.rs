@@ -5,6 +5,7 @@ use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_str
 
 /// The content of a written book.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct WrittenBookContent {
     /// A list of the pages in the book.
     pub pages: PageType,

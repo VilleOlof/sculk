@@ -5,6 +5,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct CommandBlock {
     /// Allows to activate the command without the requirement of a redstone signal.
     pub auto: bool,

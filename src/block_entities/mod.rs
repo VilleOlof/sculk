@@ -41,6 +41,7 @@ pub mod vault;
 
 /// Represents unique data specific to a block entity.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum BlockEntityKind {
     /// `minecraft:<color>_banner` or `minecraft:<color>_wall_banner`
     Banners(banners::Banner),

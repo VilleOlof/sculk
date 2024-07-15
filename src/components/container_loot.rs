@@ -4,6 +4,7 @@ use crate::{traits::FromCompoundNbt, util::get_owned_string};
 
 /// Represents the loot table of a container.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ContainerLoot {
     /// Reference to the loot table.
     pub loot_table: String,

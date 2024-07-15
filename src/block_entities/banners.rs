@@ -5,6 +5,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Banner {
     /// Optional. The name of this banner in JSON text component, which is used for showing the banner on a map.
     ///

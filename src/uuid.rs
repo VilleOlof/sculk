@@ -4,6 +4,7 @@ use std::ops::Deref;
 
 /// A UUID, internally represented as an array of 4 integers.
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Uuid(pub [i32; 4]);
 
 impl Uuid {

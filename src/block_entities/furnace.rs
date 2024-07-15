@@ -7,6 +7,7 @@ use crate::{
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Furnace {
     /// Number of ticks left before the current fuel runs out.
     ///

@@ -4,6 +4,7 @@ use crate::{error::SculkParseError, kv::KVPair, traits::FromCompoundNbt};
 
 /// Custom data component.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum CustomData {
     /// If its a string, it's the SNBT.
     Snbt(String),

@@ -4,6 +4,7 @@ use crate::{traits::FromCompoundNbt, util::get_owned_string};
 
 /// A Jukebox Playable component.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct JukeboxPlayable {
     /// The song to play.
     pub song: String,

@@ -2,7 +2,8 @@ use crate::{error::SculkParseError, traits::FromCompoundNbt};
 use simdnbt::borrow::NbtCompound;
 use std::collections::HashMap;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct KVPair<T>(HashMap<String, T>);
 
 impl<T> KVPair<T> {

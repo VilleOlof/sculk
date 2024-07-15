@@ -7,6 +7,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Vault {
     /// Configuration data that does not automatically change. All fields are optional.
     pub config: VaultConfig,
@@ -19,6 +20,7 @@ pub struct Vault {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct VaultConfig {
     ///  A resource location to the loot table that is ejected when unlocking the vault. Defaults to "minecraft:chests/trial_chambers/reward"
     pub loot_table: Option<String>,
@@ -37,6 +39,7 @@ pub struct VaultConfig {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct VaultServerData {
     ///  A set of player UUIDs that have already received their rewards from this vault.
     pub rewarded_players: Vec<Uuid>,
@@ -52,6 +55,7 @@ pub struct VaultServerData {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct VaultSharedData {
     /// The item that is currently being displayed.
     pub display_item: Item,

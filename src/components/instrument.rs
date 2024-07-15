@@ -4,6 +4,7 @@ use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_str
 
 /// (referenced by ID or inlined)
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Instrument {
     /// The ID of the instrument.
     ID(String),
@@ -13,6 +14,7 @@ pub enum Instrument {
 
 /// Instrument data.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct InstrumentData {
     /// sound event (referenced by ID or inlined)
     pub sound_event: SoundEvent,
@@ -26,6 +28,7 @@ pub struct InstrumentData {
 
 /// (referenced by ID or inlined)
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum SoundEvent {
     /// The ID of the sound event.
     ID(String),
@@ -35,6 +38,7 @@ pub enum SoundEvent {
 
 /// Sound event data.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SoundEventData {
     /// A resource location that points to a sound file.
     pub sound_id: String,

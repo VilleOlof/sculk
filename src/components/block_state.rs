@@ -4,6 +4,7 @@ use crate::{kv::KVPair, traits::FromCompoundNbt};
 
 /// Represents multiple key-value pairs of block states.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct BlockState(KVPair<String>);
 
 impl FromCompoundNbt for BlockState {

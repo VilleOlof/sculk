@@ -1,6 +1,7 @@
 use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_string};
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct TileTick {
     /// The ID of the block; used to activate the correct block update procedure.
     pub i: String,

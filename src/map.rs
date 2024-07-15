@@ -7,6 +7,7 @@ use crate::{
 
 /// Represents a map in the game.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Map {
     /// How zoomed in the map is (it is in 2scale wide blocks square per pixel, even for 0, where the map is 1:1). Default 3, minimum 0 and maximum 4.   
     pub scale: i8,
@@ -46,6 +47,7 @@ pub struct Map {
 
 /// The position of a map marker/banner.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MapPos {
     /// The x-position
     /// `X`
@@ -60,6 +62,7 @@ pub struct MapPos {
 
 /// A banner on a map.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MapBanner {
     ///  The color of the banner.  
     /// `Color`
@@ -76,6 +79,7 @@ pub struct MapBanner {
 
 /// A frame on a map.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MapFrame {
     /// Arbitrary unique value for the marker.  
     /// `EntityId`

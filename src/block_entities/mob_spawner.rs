@@ -4,6 +4,7 @@ use crate::{
 use simdnbt::borrow::NbtCompound;
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MobSpawner {
     /// Ticks until next spawn. If 0, it spawns immediately when a player enters its range. If set to -1 (this state never occurs in a natural spawner; it seems to be a feature accessed only via NBT editing), the spawner resets this and SpawnData as though it had just completed a successful spawn cycle, immediately when a player enters its range. Setting this to -1 can be useful if the player wants the game to properly randomize the spawner's Delay and SpawnData, rather than starting with pre-defined values.
     ///
@@ -53,6 +54,7 @@ pub struct MobSpawner {
 
 /// A potential future spawn. After the spawner makes an attempt at spawning, it chooses one of these entries at random and uses it to prepare for the next spawn, overwriting SpawnData.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct PotentialSpawn {
     /// The chance that this spawn gets picked in comparison to other spawn weights. Must be positive and at least 1.
     pub weight: i32,
@@ -61,6 +63,7 @@ pub struct PotentialSpawn {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SpawnData {
     /// An entity, including the entity id.
     pub entity: MaybeEntity,
@@ -73,6 +76,7 @@ pub struct SpawnData {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SpawnRules {
     /// Can either be a single value, or a compound containing min_inclusive and max_inclusive. Overrides the block light check when spawning the entity.
     pub block_light_limit: i32,
@@ -82,6 +86,7 @@ pub struct SpawnRules {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Equipment {
     /// Resource location of a loot table to use to generate the equipment
     pub loot_table: String,
@@ -91,12 +96,14 @@ pub struct Equipment {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum DropChanceType {
     All(f32),
     Indiviual(DropChances),
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct DropChances {
     /// Optional. Drop chance of the boots.
     pub feet: Option<f32>,

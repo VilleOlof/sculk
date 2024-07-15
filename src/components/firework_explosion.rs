@@ -4,6 +4,7 @@ use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_bool};
 
 /// The explosion of a firework.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct FireworkExplosion {
     /// The shape of the explosion.
     pub shape: FireworkShape,
@@ -23,6 +24,7 @@ pub struct FireworkExplosion {
 
 /// The different shapes of a firework explosion.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum FireworkShape {
     /// smol
     SmallBall,

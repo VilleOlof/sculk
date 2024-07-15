@@ -17,6 +17,7 @@ pub mod recipe_book;
 /// Represents a player's data.  
 /// Often confined in a `[uuid].dat` file or in the `level.dat` file in singeplayer.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Player {
     // Entity, except for the tags: CustomName, CustomNameVisible, and Glowing.
     // Mobs, except for the tags: HandItems, ArmorItems, HandDropChances, ArmorDropChances, CanPickUpLoot, PersistenceRequired, Leash
@@ -145,6 +146,7 @@ pub struct Player {
 
 /// Contains data about the warden spawning process for this player.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct WardenTracker {
     /// A warning level between 0, and 3 (inclusive). The warden spawns at level 3.
     pub warning_level: i32,
@@ -158,6 +160,7 @@ pub struct WardenTracker {
 
 /// The root entity that the player is riding.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Vechile {
     /// The UUID of the entity the player is riding, stored as four ints.  
     /// `Attach`
@@ -170,6 +173,7 @@ pub struct Vechile {
 
 /// The location of the player's last death.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct DeathLocation {
     /// Dimension of last death.
     pub dimension: String,
@@ -180,6 +184,7 @@ pub struct DeathLocation {
 
 /// The position the player entered the Nether from.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct NetherPosition {
     /// The X coordinate in the Overworld.
     x: f64,

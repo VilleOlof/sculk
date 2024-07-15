@@ -1,6 +1,7 @@
 use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_bool};
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct EndGateway {
     /// Age of the portal, in ticks. This is used to determine when the beam is rendered.
     ///
@@ -19,6 +20,7 @@ pub struct EndGateway {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ExitPortal {
     /// X coordinate of target location.
     ///

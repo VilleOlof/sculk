@@ -21,6 +21,7 @@ pub mod world_gen_settings;
 ///
 /// The actual file begins with a root tag and then a `Data` tag, this data tag is flattened to this struct.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Level {
     /// true if cheats are enabled.  
     /// `allowCommands`
@@ -205,6 +206,7 @@ pub struct Level {
 
 /// More detailed information about the Minecraft version the world was saved in.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct VersionData {
     /// An integer displaying the data version.  
     /// `Id`
@@ -246,6 +248,7 @@ impl FromCompoundNbt for VersionData {
 
 /// The difficulty of the world.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Difficulty {
     /// Peaceful difficulty.
     Peaceful,

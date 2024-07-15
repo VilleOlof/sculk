@@ -4,6 +4,7 @@ use crate::{kv::KVPair, traits::FromCompoundNbt};
 
 /// Enchantments on an item.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Enchantments {
     /// Contains key-value pairs of levels of enchantments on this item that affect the way the item works.  
     pub enchantments: KVPair<i32>,

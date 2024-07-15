@@ -5,6 +5,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StructureBlock {
     /// Author of the structure; only set to "?" for most vanilla structures.
     pub author: String,
@@ -75,6 +76,8 @@ pub struct StructureBlock {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(from = "&str", into = "&str"))]
 pub enum StructureBlockMirror {
     None,
     LeftRight,
@@ -92,7 +95,19 @@ impl From<&str> for StructureBlockMirror {
     }
 }
 
+impl From<StructureBlockMirror> for &str {
+    fn from(mirror: StructureBlockMirror) -> Self {
+        match mirror {
+            StructureBlockMirror::None => "NONE",
+            StructureBlockMirror::LeftRight => "LEFT_RIGHT",
+            StructureBlockMirror::FrontBack => "FRONT_BACK",
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(from = "&str", into = "&str"))]
 pub enum StructureBlockMode {
     Save,
     Load,
@@ -112,7 +127,20 @@ impl From<&str> for StructureBlockMode {
     }
 }
 
+impl From<StructureBlockMode> for &str {
+    fn from(mode: StructureBlockMode) -> Self {
+        match mode {
+            StructureBlockMode::Save => "SAVE",
+            StructureBlockMode::Load => "LOAD",
+            StructureBlockMode::Corner => "CORNER",
+            StructureBlockMode::Data => "DATA",
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(from = "&str", into = "&str"))]
 pub enum StructureBlockRotation {
     None,
     Clockwise90,
@@ -128,6 +156,17 @@ impl From<&str> for StructureBlockRotation {
             "CLOCKWISE_180" => Self::Clockwise180,
             "COUNTERCLOCKWISE_90" => Self::CounterClockwise90,
             _ => panic!("Invalid value for StructureBlockRotation: {}", s),
+        }
+    }
+}
+
+impl From<StructureBlockRotation> for &str {
+    fn from(value: StructureBlockRotation) -> Self {
+        match value {
+            StructureBlockRotation::None => "NONE",
+            StructureBlockRotation::Clockwise90 => "CLOCKWISE_90",
+            StructureBlockRotation::Clockwise180 => "CLOCKWISE_180",
+            StructureBlockRotation::CounterClockwise90 => "COUNTERCLOCKWISE_90",
         }
     }
 }

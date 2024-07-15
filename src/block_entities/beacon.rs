@@ -4,6 +4,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Beacon {
     /// Optional. The name of this beacon in JSON text component, which appears when attempting to open it, while it is locked.
     ///

@@ -4,6 +4,7 @@ use crate::{traits::FromCompoundNbt, util::get_owned_string};
 
 /// The effects of a suspicious stew.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SuspiciousStewEffects {
     /// The ID of the effect.
     pub id: String,

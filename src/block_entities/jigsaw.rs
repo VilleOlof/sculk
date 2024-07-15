@@ -1,6 +1,7 @@
 use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_string};
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Jigsaw {
     /// The block that this jigsaw block becomes.
     pub final_state: String,
@@ -25,6 +26,8 @@ pub struct Jigsaw {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(from = "&str", into = "&str"))]
 pub enum JigsawJoint {
     Rollable,
     Aligned,
@@ -36,6 +39,15 @@ impl From<&str> for JigsawJoint {
             "rollable" => JigsawJoint::Rollable,
             "aligned" => JigsawJoint::Aligned,
             _ => panic!("Invalid jigsaw joint value: {}", s),
+        }
+    }
+}
+
+impl From<JigsawJoint> for &str {
+    fn from(j: JigsawJoint) -> Self {
+        match j {
+            JigsawJoint::Rollable => "rollable",
+            JigsawJoint::Aligned => "aligned",
         }
     }
 }

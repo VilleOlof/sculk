@@ -7,6 +7,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Piston {
     /// The moving block represented by this block entity.
     ///
@@ -27,6 +28,7 @@ pub struct Piston {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct BlockState {
     /// The identifier of the block to use.
     pub name: String,
@@ -36,6 +38,8 @@ pub struct BlockState {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(from = "i32", into = "i32"))]
 pub enum Facing {
     Down = 0,
     Up = 1,
@@ -55,6 +59,19 @@ impl From<i32> for Facing {
             4 => Facing::West,
             5 => Facing::East,
             _ => panic!("Invalid value for Facing: {}", value),
+        }
+    }
+}
+
+impl From<Facing> for i32 {
+    fn from(facing: Facing) -> Self {
+        match facing {
+            Facing::Down => 0,
+            Facing::Up => 1,
+            Facing::North => 2,
+            Facing::South => 3,
+            Facing::West => 4,
+            Facing::East => 5,
         }
     }
 }

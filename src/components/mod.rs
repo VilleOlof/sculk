@@ -52,6 +52,7 @@ type InternalMap = HashMap<String, Component>;
 
 /// A collection of components.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Components(InternalMap);
 
 impl Deref for Components {
@@ -491,6 +492,7 @@ impl FromCompoundNbt for Components {
 
 /// Represents a component in a block entity.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 // #[serde(untagged)]
 pub enum Component {
     /// Can be defined as a compound or a list. If defined as a list, corresponds to modifiers.  
@@ -718,5 +720,6 @@ pub enum Component {
     WrittenBookContent(written_book_content::WrittenBookContent),
 
     /// Unknown component.
+    #[cfg_attr(feature = "serde", serde(skip))]
     Unknown(simdnbt::owned::NbtTag),
 }

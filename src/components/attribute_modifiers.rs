@@ -8,6 +8,7 @@ use crate::{
 
 /// A compound of attribute modifiers.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct AttributeModifiers {
     /// Show or hide attribute modifiers on this item's tooltip. Defaults to `true`.
     pub show_in_tooltip: bool,
@@ -18,6 +19,7 @@ pub struct AttributeModifiers {
 
 /// An attribute modifier component.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum AttributeModifier {
     /// A list of attribute modifiers.
     ModifierList(Vec<Modifier>),
@@ -28,6 +30,7 @@ pub enum AttributeModifier {
 
 /// A single attribute modifier.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Modifier {
     /// The name of the attribute this modifier is to act upon.
     ///
@@ -49,6 +52,7 @@ pub struct Modifier {
 
 /// Slot or slot type the item must be in for the modifier to take effect.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum SlotType {
     /// `any`
     Any,
@@ -74,6 +78,7 @@ pub enum SlotType {
 
 /// Modifier operation.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Operation {
     /// `add_value`
     Add,

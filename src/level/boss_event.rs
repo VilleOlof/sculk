@@ -12,6 +12,7 @@ use std::collections::HashMap;
 
 /// A custom boss bar event.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct CustomBossEvent {
     ///  A list of players that may see this boss bar.  
     /// `Players`
@@ -56,6 +57,7 @@ pub struct CustomBossEvent {
 
 /// The overlay type to use for the boss bar.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum BossEventOverlay {
     /// A smooth progress bar.
     Progress,

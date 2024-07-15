@@ -8,6 +8,7 @@ use crate::{
 
 /// A book that can be written in-game.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct WritableBookContent {
     /// A list of the pages in the book.
     pub pages: PageType,
@@ -15,6 +16,7 @@ pub struct WritableBookContent {
 
 /// A page in a book.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum PageType {
     /// Alternatively, a single page can be represented as follows:
     /// The plain text content of a page.
@@ -26,6 +28,7 @@ pub enum PageType {
 
 /// The content of a page in a book.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct BookTextData {
     /// The plain text content of the page. The escape sequence \n is used for line breaks. However, the command parser does not accept \n, so line breaks need to be set by a player or using loot tables.  
     pub raw: String,

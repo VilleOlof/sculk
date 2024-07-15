@@ -6,6 +6,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Skull {
     /// Optional. The custom name of the skull.
     pub custom_name: Option<String>,
@@ -18,6 +19,7 @@ pub struct Skull {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum SkullProfile {
     Name(String),
 
@@ -25,6 +27,7 @@ pub enum SkullProfile {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Profile {
     /// The name of a player profile, i.e. its username. If this is the only tag provided, it will be resolved into the other ones below. Optional.
     pub name: Option<String>,
@@ -38,6 +41,7 @@ pub struct Profile {
 
 /// A single property.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Property {
     /// The name of the property. Can be textures.
     pub name: String,

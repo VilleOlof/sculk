@@ -4,6 +4,7 @@ use crate::{error::SculkParseError, traits::FromCompoundNbt};
 
 /// A tool that can be used to mine blocks.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Tool {
     /// The default mining speed of this tool, used if no rules override it. Defaults to 1.0.
     pub default_mining_speed: f32,
@@ -17,6 +18,7 @@ pub struct Tool {
 
 /// Rules on how a tool behaves with certain blocks.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ToolRules {
     /// The blocks to match with. Can be a block ID or a block tag with a #, or a list of block IDs.  
     /// **NOTE:** This is always a list here, even if it only contains one block.

@@ -6,6 +6,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct CalibratedSculkSensor {
     /// The frequency of the last vibration.
     pub last_vibration_frequency: i32,
@@ -15,6 +16,7 @@ pub struct CalibratedSculkSensor {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Listener {
     /// Only exists if there is an incoming vibration.
     pub event: Option<Event>,
@@ -27,6 +29,7 @@ pub struct Listener {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Event {
     /// The distance between this vibration's source and the block.
     pub distance: f32,
@@ -49,6 +52,7 @@ pub struct Event {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Selector {
     /// The game time when the vibration occurs, or -1 if there is no vibration to choose from.​
     pub tick: i64,

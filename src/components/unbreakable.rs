@@ -4,6 +4,7 @@ use crate::traits::FromCompoundNbt;
 
 /// funny silly small struct
 #[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Unbreakable {
     /// Show or hide the "Unbreakable" line on this item's tooltip. Defaults to true.  
     pub show_in_tooltip: bool,

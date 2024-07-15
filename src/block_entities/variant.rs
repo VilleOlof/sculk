@@ -1,6 +1,7 @@
 pub use crate::block_entities::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum BlockEntityVariant {
     Banners,
     Barrels,

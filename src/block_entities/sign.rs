@@ -1,6 +1,7 @@
 use crate::{color::Color, error::SculkParseError, traits::FromCompoundNbt, util::get_bool};
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Sign {
     /// true if the text is locked with honeycomb.
     pub is_waxed: bool,
@@ -13,6 +14,7 @@ pub struct Sign {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SignText {
     /// true if the sign has been dyed with a glow ink sac.
     pub has_glowing_text: bool,

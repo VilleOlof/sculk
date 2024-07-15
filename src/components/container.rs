@@ -4,6 +4,7 @@ use crate::{item::ItemWithNoSlot, traits::FromCompoundNbt};
 
 /// The items contained in this container.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Container {
     /// A single item.
     pub item: ItemWithNoSlot,

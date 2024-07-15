@@ -8,6 +8,7 @@ use crate::{
 use super::mob_spawner::{PotentialSpawn, SpawnData};
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct TrailSpawner {
     /// Between 1 and 128. Defaults to 14. — Maximum distance in blocks for players to join the battle.
     pub required_player_range: i32,
@@ -44,6 +45,7 @@ pub struct TrailSpawner {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct TrailSpawnerConfig {
     /// Between 1 and 128. Defaults to 4 — Maximum distance in blocks that mobs can spawn.
     pub spawn_range: Option<i32>,
@@ -75,6 +77,7 @@ pub struct TrailSpawnerConfig {
 
 /// A potential loot table.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct LootTable {
     /// The chance that this loot table gets picked in comparison to other loot table weights. Must be positive and at least 1.
     pub weight: i32,

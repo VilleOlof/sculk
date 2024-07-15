@@ -7,6 +7,7 @@ use crate::{
 
 /// The Lodestone Tracker component.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct LodestoneTracker {
     /// Information about the lodestone. Optional. If not set, this compass spins randomly.
     pub target: Option<LodestoneTarget>,
@@ -17,6 +18,7 @@ pub struct LodestoneTracker {
 
 /// The target of a lodestone.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct LodestoneTarget {
     /// The integer coordinates of the lodestone.
     pub pos: [i32; 3],

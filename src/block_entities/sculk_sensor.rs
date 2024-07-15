@@ -3,6 +3,7 @@ use crate::{error::SculkParseError, traits::FromCompoundNbt};
 use super::calibrated_sculk_sensor::Listener;
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SculkSensor {
     /// The frequency of the last vibration.
     pub last_vibration_frequency: i32,

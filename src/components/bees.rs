@@ -4,6 +4,7 @@ use crate::{entity::Entity, error::SculkParseError, traits::FromCompoundNbt};
 
 /// A bee entity in a hive.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Bee {
     /// The NBT data of the entity in the hive.
     pub entity_data: Entity,

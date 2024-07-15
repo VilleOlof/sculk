@@ -4,6 +4,7 @@ use crate::{error::SculkParseError, kv::KVPair, traits::FromCompoundNbt};
 
 /// Settings about the world generation.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct WorldGenSettings {
     /// Used to determine if the bonus chest should appear near the spawn point when a world is first entered. Available only in single player.  
     /// `bonus_chest`
@@ -20,6 +21,7 @@ pub struct WorldGenSettings {
     /// Contains all the dimensions.  
     /// The value here is [generator settings](https://minecraft.wiki/w/Custom_dimension).  
     /// `dimensions`
+    #[cfg_attr(feature = "serde", serde(skip))]
     pub dimensions: KVPair<simdnbt::owned::NbtCompound>,
 }
 

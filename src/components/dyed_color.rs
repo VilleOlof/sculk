@@ -5,6 +5,7 @@ use crate::{color::RGB, error::SculkParseError, traits::FromCompoundNbt};
 /// A dyed color component.  
 /// Used on stuff like leather armor.  
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum DyedColor {
     /// A simple RGB color.
     Int(RGB),

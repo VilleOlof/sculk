@@ -1,6 +1,7 @@
 use crate::{item::ItemWithNoSlot, traits::FromCompoundNbt};
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Lectern {
     /// The book item, without the slot tag, currently on the lectern, may not exist.
     ///

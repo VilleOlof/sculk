@@ -16,6 +16,7 @@ pub mod tile_tick;
 /// Represents a chunk in the world.  
 /// [Minecraft Wiki](https://minecraft.wiki/w/Chunk_format)  
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Chunk {
     /// Version of the chunk NBT structure.  
     /// `DataVersion`
@@ -88,12 +89,14 @@ pub struct Chunk {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct BlendingData {
     pub min_section: i32,
     pub max_section: i32,
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct HeightMaps {
     /// MOTION_BLOCKING
     pub motion_blocking: Vec<i64>,
@@ -110,6 +113,7 @@ pub struct HeightMaps {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct CarvingMasks {
     /// A series of bits indicating whether a cave has been dug at a specific position, stored in a byte array.  
     /// `AIR`
@@ -141,8 +145,8 @@ impl FromCompoundNbt for Chunk {
 
         let status = nbt
             .string("Status")
-            .map(|s| ChunkStatus::from_str(s.to_str().as_ref()))
-            .ok_or(SculkParseError::MissingField("Status".into()))??;
+            .map(|s| ChunkStatus::from(s.to_str().as_ref()))
+            .ok_or(SculkParseError::MissingField("Status".into()))?;
 
         let last_update = nbt
             .long("LastUpdate")

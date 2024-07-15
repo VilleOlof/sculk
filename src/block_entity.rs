@@ -10,6 +10,7 @@ use std::io::Cursor;
 
 /// The base fields of a block entity.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct BlockEntityBase {
     /// ID of block entity.
     pub id: String,
@@ -37,6 +38,7 @@ pub struct BlockEntityBase {
 ///
 /// Gotta love minecraft data structures.  
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct NoCoordinatesBlockEntityBase {
     /// ID of block entity.
     pub id: String,
@@ -54,6 +56,7 @@ pub struct NoCoordinatesBlockEntityBase {
 /// This is used for `lazy` block entities.  
 /// So it does not contain the `components` field.  
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct LazyBlockEntityBase {
     /// ID of block entity.
     pub id: String,
@@ -75,6 +78,7 @@ pub struct LazyBlockEntityBase {
 
 /// Represents a block entity.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct BlockEntity {
     /// Common fields of a block entity.
     pub base: BlockEntityBase,
@@ -86,6 +90,7 @@ pub struct BlockEntity {
 /// Represents a block entity.  
 /// But with no coordinates.  
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct NoCoordinatesBlockEntity {
     /// Common fields of a block entity.
     pub base: NoCoordinatesBlockEntityBase,
@@ -99,6 +104,7 @@ pub struct NoCoordinatesBlockEntity {
 /// But when we go through chunk data its trickier, i dont even know if its possible to borrow there.  
 /// But for now we can own the bytes, sacrificing some memory.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum LazyByteVariant<'a> {
     /// Borrowed bytes.
     Borrowed(&'a [u8]),
@@ -116,12 +122,14 @@ pub enum LazyByteVariant<'a> {
 /// This is useful if you only need to check the id of the block entity.  
 /// And do further data processing only if the id matches a specific value.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct LazyBlockEntity<'a> {
     /// Common fields of a block entity.
     pub base: LazyBlockEntityBase,
 
     /// The bytes that was used to parse the block entity.
     // This is a bit ugly but i found no other way with `borrow::Nbt` or `borrow::BaseNbt` to work
+    #[cfg_attr(feature = "serde", serde(borrow))]
     nbt_bytes: LazyByteVariant<'a>,
 }
 

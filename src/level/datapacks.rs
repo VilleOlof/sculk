@@ -5,6 +5,7 @@ use crate::{error::SculkParseError, traits::FromCompoundNbt};
 
 /// What datapacks are enabled and disabled in a world.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Datapacks {
     /// List of disabled datapacks.  
     /// `Disabled`

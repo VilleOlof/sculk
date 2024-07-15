@@ -6,6 +6,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ChunkSection {
     /// The Y position of this section.  
     /// `Y`
@@ -21,6 +22,7 @@ pub struct ChunkSection {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Biomes {
     /// Set of different biomes used in this particular section.  
     pub palette: Vec<PaletteNoProps>,
@@ -33,6 +35,7 @@ pub struct Biomes {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct BlockStates {
     /// Set of different block states used in this particular section.  
     pub palette: Vec<Palette>,
@@ -45,6 +48,7 @@ pub struct BlockStates {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Palette {
     /// Block resource location.  
     /// `Name`
@@ -56,6 +60,7 @@ pub struct Palette {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct PaletteNoProps {
     /// Block resource location.  
     /// `Name`

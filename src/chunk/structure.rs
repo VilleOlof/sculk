@@ -11,6 +11,7 @@ use std::collections::HashMap;
 
 /// Structure data in this chunk.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Structures {
     /// Coordinates of chunks that contain Starts.   
     /// Each 64-bit number of this array represents a chunk coordinate (i.e. block coordinate / 16), with its X packed into the low (least significant) 32 bits and Z packed into the high (most significant) 32 bits.
@@ -22,6 +23,7 @@ pub struct Structures {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Structure {
     /// Bounding box of the entire structure (remaining Children). Value is 6 ints: the minimum X, Y, and Z coordinates followed by the maximum X, Y, and Z coordinates. Absent if id is `INVALID`.  
     /// `BB`
@@ -55,6 +57,7 @@ pub struct Structure {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ProcessedChunk {
     /// The chunk's X position (chunk coordinates, not block coordinates).  
     /// `X`

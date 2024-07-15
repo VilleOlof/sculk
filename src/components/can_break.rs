@@ -7,6 +7,7 @@ use crate::{
 
 /// If an item can break blocks.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum CanBreak {
     /// Multiple block predicates to match.
     List {
@@ -35,6 +36,7 @@ pub enum CanBreak {
 
 /// A block predicate to match.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Predicate {
     /// Can be a block ID or a block tag with a #, or a list of block IDs.
     pub blocks: Blocks,
@@ -48,6 +50,7 @@ pub struct Predicate {
 
 /// A list of block IDs or block tags with a #.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Blocks {
     /// A single block ID or block tag with a #.
     Block(String),

@@ -10,6 +10,7 @@ use super::Components;
 
 /// The food component.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Food {
     /// The number of food points restored by this item when eaten. Must be a non-negative integer.
     pub nutrition: i32,
@@ -32,6 +33,7 @@ pub struct Food {
 
 /// An item to convert to when eaten.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct FoodConvertedItem {
     /// The resource location of the item. Must not be air
     pub id: String,
@@ -42,6 +44,7 @@ pub struct FoodConvertedItem {
 
 /// An effect applied by an item when eaten.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Effect {
     /// A single effect.
     pub effect: EffectDetails,
@@ -52,6 +55,7 @@ pub struct Effect {
 
 /// Details of an effect applied by an item when eaten.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct EffectDetails {
     /// The ID of the effect.
     pub id: String,

@@ -5,10 +5,12 @@ use std::collections::HashMap;
 
 /// Decorations on a map.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MapDecorations(KVPair<MapIcon>);
 
 /// The key-value pair of a single icon, where the key is an arbitrary unique string identifying the decoration.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MapIcon {
     /// The type of icon.
     pub r#type: MapIconType,
@@ -24,6 +26,7 @@ pub struct MapIcon {
 
 /// The type of icon.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum MapIconType {
     Player,
     Frame,

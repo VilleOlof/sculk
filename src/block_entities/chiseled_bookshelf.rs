@@ -3,6 +3,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ChiseledBookshelf {
     /// List of books in the bookshelf.  
     ///

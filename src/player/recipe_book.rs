@@ -4,6 +4,7 @@ use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_bool};
 
 /// A player's recipe book.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RecipeBook {
     /// A list of all recipes the player has seen.
     pub recipes: Vec<String>,

@@ -2,6 +2,7 @@ use crate::{item::Item, traits::FromCompoundNbt, util::get_loot_table_data};
 
 /// Both loot table tags are removed once the items have been generated.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SuspiciousBlock {
     /// Optional. Name of the loot table to use. If this is used in a chest-like container, the loot table generates its content when it is opened. Generating the items in the container removes both loot table tags ( LootTable and  LootTableSeed).
     ///

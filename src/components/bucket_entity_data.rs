@@ -6,6 +6,7 @@ use simdnbt::borrow::NbtCompound;
 /// Represents the bucket entity data component.  
 /// Like axolotl in a bucket.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct BucketEntityData {
     /// Turns into NoAI entity tag for all bucketable entities.
     ///

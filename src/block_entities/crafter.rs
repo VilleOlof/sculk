@@ -6,6 +6,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Crafter {
     /// Set to 6 when the crafter crafts something
     pub crafting_ticks_remaining: i32,

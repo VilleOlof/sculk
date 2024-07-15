@@ -1,6 +1,7 @@
 use crate::{traits::FromCompoundNbt, util::get_optional_name};
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct EnchantingTable {
     /// Optional. The name of this container in JSON text component, which appears in its GUI where the default name ordinarily appears.
     ///

@@ -5,6 +5,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Campfire {
     /// How long each item has been cooking, first index is slot 0, etc.
     ///

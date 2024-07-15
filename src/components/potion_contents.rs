@@ -10,6 +10,7 @@ use super::food::EffectDetails;
 
 /// The contents of a potion item.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum PotionContents {
     /// A resource location string representing the potion type.
     String(String),
@@ -19,6 +20,7 @@ pub enum PotionContents {
 
 /// More detailed information about a potion item.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct PotionData {
     /// The ID of a potion type. Optional. See [Potion#Item data](https://minecraft.wiki/w/Potion#Item_data).
     pub potion: Option<String>,

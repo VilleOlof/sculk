@@ -5,6 +5,7 @@ use crate::{traits::FromCompoundNbt, util::get_bool};
 
 /// A player's abilities.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Abilities {
     /// if the player is currently flying.
     pub flying: bool,

@@ -5,6 +5,7 @@ use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_t_list};
 
 /// A firework rocket item.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Fireworks {
     /// List of the explosion effects caused by this [firework rocket](https://minecraft.wiki/w/Firework_rocket). Has a maximum of 256 explosions.  
     pub explosions: Vec<FireworkExplosion>,

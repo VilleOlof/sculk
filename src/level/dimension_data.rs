@@ -4,6 +4,7 @@ use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_bool};
 
 /// Data for a dimension.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct DimensionData {
     /// Data for The End  
     /// `1`
@@ -12,6 +13,7 @@ pub struct DimensionData {
 
 /// Data for The End.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct EndData {
     /// Data for the ender dragon fight. Appears only after the End is entered.  
     /// `DragonFight`
@@ -20,6 +22,7 @@ pub struct EndData {
 
 /// Data about the ender dragon fight.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct DragonFight {
     /// Location of the End's exit portal that the ender dragon flies to upon its death.   
     /// `ExitPortalLocation`
@@ -51,6 +54,7 @@ pub struct DragonFight {
 
 /// Location of the End's exit portal that the ender dragon flies to upon its death.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ExitPortalLocation {
     /// The X coordinate of the portal.  
     /// `X`

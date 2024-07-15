@@ -6,6 +6,7 @@ use crate::{
 
 /// Represents an item in an inventory slot.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Item {
     /// The inventory slot the item is in.  
     /// `Slot`
@@ -26,6 +27,7 @@ pub struct Item {
 /// Represents an item in an inventory slot, without the slot number.  
 /// Often used for items in single-item inventories.  
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ItemWithNoSlot {
     /// The resource location of the item. Must not be `air`.
     pub id: String,

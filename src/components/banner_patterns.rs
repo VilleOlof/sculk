@@ -6,6 +6,7 @@ use crate::{
 
 /// Represents a banner pattern.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct BannerPattern {
     /// Dye color of the section.
     pub color: Color,
@@ -16,6 +17,7 @@ pub struct BannerPattern {
 
 /// Either an id reference to a pattern or an inlined pattern.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Pattern {
     /// The resource location for the texture asset.
     ID(ResourceName),
@@ -31,6 +33,7 @@ pub enum Pattern {
 
 /// The list of available banner patterns.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum ResourceName {
     Base,
     StripeBottom,

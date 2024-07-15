@@ -4,6 +4,7 @@ use crate::{traits::FromCompoundNbt, util::get_owned_string};
 
 /// An armor trim pattern.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Trim {
     /// The ID of the trim pattern.
     pub pattern: String,
