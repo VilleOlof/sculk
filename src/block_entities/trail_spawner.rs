@@ -1,18 +1,14 @@
-use std::borrow::Cow;
-
-use simdnbt::Mutf8Str;
-
 use crate::{
     error::SculkParseError,
     traits::FromCompoundNbt,
-    util::{get_owned_mutf8str, get_owned_optional_mutf8str},
+    util::{get_owned_optional_string, get_owned_string},
     uuid::Uuid,
 };
 
 use super::mob_spawner::{PotentialSpawn, SpawnData};
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct TrailSpawner<'a> {
+pub struct TrailSpawner {
     /// Between 1 and 128. Defaults to 14. — Maximum distance in blocks for players to join the battle.
     pub required_player_range: i32,
 
@@ -20,10 +16,10 @@ pub struct TrailSpawner<'a> {
     pub target_cooldown_length: i32,
 
     /// Optional, see configuration for defaults. — The configuration to use when not ominous.
-    pub normal_config: Option<TrailSpawnerConfig<'a>>,
+    pub normal_config: Option<TrailSpawnerConfig>,
 
     /// Optional, defaults to  normal_config. When individual entries are omitted, they also default to their setting in  normal_config. — The configuration to use when ominous.
-    pub ominous_config: Option<TrailSpawnerConfig<'a>>,
+    pub ominous_config: Option<TrailSpawnerConfig>,
 
     /// A set of player UUIDs. — All the players that have joined the battle. The length of this array determines the amount of mobs and amount of reward.
     pub registered_players: Vec<Uuid>,
@@ -41,14 +37,14 @@ pub struct TrailSpawner<'a> {
     pub total_mobs_spawned: i32,
 
     /// The next mob to attempt to spawn. Selected from  spawn_potentials after the last attempt. Determines the mob displayed in the spawner.
-    pub spawn_data: SpawnData<'a>,
+    pub spawn_data: SpawnData,
 
     /// A resource location to the loot table that is given as reward. Unset if not currently giving rewards. Selected from  loot_tables_to_eject after all mobs are defeated.
-    pub ejecting_loot_table: Option<Cow<'a, Mutf8Str>>,
+    pub ejecting_loot_table: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct TrailSpawnerConfig<'a> {
+pub struct TrailSpawnerConfig {
     /// Between 1 and 128. Defaults to 4 — Maximum distance in blocks that mobs can spawn.
     pub spawn_range: Option<i32>,
 
@@ -68,26 +64,26 @@ pub struct TrailSpawnerConfig<'a> {
     pub ticks_between_spawn: Option<i32>,
 
     ///  Defaults to an empty list — List of possible entities to spawn.
-    pub spawn_potentials: Option<Vec<PotentialSpawn<'a>>>,
+    pub spawn_potentials: Option<Vec<PotentialSpawn>>,
 
     ///  Defaults to a list of `minecraft:spawners/trial_chamber/consumables` and `minecraft:spawners/trial_chamber/key`, both with weight 1 — List of possible loot tables to give as reward.
-    pub loot_tables_to_eject: Option<Vec<LootTable<'a>>>,
+    pub loot_tables_to_eject: Option<Vec<LootTable>>,
 
     /// Defaults to minecraft:spawners/trial_chamber/items_to_drop_when_ominous — A resource location to a loot table. Determines the items used by ominous item spawners spawned during the active phase when ominous. Ignored in normal mode.
-    pub items_to_drop_when_ominous: Option<Cow<'a, Mutf8Str>>,
+    pub items_to_drop_when_ominous: Option<String>,
 }
 
 /// A potential loot table.
 #[derive(Debug, Clone, PartialEq)]
-pub struct LootTable<'a> {
+pub struct LootTable {
     /// The chance that this loot table gets picked in comparison to other loot table weights. Must be positive and at least 1.
     pub weight: i32,
 
     /// A resource location to a loot table.
-    pub data: Cow<'a, Mutf8Str>,
+    pub data: String,
 }
 
-impl<'a> FromCompoundNbt for TrailSpawner<'a> {
+impl FromCompoundNbt for TrailSpawner {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -133,7 +129,7 @@ impl<'a> FromCompoundNbt for TrailSpawner<'a> {
             .map(|nbt| SpawnData::from_compound_nbt(&nbt))
             .ok_or(SculkParseError::MissingField("spawn_data".into()))??;
 
-        let ejecting_loot_table = get_owned_optional_mutf8str(&nbt, "ejecting_loot_table");
+        let ejecting_loot_table = get_owned_optional_string(&nbt, "ejecting_loot_table");
 
         Ok(TrailSpawner {
             required_player_range,
@@ -151,7 +147,7 @@ impl<'a> FromCompoundNbt for TrailSpawner<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for TrailSpawnerConfig<'a> {
+impl FromCompoundNbt for TrailSpawnerConfig {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -194,7 +190,7 @@ impl<'a> FromCompoundNbt for TrailSpawnerConfig<'a> {
         };
 
         let items_to_drop_when_ominous =
-            get_owned_optional_mutf8str(&nbt, "items_to_drop_when_ominous");
+            get_owned_optional_string(&nbt, "items_to_drop_when_ominous");
 
         Ok(TrailSpawnerConfig {
             spawn_range,
@@ -210,7 +206,7 @@ impl<'a> FromCompoundNbt for TrailSpawnerConfig<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for LootTable<'a> {
+impl FromCompoundNbt for LootTable {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -221,7 +217,7 @@ impl<'a> FromCompoundNbt for LootTable<'a> {
             .int("weight")
             .ok_or(SculkParseError::MissingField("weight".into()))?;
 
-        let data = get_owned_mutf8str(&nbt, "data")?;
+        let data = get_owned_string(&nbt, "data")?;
 
         Ok(LootTable { weight, data })
     }

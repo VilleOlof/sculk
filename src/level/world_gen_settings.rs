@@ -4,7 +4,7 @@ use crate::{error::SculkParseError, kv::KVPair, traits::FromCompoundNbt};
 
 /// Settings about the world generation.
 #[derive(Debug, Clone, PartialEq)]
-pub struct WorldGenSettings<'a> {
+pub struct WorldGenSettings {
     /// Used to determine if the bonus chest should appear near the spawn point when a world is first entered. Available only in single player.  
     /// `bonus_chest`
     pub bonus_chest: Option<bool>,
@@ -20,10 +20,10 @@ pub struct WorldGenSettings<'a> {
     /// Contains all the dimensions.  
     /// The value here is [generator settings](https://minecraft.wiki/w/Custom_dimension).  
     /// `dimensions`
-    pub dimensions: KVPair<'a, simdnbt::owned::NbtCompound>,
+    pub dimensions: KVPair<simdnbt::owned::NbtCompound>,
 }
 
-impl<'a> FromCompoundNbt for WorldGenSettings<'a> {
+impl FromCompoundNbt for WorldGenSettings {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>

@@ -2,19 +2,17 @@ use crate::{
     color::Color,
     error::SculkParseError,
     traits::FromCompoundNbt,
-    util::{get_bool, get_owned_mutf8str, get_owned_optional_mutf8str, get_t_compound_vec},
+    util::{get_bool, get_owned_optional_string, get_owned_string, get_t_compound_vec},
 };
-use simdnbt::Mutf8Str;
-use std::borrow::Cow;
 
 /// Represents a map in the game.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Map<'a> {
+pub struct Map {
     /// How zoomed in the map is (it is in 2scale wide blocks square per pixel, even for 0, where the map is 1:1). Default 3, minimum 0 and maximum 4.   
     pub scale: i8,
 
     /// Resource location for a dimension.  
-    pub dimension: Cow<'a, Mutf8Str>,
+    pub dimension: String,
 
     /// true (default) indicates that a positional arrow should be shown when the map is near its center coords. false indicates that the position arrow should never be shown.  
     /// `trackingPosition`
@@ -33,7 +31,7 @@ pub struct Map<'a> {
     pub z_center: i32,
 
     /// List of banner markers added to this map. May be empty.  
-    pub banners: Vec<MapBanner<'a>>,
+    pub banners: Vec<MapBanner>,
 
     /// List map markers added to this map. May be empty.  
     pub frames: Vec<MapFrame>,
@@ -62,14 +60,14 @@ pub struct MapPos {
 
 /// A banner on a map.
 #[derive(Debug, Clone, PartialEq)]
-pub struct MapBanner<'a> {
+pub struct MapBanner {
     ///  The color of the banner.  
     /// `Color`
     pub color: Color,
 
     /// The custom name of the banner, in JSON text. May not exist.  
     /// `Name`
-    pub name: Option<Cow<'a, Mutf8Str>>,
+    pub name: Option<String>,
 
     /// The block position of the banner in the world.  
     /// `Pos`
@@ -141,7 +139,7 @@ impl FromCompoundNbt for MapFrame {
     }
 }
 
-impl<'a> FromCompoundNbt for MapBanner<'a> {
+impl FromCompoundNbt for MapBanner {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -155,7 +153,7 @@ impl<'a> FromCompoundNbt for MapBanner<'a> {
             return Err(SculkParseError::MissingField("Color".into()));
         };
 
-        let name = get_owned_optional_mutf8str(&nbt, "Name");
+        let name = get_owned_optional_string(&nbt, "Name");
 
         let pos = nbt
             .compound("Pos")
@@ -166,7 +164,7 @@ impl<'a> FromCompoundNbt for MapBanner<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for Map<'a> {
+impl FromCompoundNbt for Map {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -184,7 +182,7 @@ impl<'a> FromCompoundNbt for Map<'a> {
             .byte("scale")
             .ok_or(SculkParseError::MissingField("scale".into()))?;
 
-        let dimension = get_owned_mutf8str(&nbt, "dimension")?;
+        let dimension = get_owned_string(&nbt, "dimension")?;
         let tracking_position = nbt.byte("trackingPosition").map(|b| b != 0).unwrap_or(true);
         let unlimited_tracking = get_bool(&nbt, "unlimitedTracking");
 

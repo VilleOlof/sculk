@@ -4,16 +4,14 @@ use super::block_state::BlockState;
 use crate::{
     block_entity::BlockEntity, error::SculkParseError, traits::FromCompoundNbt, util::get_t_list,
 };
-use simdnbt::Mutf8Str;
-use std::borrow::Cow;
 
 /// If an item can break blocks.
 #[derive(Debug, Clone, PartialEq)]
-pub enum CanBreak<'a> {
+pub enum CanBreak {
     /// Multiple block predicates to match.
     List {
         /// A list of block predicates to match.
-        predicates: Vec<Predicate<'a>>,
+        predicates: Vec<Predicate>,
 
         /// Show or hide the "Can break" line on this item's tooltip. Defaults to true.
         show_in_tooltip: bool,
@@ -22,13 +20,13 @@ pub enum CanBreak<'a> {
     /// Single block predicate to match.
     Single {
         /// Can be a block ID or a block tag with a #, or a list of block IDs.
-        blocks: Blocks<'a>,
+        blocks: Blocks,
 
         /// Block entity NBT to match.
-        nbt: Option<BlockEntity<'a>>,
+        nbt: Option<BlockEntity>,
 
         /// The block state properties to match.
-        state: Option<BlockState<'a>>,
+        state: Option<BlockState>,
 
         /// Show or hide the "Can break" line on this item's tooltip. Defaults to true.
         show_in_tooltip: bool,
@@ -37,28 +35,28 @@ pub enum CanBreak<'a> {
 
 /// A block predicate to match.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Predicate<'a> {
+pub struct Predicate {
     /// Can be a block ID or a block tag with a #, or a list of block IDs.
-    pub blocks: Blocks<'a>,
+    pub blocks: Blocks,
 
     /// Block entity NBT to match.
-    pub nbt: Option<BlockEntity<'a>>,
+    pub nbt: Option<BlockEntity>,
 
     /// The block state properties to match.
-    pub state: Option<BlockState<'a>>,
+    pub state: Option<BlockState>,
 }
 
 /// A list of block IDs or block tags with a #.
 #[derive(Debug, Clone, PartialEq)]
-pub enum Blocks<'a> {
+pub enum Blocks {
     /// A single block ID or block tag with a #.
-    Block(Cow<'a, Mutf8Str>),
+    Block(String),
 
     /// A list of block IDs or block tags with a #.
-    Blocks(Vec<Cow<'a, Mutf8Str>>),
+    Blocks(Vec<String>),
 }
 
-impl<'a> FromCompoundNbt for CanBreak<'a> {
+impl FromCompoundNbt for CanBreak {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -105,7 +103,7 @@ impl<'a> FromCompoundNbt for CanBreak<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for Predicate<'a> {
+impl FromCompoundNbt for Predicate {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -132,7 +130,7 @@ impl<'a> FromCompoundNbt for Predicate<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for Blocks<'a> {
+impl FromCompoundNbt for Blocks {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -140,14 +138,14 @@ impl<'a> FromCompoundNbt for Blocks<'a> {
         Self: Sized,
     {
         if let Some(string) = nbt.string("blocks") {
-            return Ok(Blocks::Block(Cow::<'a, Mutf8Str>::Owned(string.to_owned())));
+            return Ok(Blocks::Block(string.to_string()));
         } else if let Some(list) = nbt.list("blocks") {
             let blocks = list
                 .strings()
                 .ok_or(SculkParseError::InvalidField("blocks".into()))?
                 .into_iter()
-                .map(|string| Cow::<'a, Mutf8Str>::Owned((*string).to_owned()))
-                .collect::<Vec<Cow<'a, Mutf8Str>>>();
+                .map(|string| (*string).to_string())
+                .collect::<Vec<String>>();
 
             return Ok(Blocks::Blocks(blocks));
         } else {

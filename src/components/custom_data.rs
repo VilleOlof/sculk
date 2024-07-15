@@ -1,19 +1,17 @@
 //! Custom data component.
 
 use crate::{error::SculkParseError, kv::KVPair, traits::FromCompoundNbt};
-use simdnbt::Mutf8Str;
-use std::borrow::Cow;
 
 /// Custom data component.
 #[derive(Debug, Clone, PartialEq)]
-pub enum CustomData<'a> {
+pub enum CustomData {
     /// If its a string, it's the SNBT.
-    Snbt(Cow<'a, Mutf8Str>),
+    Snbt(String),
     /// If its a compound, it's a key-value pair.
-    KeyValues(KVPair<'a, Cow<'a, Mutf8Str>>),
+    KeyValues(KVPair<String>),
 }
 
-impl<'a> FromCompoundNbt for CustomData<'a> {
+impl FromCompoundNbt for CustomData {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -21,7 +19,7 @@ impl<'a> FromCompoundNbt for CustomData<'a> {
         Self: Sized,
     {
         if let Some(string) = nbt.string("minecraft:custom_data") {
-            let snbt = Cow::<'a, Mutf8Str>::Owned(string.to_owned());
+            let snbt = string.to_string();
             return Ok(CustomData::Snbt(snbt));
         } else if let Some(compound) = nbt.compound("minecraft:custom_data") {
             let map = KVPair::from_compound_nbt(&compound)?;

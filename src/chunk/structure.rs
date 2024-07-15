@@ -4,35 +4,35 @@ use crate::{
     error::SculkParseError,
     kv::KVPair,
     traits::FromCompoundNbt,
-    util::{get_owned_mutf8str, get_owned_optional_mutf8str},
+    util::{get_owned_optional_string, get_owned_string},
 };
-use simdnbt::{borrow::NbtCompound, Mutf8Str};
-use std::{borrow::Cow, collections::HashMap};
+use simdnbt::borrow::NbtCompound;
+use std::collections::HashMap;
 
 /// Structure data in this chunk.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Structures<'a> {
+pub struct Structures {
     /// Coordinates of chunks that contain Starts.   
     /// Each 64-bit number of this array represents a chunk coordinate (i.e. block coordinate / 16), with its X packed into the low (least significant) 32 bits and Z packed into the high (most significant) 32 bits.
-    pub references: KVPair<'a, Vec<i64>>,
+    pub references: KVPair<Vec<i64>>,
 
     /// Structures that are yet to be generated, stored by general type. Some parts of the structures may have already been generated. Completely generated structures are removed by setting their id to "INVALID" and removing all other tags  
     /// Only the structures that can spawn in this dimension are stored, for example, EndCity is stored only in the end chunks.
-    pub starts: KVPair<'a, Structure<'a>>,
+    pub starts: KVPair<Structure>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Structure<'a> {
+pub struct Structure {
     /// Bounding box of the entire structure (remaining Children). Value is 6 ints: the minimum X, Y, and Z coordinates followed by the maximum X, Y, and Z coordinates. Absent if id is `INVALID`.  
     /// `BB`
     pub bb: Option<[i32; 6]>,
 
     /// The biome id this structure is in. Absent if id is `INVALID`.
-    pub biome: Option<Cow<'a, Mutf8Str>>,
+    pub biome: Option<String>,
 
     ///  List of structure pieces making up this structure, that were not generated yet. Absent if id is `INVALID`.  
     /// `Children`
-    // pub children: Vec<StructureChild<'a>>,
+    // pub children: Vec<StructureChild>,
 
     /// Chunk X coordinate of the start of the structure. Absent if id is `INVALID`.  
     /// `ChunkX`
@@ -43,7 +43,7 @@ pub struct Structure<'a> {
     pub chunk_z: Option<i32>,
 
     /// If there's no structure of this kind in this chunk, this value is `INVALID`, else it's the structure name.
-    pub id: Cow<'a, Mutf8Str>,
+    pub id: String,
 
     /// (Monument only) List of chunks that have had their piece of the structure created. Absent if id is `INVALID`.  
     /// `Processed`
@@ -64,26 +64,26 @@ pub struct ProcessedChunk {
     pub z: i32,
 }
 
-impl<'a> FromCompoundNbt for Structures<'a> {
+impl FromCompoundNbt for Structures {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
         let references = nbt
             .compound("References")
-            .map(|nbt| KVPair::<'a, Vec<i64>>::from_compound_nbt(&nbt))
+            .map(|nbt| KVPair::<Vec<i64>>::from_compound_nbt(&nbt))
             .ok_or(SculkParseError::MissingField("References".into()))??;
 
         let starts = nbt
             .compound("starts")
-            .map(|nbt| KVPair::<'a, Structure<'a>>::from_compound_nbt(&nbt))
+            .map(|nbt| KVPair::<Structure>::from_compound_nbt(&nbt))
             .ok_or(SculkParseError::MissingField("starts".into()))??;
 
         Ok(Structures { references, starts })
     }
 }
 
-impl<'a> FromCompoundNbt for KVPair<'a, Vec<i64>> {
+impl FromCompoundNbt for KVPair<Vec<i64>> {
     fn from_compound_nbt(nbt: &NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -96,14 +96,14 @@ impl<'a> FromCompoundNbt for KVPair<'a, Vec<i64>> {
                 .long_array()
                 .ok_or(SculkParseError::InvalidField(key.clone()))?;
 
-            map.insert(Cow::Owned(key), value);
+            map.insert(key, value);
         }
 
         Ok(KVPair::new(map))
     }
 }
 
-impl<'a> FromCompoundNbt for KVPair<'a, Structure<'a>> {
+impl FromCompoundNbt for KVPair<Structure> {
     fn from_compound_nbt(nbt: &NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -117,14 +117,14 @@ impl<'a> FromCompoundNbt for KVPair<'a, Structure<'a>> {
                 .ok_or(SculkParseError::InvalidField(key.clone()))?;
             let value = Structure::from_compound_nbt(&value)?;
 
-            map.insert(Cow::Owned(key), value);
+            map.insert(key, value);
         }
 
         Ok(KVPair::new(map))
     }
 }
 
-impl<'a> FromCompoundNbt for Structure<'a> {
+impl FromCompoundNbt for Structure {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -137,10 +137,10 @@ impl<'a> FromCompoundNbt for Structure<'a> {
             bb
         });
 
-        let biome = get_owned_optional_mutf8str(&nbt, "biome");
+        let biome = get_owned_optional_string(&nbt, "biome");
         let chunk_x = nbt.int("ChunkX");
         let chunk_z = nbt.int("ChunkZ");
-        let id = get_owned_mutf8str(&nbt, "id")?;
+        let id = get_owned_string(&nbt, "id")?;
 
         let processed = if let Some(list) = nbt.list("processed") {
             let mut processed = vec![];

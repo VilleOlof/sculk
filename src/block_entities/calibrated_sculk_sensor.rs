@@ -1,42 +1,38 @@
-use std::borrow::Cow;
-
-use simdnbt::Mutf8Str;
-
 use crate::{
     error::SculkParseError,
     traits::FromCompoundNbt,
-    util::{get_doubles_array, get_owned_mutf8str},
+    util::{get_doubles_array, get_owned_string},
     uuid::Uuid,
 };
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct CalibratedSculkSensor<'a> {
+pub struct CalibratedSculkSensor {
     /// The frequency of the last vibration.
     pub last_vibration_frequency: i32,
 
     /// The vibration event listener for this sculk shrieker, sculk sensor, or calibrated sculk sensor.
-    pub listener: Listener<'a>,
+    pub listener: Listener,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Listener<'a> {
+pub struct Listener {
     /// Only exists if there is an incoming vibration.
-    pub event: Option<Event<'a>>,
+    pub event: Option<Event>,
 
     /// How many ticks remain until triggered by the vibration. Set to 0 if there is no incoming vibration
     pub event_delay: i32,
 
     /// The data of the vibration selector.​
-    pub selector: Selector<'a>,
+    pub selector: Selector,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Event<'a> {
+pub struct Event {
     /// The distance between this vibration's source and the block.
     pub distance: f32,
 
     /// The resource location of the vibration event that caused the current incoming vibration.
-    pub game_event: Cow<'a, Mutf8Str>,
+    pub game_event: String,
 
     /// The coordinates of the source of this vibration.  
     ///
@@ -53,15 +49,15 @@ pub struct Event<'a> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Selector<'a> {
+pub struct Selector {
     /// The game time when the vibration occurs, or -1 if there is no vibration to choose from.​
     pub tick: i64,
 
     /// Candidate game event
-    pub event: Option<Event<'a>>,
+    pub event: Option<Event>,
 }
 
-impl<'a> FromCompoundNbt for CalibratedSculkSensor<'a> {
+impl FromCompoundNbt for CalibratedSculkSensor {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -84,7 +80,7 @@ impl<'a> FromCompoundNbt for CalibratedSculkSensor<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for Listener<'a> {
+impl FromCompoundNbt for Listener {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -112,7 +108,7 @@ impl<'a> FromCompoundNbt for Listener<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for Selector<'a> {
+impl FromCompoundNbt for Selector {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -131,7 +127,7 @@ impl<'a> FromCompoundNbt for Selector<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for Event<'a> {
+impl FromCompoundNbt for Event {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -141,7 +137,7 @@ impl<'a> FromCompoundNbt for Event<'a> {
         let distance = nbt
             .float("distance")
             .ok_or(SculkParseError::MissingField("distance".into()))?;
-        let game_event = get_owned_mutf8str(&nbt, "game_event")?;
+        let game_event = get_owned_string(&nbt, "game_event")?;
 
         let pos = get_doubles_array(&nbt, "pos").and_then(|arr| {
             if arr.len() == 3 {

@@ -1,11 +1,11 @@
 use crate::{item::ItemWithNoSlot, traits::FromCompoundNbt};
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Lectern<'a> {
+pub struct Lectern {
     /// The book item, without the slot tag, currently on the lectern, may not exist.
     ///
     /// `Book`
-    pub book: Option<ItemWithNoSlot<'a>>,
+    pub book: Option<ItemWithNoSlot>,
 
     /// The page the book is currently on, starting from 0, does not exist if there's no book. Value is clamped between 0 and the last page - 1.
     ///
@@ -13,7 +13,7 @@ pub struct Lectern<'a> {
     pub page: Option<i32>,
 }
 
-impl<'a> FromCompoundNbt for Lectern<'a> {
+impl FromCompoundNbt for Lectern {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>

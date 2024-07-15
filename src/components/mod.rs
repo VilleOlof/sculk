@@ -1,11 +1,10 @@
-use std::{borrow::Cow, collections::HashMap, ops::Deref};
+use std::{collections::HashMap, ops::Deref};
 
 use attribute_modifiers::AttributeModifier;
 use banner_patterns::BannerPattern;
 use base_color::BaseColor;
 use bees::Bee;
 use container::Container;
-use simdnbt::Mutf8Str;
 use suspicious_stew_effects::SuspiciousStewEffects;
 use trim::Trim;
 
@@ -49,21 +48,21 @@ pub mod unbreakable;
 pub mod writable_book_content;
 pub mod written_book_content;
 
-type InternalMap<'a> = HashMap<String, Component<'a>>;
+type InternalMap = HashMap<String, Component>;
 
 /// A collection of components.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Components<'a>(InternalMap<'a>);
+pub struct Components(InternalMap);
 
-impl<'a> Deref for Components<'a> {
-    type Target = InternalMap<'a>;
+impl Deref for Components {
+    type Target = InternalMap;
 
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 
-impl<'a> FromCompoundNbt for Components<'a> {
+impl FromCompoundNbt for Components {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -79,7 +78,7 @@ impl<'a> FromCompoundNbt for Components<'a> {
         for (key, value) in nbt_components.iter() {
             let key = key.to_string();
 
-            let component: Component<'a> = match key.as_str() {
+            let component: Component = match key.as_str() {
                 "minecraft:attribute_modifiers" => {
                     // since the root value is either list or compound, we need to pass parent nbt.
                     Component::AttributeModifiers(AttributeModifier::from_compound_nbt(&nbt)?)
@@ -200,7 +199,7 @@ impl<'a> FromCompoundNbt for Components<'a> {
                     let value = value
                         .string()
                         .ok_or(SculkParseError::InvalidField("custom_name".into()))?;
-                    Component::CustomName(Cow::Owned(value.to_owned()))
+                    Component::CustomName(value.to_string())
                 }
                 "minecraft:damage" => {
                     let value = value
@@ -286,7 +285,7 @@ impl<'a> FromCompoundNbt for Components<'a> {
                     let value = value
                         .string()
                         .ok_or(SculkParseError::InvalidField("item_name".into()))?;
-                    Component::ItemName(Cow::Owned(value.to_owned()))
+                    Component::ItemName(value.to_string())
                 }
                 "minecraft:jukebox_playable" => {
                     let nbt = value
@@ -300,7 +299,7 @@ impl<'a> FromCompoundNbt for Components<'a> {
                     let value = value
                         .string()
                         .ok_or(SculkParseError::InvalidField("lock".into()))?;
-                    Component::Lock(Cow::Owned(value.to_owned()))
+                    Component::Lock(value.to_string())
                 }
                 "minecraft:lodestone_tracker" => {
                     let nbt = value
@@ -321,7 +320,7 @@ impl<'a> FromCompoundNbt for Components<'a> {
                         .strings()
                         .ok_or(SculkParseError::InvalidField("lore".into()))?
                     {
-                        lore.push(Cow::Owned((*item).to_owned()));
+                        lore.push((*item).to_string());
                     }
 
                     Component::Lore(lore)
@@ -362,7 +361,7 @@ impl<'a> FromCompoundNbt for Components<'a> {
                     let value = value
                         .string()
                         .ok_or(SculkParseError::InvalidField("note_block_sound".into()))?;
-                    Component::NoteBlockSound(Cow::Owned(value.to_owned()))
+                    Component::NoteBlockSound(value.to_string())
                 }
                 "minecraft:ominous_bottle_amplifier" => {
                     let value = value.int().ok_or(SculkParseError::InvalidField(
@@ -381,7 +380,7 @@ impl<'a> FromCompoundNbt for Components<'a> {
                         .strings()
                         .ok_or(SculkParseError::InvalidField("pot_decorations".into()))?
                     {
-                        decorations.push(Cow::Owned((*item).to_owned()));
+                        decorations.push((*item).to_string());
                     }
 
                     Component::PotDecorations(decorations)
@@ -409,7 +408,7 @@ impl<'a> FromCompoundNbt for Components<'a> {
                         .strings()
                         .ok_or(SculkParseError::InvalidField("recipes".into()))?
                     {
-                        recipes.push(Cow::Owned((*item).to_owned()));
+                        recipes.push((*item).to_string());
                     }
 
                     Component::Recipes(recipes)
@@ -493,30 +492,30 @@ impl<'a> FromCompoundNbt for Components<'a> {
 /// Represents a component in a block entity.
 #[derive(Debug, Clone, PartialEq)]
 // #[serde(untagged)]
-pub enum Component<'a> {
+pub enum Component {
     /// Can be defined as a compound or a list. If defined as a list, corresponds to modifiers.  
     /// `minecraft:attribute_modifiers`
-    AttributeModifiers(attribute_modifiers::AttributeModifier<'a>),
+    AttributeModifiers(attribute_modifiers::AttributeModifier),
 
     /// List of all patterns applied to the banner or the shield.  
     /// `minecraft:banner_patterns`
-    BannerPatterns(Vec<banner_patterns::BannerPattern<'a>>),
+    BannerPatterns(Vec<banner_patterns::BannerPattern>),
 
     /// The base dye color of the banner applied on a shield.  
     /// `minecraft:base_color`
-    BaseColor(base_color::BaseColor<'a>),
+    BaseColor(base_color::BaseColor),
 
     /// The entities currently in the beehive or bee nest.  
     /// `minecraft:bees`
-    Bees(Vec<bees::Bee<'a>>),
+    Bees(Vec<bees::Bee>),
 
     /// [Block entity](https://minecraft.wiki/w/Block_entity) NBT applied when this block is placed.
     /// `minecraft:block_entity_data`
-    BlockEntityData(NoCoordinatesBlockEntity<'a>),
+    BlockEntityData(NoCoordinatesBlockEntity),
 
     /// The block state properties to apply when placing this block.  
     /// `minecraft:block_state`
-    BlockState(block_state::BlockState<'a>),
+    BlockState(block_state::BlockState),
 
     /// NBT applied to an [entity](https://minecraft.wiki/w/Entity) when placed from this bucket. Only tags below are applied.
     /// `minecraft:bucket_entity_data`
@@ -524,33 +523,33 @@ pub enum Component<'a> {
 
     /// The items stored inside this [bundle](https://minecraft.wiki/w/Bundle).  
     /// `minecraft:bundle_contents`
-    BundleContents(Vec<ItemWithNoSlot<'a>>),
+    BundleContents(Vec<ItemWithNoSlot>),
 
     /// The only blocks this item may break when used by a player in [adventure](https://minecraft.wiki/w/Adventure) mode.
     /// `minecraft:can_break`
-    CanBreak(can_break::CanBreak<'a>),
+    CanBreak(can_break::CanBreak),
 
     /// Determines which blocks that blocks with this component can be placed against in [adventure](https://minecraft.wiki/w/Adventure) mode.  
     /// `minecraft:can_place_on`
     ///
     /// `CanPlaceOn` uses the same structure as `CanBreak`
-    CanPlaceOn(can_break::CanBreak<'a>),
+    CanPlaceOn(can_break::CanBreak),
 
     /// The items loaded as projectiles into this crossbow. If not present, this crossbow is not charged.  
     /// `minecraft:charged_projectiles`
-    ChargedProjectiles(Vec<ItemWithNoSlot<'a>>),
+    ChargedProjectiles(Vec<ItemWithNoSlot>),
 
     /// The items contained in this [container](https://minecraft.wiki/w/Container).  
     /// `minecraft:container`
-    Container(Vec<container::Container<'a>>),
+    Container(Vec<container::Container>),
 
     /// The unresolved loot table and seed of this container item.  
     /// `minecraft:container_loot`
-    ContainerLoot(container_loot::ContainerLoot<'a>),
+    ContainerLoot(container_loot::ContainerLoot),
 
     /// Contains key-value pairs of any custom data not used by the game, either as an object or a [SNBT](https://minecraft.wiki/w/SNBT) string.  
     /// `minecraft:custom_data`
-    CustomData(custom_data::CustomData<'a>),
+    CustomData(custom_data::CustomData),
 
     /// A value used in the "custom_model_data" [item tag](https://minecraft.wiki/w/Model#Item_models) in the overrides of item models.  
     /// `minecraft:custom_model_data`
@@ -558,7 +557,7 @@ pub enum Component<'a> {
 
     /// The JSON text component to use as this item's name. See [Raw JSON text](https://minecraft.wiki/w/Raw_JSON_text_format) format.  
     /// `custom_name`
-    CustomName(Cow<'a, Mutf8Str>),
+    CustomName(String),
 
     /// The number of uses consumed (not remaining) of the item's durability. Must be a non-negative integer, defaults to 0.  
     /// `minecraft:damage`
@@ -566,7 +565,7 @@ pub enum Component<'a> {
 
     /// The selected block state properties used by this debug stick.  
     /// `minecraft:debug_stick_state`
-    DebugStickState(KVPair<'a, Cow<'a, Mutf8Str>>),
+    DebugStickState(KVPair<String>),
 
     /// Can be defined as a compound or an integer. If defined as an integer, corresponds to  rgb.  
     /// `minecraft:dyed_color`
@@ -578,11 +577,11 @@ pub enum Component<'a> {
 
     /// Can contain either the following fields, or key-value pairs of levels of [enchantments](https://minecraft.wiki/w/Enchantment)  
     /// `minecraft:enchantments`
-    Enchantments(enchantments::Enchantments<'a>),
+    Enchantments(enchantments::Enchantments),
 
     /// NBT applied to an [entity](https://minecraft.wiki/w/Entity) when created from an item.   
     /// `minecraft:entity_data`
-    EntityData(Entity<'a>),
+    EntityData(Entity),
 
     /// If set, this item will not burn in fire or lava.  
     /// `minecraft:fire_resistant`
@@ -597,7 +596,7 @@ pub enum Component<'a> {
 
     /// If set, this item is considered as a food, and can be eaten.  
     /// `minecraft:food`
-    Food(food::Food<'a>),
+    Food(food::Food),
 
     /// If set, it will hide additional info on this item's tooltip.  
     /// `minecraft:hide_additional_tooltip`
@@ -609,7 +608,7 @@ pub enum Component<'a> {
 
     /// [instrument](https://minecraft.wiki/w/Goat_horn) (referenced by ID or inlined)  
     /// `minecraft:instrument`
-    Instrument(instrument::Instrument<'a>),
+    Instrument(instrument::Instrument),
 
     /// If set, this projectile item can't be picked up by a player when fired, except in creative mode. Can only be used within [charged_projectiles](https://minecraft.wiki/w/Data_component_format#charged_projectiles) components.  
     /// `minecraft:intangible_projectile`
@@ -617,23 +616,23 @@ pub enum Component<'a> {
 
     /// The default name of this item, as a JSON text component. See [Raw JSON text format](https://minecraft.wiki/w/Raw_JSON_text_format). Unlike the [custom_name](https://minecraft.wiki/w/Data_component_format#custom_name) component, this name cannot be changed through an anvil, and does not show in some labels, such as banner markers and item frames.  
     /// `minecraft:item_name`
-    ItemName(Cow<'a, Mutf8Str>),
+    ItemName(String),
 
     ///  If present, this item can be inserted into a [jukebox](https://minecraft.wiki/w/Jukebox) and plays the specified song.  
     /// `minecraft:jukebox_playable`
-    JukeboxPlayable(jukebox_playable::JukeboxPlayable<'a>),
+    JukeboxPlayable(jukebox_playable::JukeboxPlayable),
 
     ///  The string value representing the "key" to open this container item. The key must be an item with the same value as its custom name.  
     /// `minecraft:lock`
-    Lock(Cow<'a, Mutf8Str>),
+    Lock(String),
 
     /// If specified, stores information about the lodestone this compass should point towards.  
     /// `minecraft:lodestone_tracker`
-    LodestoneTracker(lodestone_tracker::LodestoneTracker<'a>),
+    LodestoneTracker(lodestone_tracker::LodestoneTracker),
 
     /// List of additional lines to display in this item's tooltip. Has a maximum of 256 lines.   
     /// `minecraft:lore`
-    Lore(Vec<Cow<'a, Mutf8Str>>),
+    Lore(Vec<String>),
 
     /// The color of the markings on this [filled map](https://minecraft.wiki/w/Filled_map) item texture.  
     /// `minecraft:map_color`
@@ -641,7 +640,7 @@ pub enum Component<'a> {
 
     ///  Contains key-value pairs of the icons to display on this [filled map](https://minecraft.wiki/w/Filled_map).  
     /// `minecraft:map_decorations`
-    MapDecorations(map_decorations::MapDecorations<'a>),
+    MapDecorations(map_decorations::MapDecorations),
 
     /// The number of this filled map, representing the shared state holding map contents and markers.  
     /// `minecraft:map_id`
@@ -657,7 +656,7 @@ pub enum Component<'a> {
 
     /// The ID of the sound event played by a note block when this [player head](https://minecraft.wiki/w/Player_head) is placed above.  
     /// `minecraft:note_block_sound`
-    NoteBlockSound(Cow<'a, Mutf8Str>),
+    NoteBlockSound(String),
 
     /// The amplifier amount of the [Bad Omen](https://minecraft.wiki/w/Bad_Omen) effect on this [ominous bottle](https://minecraft.wiki/w/Ominous_bottle). Must be a positive integer between 0 and 4 (inclusive).  
     /// `minecraft:ominous_bottle_amplifier`
@@ -668,15 +667,15 @@ pub enum Component<'a> {
     /// Each entry: The ID of an item. Can be either brick or a sherd.  
     ///
     /// `minecraft:pot_decorations`
-    PotDecorations(Vec<Cow<'a, Mutf8Str>>),
+    PotDecorations(Vec<String>),
 
     /// The potion and custom effects contained in this [potion](https://minecraft.wiki/w/Potion), [splash potion](https://minecraft.wiki/w/Splash_potion), [lingering potion](https://minecraft.wiki/w/Lingering_potion), or [tipped arrow](https://minecraft.wiki/w/Tipped_arrow). If defined as a string, corresponds to  potion.   
     /// `minecraft:potion_contents`
-    PotionContents(potion_contents::PotionContents<'a>),
+    PotionContents(potion_contents::PotionContents),
 
     /// Information about the owner of this player head. If defined as a string, corresponds to name.  
     /// `minecraft:profile`
-    Profile(skull::SkullProfile<'a>),
+    Profile(skull::SkullProfile),
 
     /// Sets the rarity of this item, which affects the default color of its name.  
     /// `minecraft:rarity`
@@ -684,7 +683,7 @@ pub enum Component<'a> {
 
     /// The recipes that a player unlocks when this knowledge book is used.  
     /// `minecraft:recipes`
-    Recipes(Vec<Cow<'a, Mutf8Str>>),
+    Recipes(Vec<String>),
 
     /// The number of experience levels to add to the base level cost when repairing, combining, or renaming this item with an anvil. Must be a non-negative integer, defaults to 0.  
     /// `minecraft:repair_cost`
@@ -692,19 +691,19 @@ pub enum Component<'a> {
 
     ///  Can contain either the following fields, or key-value pairs of levels of enchantments. For the latter, corresponds to  levels.   
     /// `minecraft:stored_enchantments`
-    StoredEnchantments(enchantments::Enchantments<'a>),
+    StoredEnchantments(enchantments::Enchantments),
 
     /// The effects applied when consuming this suspicious stew.  
     /// `minecraft:suspicous_stew_effects`
-    SuspiciousStewEffects(Vec<suspicious_stew_effects::SuspiciousStewEffects<'a>>),
+    SuspiciousStewEffects(Vec<suspicious_stew_effects::SuspiciousStewEffects>),
 
     /// If set, this item is considered as a [tool](https://minecraft.wiki/w/Tool).  
     /// `minecraft:tool`
-    Tool(tool::Tool<'a>),
+    Tool(tool::Tool),
 
     /// Contains the trim applied to this [armor](https://minecraft.wiki/w/Armor) piece.  
     /// `minecraft:trim`
-    Trim(trim::Trim<'a>),
+    Trim(trim::Trim),
 
     /// If set, this item doesn't lose durability when used.  
     /// `minecraft:unbreakable`
@@ -712,11 +711,11 @@ pub enum Component<'a> {
 
     /// The contents of this [book and quill](https://minecraft.wiki/w/Book_and_quill).  
     /// `minecraft:writable_book_content`
-    WritableBookContent(writable_book_content::WritableBookContent<'a>),
+    WritableBookContent(writable_book_content::WritableBookContent),
 
     /// The contents and metadata of this [written book](https://minecraft.wiki/w/Written_book).  
     /// `minecraft:written_book_content`
-    WrittenBookContent(written_book_content::WrittenBookContent<'a>),
+    WrittenBookContent(written_book_content::WrittenBookContent),
 
     /// Unknown component.
     Unknown(simdnbt::owned::NbtTag),

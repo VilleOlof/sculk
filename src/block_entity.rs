@@ -3,16 +3,16 @@ use crate::{
     components::Components,
     error::SculkParseError,
     traits::{FromCompoundNbt, FromNbt},
-    util::{get_bool, get_optional_components, get_owned_mutf8str},
+    util::{get_bool, get_optional_components, get_owned_string},
 };
-use simdnbt::{borrow::BaseNbt, Mutf8Str};
-use std::{borrow::Cow, io::Cursor};
+use simdnbt::borrow::BaseNbt;
+use std::io::Cursor;
 
 /// The base fields of a block entity.
 #[derive(Debug, Clone, PartialEq)]
-pub struct BlockEntityBase<'a> {
+pub struct BlockEntityBase {
     /// ID of block entity.
-    pub id: Cow<'a, Mutf8Str>,
+    pub id: String,
 
     /// If true, this is an invalid block entity, and this block is not immediately placed when a loaded chunk is loaded. If false, this is a normal block entity that can be immediately placed.
     ///
@@ -29,7 +29,7 @@ pub struct BlockEntityBase<'a> {
     pub z: i32,
 
     /// Optional map of components.
-    pub components: Option<Components<'a>>,
+    pub components: Option<Components>,
 }
 
 /// The base fields of a block entity.  
@@ -37,9 +37,9 @@ pub struct BlockEntityBase<'a> {
 ///
 /// Gotta love minecraft data structures.  
 #[derive(Debug, Clone, PartialEq)]
-pub struct NoCoordinatesBlockEntityBase<'a> {
+pub struct NoCoordinatesBlockEntityBase {
     /// ID of block entity.
-    pub id: Cow<'a, Mutf8Str>,
+    pub id: String,
 
     /// If true, this is an invalid block entity, and this block is not immediately placed when a loaded chunk is loaded. If false, this is a normal block entity that can be immediately placed.
     ///
@@ -47,16 +47,16 @@ pub struct NoCoordinatesBlockEntityBase<'a> {
     pub keep_packed: bool,
 
     /// Optional map of components.
-    pub components: Option<Components<'a>>,
+    pub components: Option<Components>,
 }
 
 /// The base fields of a block entity.  
 /// This is used for `lazy` block entities.  
 /// So it does not contain the `components` field.  
 #[derive(Debug, Clone, PartialEq)]
-pub struct LazyBlockEntityBase<'a> {
+pub struct LazyBlockEntityBase {
     /// ID of block entity.
-    pub id: Cow<'a, Mutf8Str>,
+    pub id: String,
 
     /// If true, this is an invalid block entity, and this block is not immediately placed when a loaded chunk is loaded. If false, this is a normal block entity that can be immediately placed.
     ///
@@ -75,23 +75,23 @@ pub struct LazyBlockEntityBase<'a> {
 
 /// Represents a block entity.
 #[derive(Debug, Clone, PartialEq)]
-pub struct BlockEntity<'a> {
+pub struct BlockEntity {
     /// Common fields of a block entity.
-    pub base: BlockEntityBase<'a>,
+    pub base: BlockEntityBase,
 
     /// The specific data of the block entity.
-    pub kind: BlockEntityKind<'a>,
+    pub kind: BlockEntityKind,
 }
 
 /// Represents a block entity.  
 /// But with no coordinates.  
 #[derive(Debug, Clone, PartialEq)]
-pub struct NoCoordinatesBlockEntity<'a> {
+pub struct NoCoordinatesBlockEntity {
     /// Common fields of a block entity.
-    pub base: NoCoordinatesBlockEntityBase<'a>,
+    pub base: NoCoordinatesBlockEntityBase,
 
     /// The specific data of the block entity.
-    pub kind: BlockEntityKind<'a>,
+    pub kind: BlockEntityKind,
 }
 
 /// Represents a `lazy` byte variant.  
@@ -118,7 +118,7 @@ pub enum LazyByteVariant<'a> {
 #[derive(Debug, Clone, PartialEq)]
 pub struct LazyBlockEntity<'a> {
     /// Common fields of a block entity.
-    pub base: LazyBlockEntityBase<'a>,
+    pub base: LazyBlockEntityBase,
 
     /// The bytes that was used to parse the block entity.
     // This is a bit ugly but i found no other way with `borrow::Nbt` or `borrow::BaseNbt` to work
@@ -142,12 +142,12 @@ impl<'a> FromCompoundNbt for LazyBlockEntity<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for BlockEntityBase<'a> {
+impl FromCompoundNbt for BlockEntityBase {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
-        let id = get_owned_mutf8str(&nbt, "id")?;
+        let id = get_owned_string(&nbt, "id")?;
         let keep_packed = get_bool(&nbt, "keepPacked");
 
         let x = nbt
@@ -173,12 +173,12 @@ impl<'a> FromCompoundNbt for BlockEntityBase<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for NoCoordinatesBlockEntityBase<'a> {
+impl FromCompoundNbt for NoCoordinatesBlockEntityBase {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
-        let id = get_owned_mutf8str(&nbt, "id")?;
+        let id = get_owned_string(&nbt, "id")?;
         let keep_packed = get_bool(&nbt, "keepPacked");
 
         let components = get_optional_components(&nbt)?;
@@ -191,12 +191,12 @@ impl<'a> FromCompoundNbt for NoCoordinatesBlockEntityBase<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for LazyBlockEntityBase<'a> {
+impl FromCompoundNbt for LazyBlockEntityBase {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
-        let id = get_owned_mutf8str(&nbt, "id")?;
+        let id = get_owned_string(&nbt, "id")?;
         let keep_packed = get_bool(&nbt, "keepPacked");
 
         let x = nbt
@@ -219,7 +219,7 @@ impl<'a> FromCompoundNbt for LazyBlockEntityBase<'a> {
     }
 }
 
-impl<'a> FromNbt for BlockEntity<'a> {
+impl FromNbt for BlockEntity {
     fn from_nbt(nbt: simdnbt::borrow::Nbt) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -237,7 +237,7 @@ impl<'a> FromNbt for BlockEntity<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for BlockEntity<'a> {
+impl FromCompoundNbt for BlockEntity {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -249,7 +249,7 @@ impl<'a> FromCompoundNbt for BlockEntity<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for NoCoordinatesBlockEntity<'a> {
+impl FromCompoundNbt for NoCoordinatesBlockEntity {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -263,11 +263,11 @@ impl<'a> FromCompoundNbt for NoCoordinatesBlockEntity<'a> {
 
 // It got its own silly implementation :3
 impl<'a> LazyBlockEntity<'a> {
-    fn from_nbt(nbt: simdnbt::borrow::Nbt<'a>, bytes: &'a [u8]) -> Result<Self, SculkParseError>
+    fn from_nbt(nbt: simdnbt::borrow::Nbt, bytes: &'a [u8]) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
-        let base_nbt: BaseNbt<'a> = match nbt.is_none() {
+        let base_nbt: BaseNbt = match nbt.is_none() {
             true => return Err(SculkParseError::NoNbt),
             false => nbt.unwrap(),
         };
@@ -281,14 +281,14 @@ impl<'a> LazyBlockEntity<'a> {
     }
 }
 
-impl<'a> BlockEntity<'a> {
+impl BlockEntity {
     /// Get the variant of the block entity.
     pub fn variant(&self) -> BlockEntityVariant {
         self.kind.variant()
     }
 
     /// Converts from bytes to a block entity.
-    pub fn from_bytes(bytes: &'a [u8]) -> Result<Self, SculkParseError> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, SculkParseError> {
         let mut cursor = Cursor::new(bytes);
         let nbt = match simdnbt::borrow::read(&mut cursor) {
             Ok(nbt) => nbt,

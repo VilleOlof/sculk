@@ -1,43 +1,35 @@
 use crate::{error::SculkParseError, traits::FromCompoundNbt};
-use simdnbt::{borrow::NbtCompound, Mutf8Str};
-use std::{borrow::Cow, collections::HashMap, ops::Deref};
+use simdnbt::borrow::NbtCompound;
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct KVPair<'a, T>(HashMap<Cow<'a, String>, T>);
+pub struct KVPair<T>(HashMap<String, T>);
 
-impl<'a, T> Deref for KVPair<'a, T> {
-    type Target = HashMap<Cow<'a, String>, T>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl<'a, T> KVPair<'a, T> {
-    pub fn new(map: HashMap<Cow<'a, String>, T>) -> Self {
+impl<T> KVPair<T> {
+    pub fn new(map: HashMap<String, T>) -> Self {
         KVPair(map)
     }
 }
 
-impl<'a> FromCompoundNbt for KVPair<'a, Cow<'a, Mutf8Str>> {
+impl FromCompoundNbt for KVPair<String> {
     fn from_compound_nbt(nbt: &NbtCompound) -> Result<Self, SculkParseError> {
         let mut map = HashMap::new();
 
         for (key, value) in nbt.iter() {
             let key = key.to_string();
             let value = match value.string() {
-                Some(string) => string.to_owned(),
+                Some(string) => string.to_string(),
                 None => continue,
             };
 
-            map.insert(Cow::Owned(key), Cow::Owned(value));
+            map.insert(key, value);
         }
 
         Ok(KVPair::new(map))
     }
 }
 
-impl<'a> FromCompoundNbt for KVPair<'a, i32> {
+impl FromCompoundNbt for KVPair<i32> {
     fn from_compound_nbt(nbt: &NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -51,14 +43,14 @@ impl<'a> FromCompoundNbt for KVPair<'a, i32> {
                 None => continue,
             };
 
-            map.insert(Cow::Owned(key), value);
+            map.insert(key, value);
         }
 
         Ok(KVPair::new(map))
     }
 }
 
-impl<'a> FromCompoundNbt for KVPair<'a, simdnbt::owned::NbtCompound> {
+impl FromCompoundNbt for KVPair<simdnbt::owned::NbtCompound> {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -72,7 +64,7 @@ impl<'a> FromCompoundNbt for KVPair<'a, simdnbt::owned::NbtCompound> {
                 None => continue,
             };
 
-            map.insert(Cow::Owned(key), value);
+            map.insert(key, value);
         }
 
         Ok(KVPair::new(map))

@@ -1,12 +1,10 @@
 //! Tool component.
 
 use crate::{error::SculkParseError, traits::FromCompoundNbt};
-use simdnbt::Mutf8Str;
-use std::borrow::Cow;
 
 /// A tool that can be used to mine blocks.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Tool<'a> {
+pub struct Tool {
     /// The default mining speed of this tool, used if no rules override it. Defaults to 1.0.
     pub default_mining_speed: f32,
 
@@ -14,15 +12,15 @@ pub struct Tool<'a> {
     pub damage_per_block: i32,
 
     ///  A list of rules for the blocks that this tool has a special behavior with.
-    pub rules: Vec<ToolRules<'a>>,
+    pub rules: Vec<ToolRules>,
 }
 
 /// Rules on how a tool behaves with certain blocks.
 #[derive(Debug, Clone, PartialEq)]
-pub struct ToolRules<'a> {
+pub struct ToolRules {
     /// The blocks to match with. Can be a block ID or a block tag with a #, or a list of block IDs.  
     /// **NOTE:** This is always a list here, even if it only contains one block.
-    pub blocks: Vec<Cow<'a, Mutf8Str>>,
+    pub blocks: Vec<String>,
 
     ///  If the blocks match, overrides the default mining speed. Optional.
     pub speed: Option<f32>,
@@ -31,7 +29,7 @@ pub struct ToolRules<'a> {
     pub correct_for_drops: Option<bool>,
 }
 
-impl<'a> FromCompoundNbt for Tool<'a> {
+impl FromCompoundNbt for Tool {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -65,7 +63,7 @@ impl<'a> FromCompoundNbt for Tool<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for ToolRules<'a> {
+impl FromCompoundNbt for ToolRules {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -74,7 +72,7 @@ impl<'a> FromCompoundNbt for ToolRules<'a> {
     {
         let blocks = if let Some(string) = nbt.string("blocks") {
             // single block id
-            vec![Cow::<'a, Mutf8Str>::Owned(string.to_owned())]
+            vec![string.to_string()]
         } else if let Some(list) = nbt.list("blocks") {
             // multiple block ids
             let list = list
@@ -84,7 +82,7 @@ impl<'a> FromCompoundNbt for ToolRules<'a> {
             let mut blocks = vec![];
 
             for string in list {
-                blocks.push(Cow::<'a, Mutf8Str>::Owned((*string).to_owned()));
+                blocks.push((*string).to_string());
             }
 
             blocks

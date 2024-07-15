@@ -1,17 +1,13 @@
-use std::borrow::Cow;
-
-use simdnbt::Mutf8Str;
-
 use crate::{
     error::SculkParseError,
     traits::FromCompoundNbt,
-    util::{get_bool, get_owned_mutf8str},
+    util::{get_bool, get_owned_string},
 };
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct StructureBlock<'a> {
+pub struct StructureBlock {
     /// Author of the structure; only set to "?" for most vanilla structures.
-    pub author: Cow<'a, Mutf8Str>,
+    pub author: String,
 
     /// Whether entities should be ignored in the structure.
     ///
@@ -22,7 +18,7 @@ pub struct StructureBlock<'a> {
     pub integrity: f32,
 
     /// Value of the data structure block field.
-    pub metadata: Cow<'a, Mutf8Str>,
+    pub metadata: String,
 
     /// How the structure is mirrored, one of "NONE", "LEFT_RIGHT" (mirrored over X axis when not rotated), or "FRONT_BACK" (mirrored over Z axis when not rotated).
     pub mirror: StructureBlockMirror,
@@ -31,7 +27,7 @@ pub struct StructureBlock<'a> {
     pub mode: StructureBlockMode,
 
     /// Name of the structure.
-    pub name: Cow<'a, Mutf8Str>,
+    pub name: String,
 
     /// X-position of the structure.
     ///
@@ -136,21 +132,21 @@ impl From<&str> for StructureBlockRotation {
     }
 }
 
-impl<'a> FromCompoundNbt for StructureBlock<'a> {
+impl FromCompoundNbt for StructureBlock {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
     where
         Self: Sized,
     {
-        let author = get_owned_mutf8str(&nbt, "author")?;
+        let author = get_owned_string(&nbt, "author")?;
         let ignore_entities = get_bool(&nbt, "ignoreEntities");
 
         let integrity = nbt
             .float("integrity")
             .ok_or(SculkParseError::MissingField("integrity".into()))?;
 
-        let metadata = get_owned_mutf8str(&nbt, "metadata")?;
+        let metadata = get_owned_string(&nbt, "metadata")?;
 
         let mirror = nbt
             .string("mirror")
@@ -162,7 +158,7 @@ impl<'a> FromCompoundNbt for StructureBlock<'a> {
             .map(|string| StructureBlockMode::from(string.to_str().as_ref()))
             .ok_or(SculkParseError::MissingField("mode".into()))?;
 
-        let name = get_owned_mutf8str(&nbt, "name")?;
+        let name = get_owned_string(&nbt, "name")?;
 
         let pos_x = nbt
             .int("posX")

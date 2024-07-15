@@ -1,15 +1,12 @@
-use simdnbt::Mutf8Str;
-
 use crate::{
     error::SculkParseError,
     item::Item,
     traits::FromCompoundNbt,
     util::{get_bool, get_int_array, get_loot_table_data, get_optional_lock, get_t_compound_vec},
 };
-use std::borrow::Cow;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Crafter<'a> {
+pub struct Crafter {
     /// Set to 6 when the crafter crafts something
     pub crafting_ticks_remaining: i32,
 
@@ -24,17 +21,17 @@ pub struct Crafter<'a> {
     /// Crafter slots are numbered 0-8. 0 starts in the top left corner.
     ///
     /// `Items`
-    pub items: Vec<Item<'a>>,
+    pub items: Vec<Item>,
 
     /// Optional. When not blank, prevents the container from being opened unless the opener is holding an item whose name matches this string.
     ///
     /// `Lock`
-    pub lock: Option<Cow<'a, Mutf8Str>>,
+    pub lock: Option<String>,
 
     /// Optional. Name of the loot table to use. If this is used in a chest-like container, the loot table generates its content when it is opened. Generating the items in the container removes both loot table tags ( LootTable and  LootTableSeed).
     ///
     /// `LootTable`
-    pub loot_table: Option<Cow<'a, Mutf8Str>>,
+    pub loot_table: Option<String>,
 
     /// Optional. Seed for generating the loot table. The default value works similarly to the seeds for worlds, where value of 0 or an omitted value causes the game to use a random seed.
     ///
@@ -42,7 +39,7 @@ pub struct Crafter<'a> {
     pub loot_table_seed: Option<i64>,
 }
 
-impl<'a> FromCompoundNbt for Crafter<'a> {
+impl FromCompoundNbt for Crafter {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>

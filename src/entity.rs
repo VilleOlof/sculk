@@ -2,17 +2,15 @@ use crate::{
     error::SculkParseError,
     traits::FromCompoundNbt,
     util::{
-        get_bool, get_optional_name, get_owned_mutf8str, get_owned_optional_mutf8str,
+        get_bool, get_optional_name, get_owned_optional_string, get_owned_string,
         get_t_compound_vec,
     },
     uuid::Uuid,
 };
-use simdnbt::Mutf8Str;
-use std::borrow::Cow;
 
 /// An entity in the game.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Entity<'a> {
+pub struct Entity {
     ///  How much air the entity has, in game ticks. Decreases when unable to breathe (except suffocating in a block). Increases when it can breathe.  Air being <= -20 game ticks (while still unable to breathe) on a given game tick causes the entity to immediately lose 1 health to drowning damage. This resets  Air to 0 game ticks. Most mobs can have a maximum of 300 game ticks (15 seconds) of  Air, while dolphins can reach up to 4800 game ticks (240 seconds), and axolotls have 6000 game ticks (300 seconds).
     ///
     /// `Air`
@@ -21,7 +19,7 @@ pub struct Entity<'a> {
     /// The custom name JSON text component of this entity. Appears in player death messages and villager trading interfaces, as well as above the entity when the player's cursor is over it. May be empty or not exist. Cannot be removed using the data remove command,[1] but setting it to an empty string has the same effect.
     ///
     /// `CustomName`
-    pub custom_name: Option<Cow<'a, Mutf8Str>>,
+    pub custom_name: Option<String>,
 
     /// if true, and this entity has a custom name, the name always appears above the entity, regardless of where the cursor points. If the entity does not have a custom name, a default name is shown. May not exist.
     ///
@@ -49,7 +47,7 @@ pub struct Entity<'a> {
     pub has_visual_fire: bool,
 
     /// String representation of the entity's ID. Does not exist for the Player entity.
-    pub id: Cow<'a, Mutf8Str>,
+    pub id: String,
 
     ///  if true, the entity should not take damage. This applies to living and nonliving entities alike: mobs should not take damage from any source (including potion effects), and cannot be moved by fishing rods, attacks, explosions, or projectiles, and objects such as vehicles and item frames cannot be destroyed unless their supports are removed. Invulnerable player entities are also ignored by any hostile mobs. Note that these entities can be damaged by players in Creative mode.
     ///
@@ -74,7 +72,7 @@ pub struct Entity<'a> {
     /// The data of the entities that are riding this entity.
     ///
     /// `Passengers`
-    pub passengers: Vec<Entity<'a>>,
+    pub passengers: Vec<Entity>,
 
     /// The number of game ticks before which the entity may be teleported back through a nether portal. Initially starts at 300 game ticks (15 seconds) after teleportation and counts down to 0.
     ///
@@ -103,7 +101,7 @@ pub struct Entity<'a> {
     /// List of scoreboard tags of this entity.
     ///
     /// `Tags`
-    pub tags: Vec<Cow<'a, Mutf8Str>>,
+    pub tags: Vec<String>,
 
     /// Optional. How many game ticks the entity has been freezing. Although this tag is defined for all entities, it is actually only used by mobs that are not in the freeze_immune_entity_types entity type tag. Increases while in powder snow, even partially, up to a maximum of 300 game ticks (15 seconds), and decreases at double speed while not in powder snow.
     ///
@@ -120,7 +118,7 @@ pub struct Entity<'a> {
 /// A maybe entity.  
 /// All fields are optional.
 #[derive(Debug, Clone, PartialEq)]
-pub struct MaybeEntity<'a> {
+pub struct MaybeEntity {
     ///  How much air the entity has, in game ticks. Decreases when unable to breathe (except suffocating in a block). Increases when it can breathe.  Air being <= -20 game ticks (while still unable to breathe) on a given game tick causes the entity to immediately lose 1 health to drowning damage. This resets  Air to 0 game ticks. Most mobs can have a maximum of 300 game ticks (15 seconds) of  Air, while dolphins can reach up to 4800 game ticks (240 seconds), and axolotls have 6000 game ticks (300 seconds).
     ///
     /// `Air`
@@ -129,7 +127,7 @@ pub struct MaybeEntity<'a> {
     /// The custom name JSON text component of this entity. Appears in player death messages and villager trading interfaces, as well as above the entity when the player's cursor is over it. May be empty or not exist. Cannot be removed using the data remove command,[1] but setting it to an empty string has the same effect.
     ///
     /// `CustomName`
-    pub custom_name: Option<Cow<'a, Mutf8Str>>,
+    pub custom_name: Option<String>,
 
     /// if true, and this entity has a custom name, the name always appears above the entity, regardless of where the cursor points. If the entity does not have a custom name, a default name is shown. May not exist.
     ///
@@ -157,7 +155,7 @@ pub struct MaybeEntity<'a> {
     pub has_visual_fire: Option<bool>,
 
     /// String representation of the entity's ID. Does not exist for the Player entity.
-    pub id: Option<Cow<'a, Mutf8Str>>,
+    pub id: Option<String>,
 
     ///  if true, the entity should not take damage. This applies to living and nonliving entities alike: mobs should not take damage from any source (including potion effects), and cannot be moved by fishing rods, attacks, explosions, or projectiles, and objects such as vehicles and item frames cannot be destroyed unless their supports are removed. Invulnerable player entities are also ignored by any hostile mobs. Note that these entities can be damaged by players in Creative mode.
     ///
@@ -182,7 +180,7 @@ pub struct MaybeEntity<'a> {
     /// The data of the entities that are riding this entity.
     ///
     /// `Passengers`
-    pub passengers: Option<Vec<Entity<'a>>>,
+    pub passengers: Option<Vec<Entity>>,
 
     /// The number of game ticks before which the entity may be teleported back through a nether portal. Initially starts at 300 game ticks (15 seconds) after teleportation and counts down to 0.
     ///
@@ -211,7 +209,7 @@ pub struct MaybeEntity<'a> {
     /// List of scoreboard tags of this entity.
     ///
     /// `Tags`
-    pub tags: Option<Vec<Cow<'a, Mutf8Str>>>,
+    pub tags: Option<Vec<String>>,
 
     /// Optional. How many game ticks the entity has been freezing. Although this tag is defined for all entities, it is actually only used by mobs that are not in the freeze_immune_entity_types entity type tag. Increases while in powder snow, even partially, up to a maximum of 300 game ticks (15 seconds), and decreases at double speed while not in powder snow.
     ///
@@ -223,7 +221,7 @@ pub struct MaybeEntity<'a> {
     pub uuid: Option<Uuid>,
 }
 
-impl<'a> FromCompoundNbt for Entity<'a> {
+impl FromCompoundNbt for Entity {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -243,7 +241,7 @@ impl<'a> FromCompoundNbt for Entity<'a> {
             .ok_or(SculkParseError::MissingField("Fire".into()))?;
         let glowing = get_bool(&nbt, "Glowing");
         let has_visual_fire = get_bool(&nbt, "HasVisualFire");
-        let id = get_owned_mutf8str(&nbt, "id")?;
+        let id = get_owned_string(&nbt, "id")?;
         let invulnerable = get_bool(&nbt, "Invulnerable");
 
         let motion_list = nbt
@@ -261,7 +259,7 @@ impl<'a> FromCompoundNbt for Entity<'a> {
         let no_gravity = get_bool(&nbt, "NoGravity");
         let on_ground = get_bool(&nbt, "OnGround");
 
-        let passengers: Vec<Entity<'a>> =
+        let passengers: Vec<Entity> =
             get_t_compound_vec(&nbt, "passengers", Entity::from_compound_nbt)?;
 
         let portal_cooldown = nbt
@@ -297,12 +295,12 @@ impl<'a> FromCompoundNbt for Entity<'a> {
         let tags_list = nbt
             .list("Tags")
             .ok_or(SculkParseError::MissingField("Tags".into()))?;
-        let mut tags: Vec<Cow<'a, Mutf8Str>> = vec![];
+        let mut tags: Vec<String> = vec![];
         for tag in tags_list
             .strings()
             .ok_or(SculkParseError::InvalidField("Tags".into()))?
         {
-            tags.push(Cow::Owned((*tag).to_owned()));
+            tags.push((*tag).to_string());
         }
 
         let ticks_frozen = nbt.int("TicksFrozen");
@@ -336,7 +334,7 @@ impl<'a> FromCompoundNbt for Entity<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for MaybeEntity<'a> {
+impl FromCompoundNbt for MaybeEntity {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -350,7 +348,7 @@ impl<'a> FromCompoundNbt for MaybeEntity<'a> {
         let fire = nbt.short("Fire");
         let glowing = nbt.byte("Glowing").map(|b| b != 0);
         let has_visual_fire = nbt.byte("HasVisualFire").map(|b| b != 0);
-        let id = get_owned_optional_mutf8str(&nbt, "id");
+        let id = get_owned_optional_string(&nbt, "id");
         let invulnerable = nbt.byte("Invulnerable").map(|b| b != 0);
 
         let motion = if let Some(motion_list) = nbt.list("Motion") {
@@ -371,7 +369,7 @@ impl<'a> FromCompoundNbt for MaybeEntity<'a> {
         let no_gravity = nbt.byte("NoGravity").map(|b| b != 0);
         let on_ground = nbt.byte("OnGround").map(|b| b != 0);
 
-        let passengers: Option<Vec<Entity<'a>>> =
+        let passengers: Option<Vec<Entity>> =
             match get_t_compound_vec(&nbt, "passengers", Entity::from_compound_nbt) {
                 Ok(passengers) => Some(passengers),
                 Err(SculkParseError::MissingField(_)) => None,
@@ -413,12 +411,12 @@ impl<'a> FromCompoundNbt for MaybeEntity<'a> {
         let silent = nbt.byte("Silent").map(|b| b != 0);
 
         let tags = if let Some(tags_list) = nbt.list("Tags") {
-            let mut tags: Vec<Cow<'a, Mutf8Str>> = vec![];
+            let mut tags: Vec<String> = vec![];
             for tag in tags_list
                 .strings()
                 .ok_or(SculkParseError::InvalidField("Tags".into()))?
             {
-                tags.push(Cow::Owned((*tag).to_owned()));
+                tags.push((*tag).to_string());
             }
 
             Some(tags)

@@ -1,14 +1,12 @@
 //! Block state component.
 
 use crate::{kv::KVPair, traits::FromCompoundNbt};
-use simdnbt::Mutf8Str;
-use std::borrow::Cow;
 
 /// Represents multiple key-value pairs of block states.
 #[derive(Debug, Clone, PartialEq)]
-pub struct BlockState<'a>(KVPair<'a, Cow<'a, Mutf8Str>>);
+pub struct BlockState(KVPair<String>);
 
-impl<'a> FromCompoundNbt for BlockState<'a> {
+impl FromCompoundNbt for BlockState {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>

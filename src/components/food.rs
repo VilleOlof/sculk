@@ -3,16 +3,14 @@
 use crate::{
     error::SculkParseError,
     traits::FromCompoundNbt,
-    util::{get_optional_components, get_owned_mutf8str, get_t_compound_vec},
+    util::{get_optional_components, get_owned_string, get_t_compound_vec},
 };
-use simdnbt::Mutf8Str;
-use std::borrow::Cow;
 
 use super::Components;
 
 /// The food component.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Food<'a> {
+pub struct Food {
     /// The number of food points restored by this item when eaten. Must be a non-negative integer.
     pub nutrition: i32,
 
@@ -26,27 +24,27 @@ pub struct Food<'a> {
     pub eat_seconds: f32,
 
     /// The item to replace this item with when it is eaten.
-    pub using_converts_to: Option<FoodConvertedItem<'a>>,
+    pub using_converts_to: Option<FoodConvertedItem>,
 
     ///  A list of effects applied by this item when eaten.
-    pub effects: Vec<Effect<'a>>,
+    pub effects: Vec<Effect>,
 }
 
 /// An item to convert to when eaten.
 #[derive(Debug, Clone, PartialEq)]
-pub struct FoodConvertedItem<'a> {
+pub struct FoodConvertedItem {
     /// The resource location of the item. Must not be air
-    pub id: Cow<'a, Mutf8Str>,
+    pub id: String,
 
     /// Optional map of data components. Additional information about the item.
-    pub components: Option<Components<'a>>,
+    pub components: Option<Components>,
 }
 
 /// An effect applied by an item when eaten.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Effect<'a> {
+pub struct Effect {
     /// A single effect.
-    pub effect: EffectDetails<'a>,
+    pub effect: EffectDetails,
 
     /// The chance for the effect to be applied. Must be a positive float between 0 and 1. Defaults to 1.
     pub probability: f32,
@@ -54,9 +52,9 @@ pub struct Effect<'a> {
 
 /// Details of an effect applied by an item when eaten.
 #[derive(Debug, Clone, PartialEq)]
-pub struct EffectDetails<'a> {
+pub struct EffectDetails {
     /// The ID of the effect.
-    pub id: Cow<'a, Mutf8Str>,
+    pub id: String,
 
     /// The amplifier of the effect, with level I having value 0. Optional, defaults to 0.
     pub amplifier: Option<i8>,
@@ -74,7 +72,7 @@ pub struct EffectDetails<'a> {
     pub show_icon: Option<bool>,
 }
 
-impl<'a> FromCompoundNbt for Food<'a> {
+impl FromCompoundNbt for Food {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -107,19 +105,19 @@ impl<'a> FromCompoundNbt for Food<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for FoodConvertedItem<'a> {
+impl FromCompoundNbt for FoodConvertedItem {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
-        let id = get_owned_mutf8str(&nbt, "id")?;
+        let id = get_owned_string(&nbt, "id")?;
         let components = get_optional_components(&nbt)?;
 
         Ok(FoodConvertedItem { id, components })
     }
 }
 
-impl<'a> FromCompoundNbt for Effect<'a> {
+impl FromCompoundNbt for Effect {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -140,14 +138,14 @@ impl<'a> FromCompoundNbt for Effect<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for EffectDetails<'a> {
+impl FromCompoundNbt for EffectDetails {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
     where
         Self: Sized,
     {
-        let id = get_owned_mutf8str(&nbt, "id")?;
+        let id = get_owned_string(&nbt, "id")?;
         let amplifier = nbt.byte("amplifier");
         let duration = nbt.int("duration");
         let ambient = nbt.byte("ambient").map(|b| b != 0);

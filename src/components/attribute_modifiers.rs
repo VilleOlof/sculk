@@ -3,44 +3,42 @@
 use crate::{
     error::SculkParseError,
     traits::FromCompoundNbt,
-    util::{get_bool, get_owned_mutf8str, get_t_list},
+    util::{get_bool, get_owned_string, get_t_list},
 };
-use simdnbt::Mutf8Str;
-use std::borrow::Cow;
 
 /// A compound of attribute modifiers.
 #[derive(Debug, Clone, PartialEq)]
-pub struct AttributeModifiers<'a> {
+pub struct AttributeModifiers {
     /// Show or hide attribute modifiers on this item's tooltip. Defaults to `true`.
     pub show_in_tooltip: bool,
 
     /// Contains attribute modifiers on this item which modify attributes of the wearer or holder (if the item is not in the hand or armor slots, it has no effect).
-    pub modifiers: Vec<Modifier<'a>>,
+    pub modifiers: Vec<Modifier>,
 }
 
 /// An attribute modifier component.
 #[derive(Debug, Clone, PartialEq)]
-pub enum AttributeModifier<'a> {
+pub enum AttributeModifier {
     /// A list of attribute modifiers.
-    ModifierList(Vec<Modifier<'a>>),
+    ModifierList(Vec<Modifier>),
 
     /// A compound of attribute modifiers.
-    Compound(AttributeModifiers<'a>),
+    Compound(AttributeModifiers),
 }
 
 /// A single attribute modifier.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Modifier<'a> {
+pub struct Modifier {
     /// The name of the attribute this modifier is to act upon.
     ///
     /// `type`
-    pub r#type: Cow<'a, Mutf8Str>,
+    pub r#type: String,
 
     /// Slot or slot type the item must be in for the modifier to take effect.
     pub slot: SlotType,
 
     /// The unique resource location to identify this modifier.
-    pub id: Cow<'a, Mutf8Str>,
+    pub id: String,
 
     /// Amount of change from the modifier.
     pub amount: f64,
@@ -85,7 +83,7 @@ pub enum Operation {
     MultiplyTotal,
 }
 
-impl<'a> FromCompoundNbt for AttributeModifier<'a> {
+impl FromCompoundNbt for AttributeModifier {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -112,14 +110,14 @@ impl<'a> FromCompoundNbt for AttributeModifier<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for AttributeModifiers<'a> {
+impl FromCompoundNbt for AttributeModifiers {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
         let show_in_tooltip = get_bool(&nbt, "show_in_tooltip");
 
-        let modifiers: Vec<Modifier<'a>> = match nbt.list("modifiers") {
+        let modifiers: Vec<Modifier> = match nbt.list("modifiers") {
             Some(modifiers) => get_t_list(&modifiers, "modifiers", Modifier::from_compound_nbt)?,
             None => vec![],
         };
@@ -131,18 +129,18 @@ impl<'a> FromCompoundNbt for AttributeModifiers<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for Modifier<'a> {
+impl FromCompoundNbt for Modifier {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
-        let r#type = get_owned_mutf8str(nbt, "type")?;
+        let r#type = get_owned_string(nbt, "type")?;
         let slot = nbt
             .string("slot")
             .map(|s| SlotType::from_str(s.to_str().as_ref()))
             .ok_or(SculkParseError::MissingField("slot".into()))??;
 
-        let id = get_owned_mutf8str(nbt, "id")?;
+        let id = get_owned_string(nbt, "id")?;
 
         let amount = nbt
             .double("amount")

@@ -5,7 +5,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Campfire<'a> {
+pub struct Campfire {
     /// How long each item has been cooking, first index is slot 0, etc.
     ///
     /// `CookingTimes`
@@ -19,10 +19,10 @@ pub struct Campfire<'a> {
     /// List of up to 4 items currently cooking.
     ///
     /// `Items`
-    pub items: Vec<Item<'a>>,
+    pub items: Vec<Item>,
 }
 
-impl<'a> FromCompoundNbt for Campfire<'a> {
+impl FromCompoundNbt for Campfire {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>

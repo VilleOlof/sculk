@@ -1,20 +1,18 @@
 use crate::{
     components::Components,
     traits::FromCompoundNbt,
-    util::{get_optional_components, get_owned_mutf8str},
+    util::{get_optional_components, get_owned_string},
 };
-use simdnbt::Mutf8Str;
-use std::borrow::Cow;
 
 /// Represents an item in an inventory slot.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Item<'a> {
+pub struct Item {
     /// The inventory slot the item is in.  
     /// `Slot`
     pub slot: i8,
 
     /// The resource location of the item. Must not be `air`.
-    pub id: Cow<'a, Mutf8Str>,
+    pub id: String,
 
     /// Number of items stacked in this inventory slot. Any item can be stacked, even if unstackable through normal means. Defaults to 1.  
     ///
@@ -22,25 +20,25 @@ pub struct Item<'a> {
     pub count: i32,
 
     /// Optional map of data components. Additional information about the item.
-    pub components: Option<Components<'a>>,
+    pub components: Option<Components>,
 }
 
 /// Represents an item in an inventory slot, without the slot number.  
 /// Often used for items in single-item inventories.  
 #[derive(Debug, Clone, PartialEq)]
-pub struct ItemWithNoSlot<'a> {
+pub struct ItemWithNoSlot {
     /// The resource location of the item. Must not be `air`.
-    pub id: Cow<'a, Mutf8Str>,
+    pub id: String,
 
     /// Number of items stacked in this inventory slot. Any item can be stacked, even if unstackable through normal means. Defaults to 1.  
     /// Actual name: `Count`
     pub count: i32,
 
     /// Optional map of data components. Additional information about the item.
-    pub components: Option<Components<'a>>,
+    pub components: Option<Components>,
 }
 
-impl<'a> FromCompoundNbt for Item<'a> {
+impl FromCompoundNbt for Item {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -51,7 +49,7 @@ impl<'a> FromCompoundNbt for Item<'a> {
             .byte("Slot")
             .ok_or(crate::error::SculkParseError::MissingField("Slot".into()))?;
 
-        let id = get_owned_mutf8str(&nbt, "id")?;
+        let id = get_owned_string(&nbt, "id")?;
 
         let count = nbt.int("Count").unwrap_or(1);
 
@@ -66,14 +64,14 @@ impl<'a> FromCompoundNbt for Item<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for ItemWithNoSlot<'a> {
+impl FromCompoundNbt for ItemWithNoSlot {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
     where
         Self: Sized,
     {
-        let id = get_owned_mutf8str(&nbt, "id")?;
+        let id = get_owned_string(&nbt, "id")?;
 
         let count = nbt.int("Count").unwrap_or(1);
 

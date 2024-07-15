@@ -5,15 +5,15 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Beehive<'a> {
+pub struct Beehive {
     /// Entities currently in the hive.
-    bees: Vec<Bee<'a>>,
+    bees: Vec<Bee>,
 
     /// Stores the flower block location, as 3 integers, so other bees can go to it.
     flower_pos: Vec<i32>,
 }
 
-impl<'a> FromCompoundNbt for Beehive<'a> {
+impl FromCompoundNbt for Beehive {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>

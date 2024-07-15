@@ -1,9 +1,6 @@
-use std::borrow::Cow;
-
 use boss_event::CustomBossEvent;
 use datapacks::Datapacks;
 use dimension_data::DragonFight;
-use simdnbt::Mutf8Str;
 use world_gen_settings::WorldGenSettings;
 
 use crate::{
@@ -11,7 +8,7 @@ use crate::{
     kv::KVPair,
     player::{game_type::GameType, Player},
     traits::FromCompoundNbt,
-    util::{get_bool, get_owned_mutf8str},
+    util::{get_bool, get_owned_string},
     uuid::Uuid,
 };
 
@@ -24,7 +21,7 @@ pub mod world_gen_settings;
 ///
 /// The actual file begins with a root tag and then a `Data` tag, this data tag is flattened to this struct.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Level<'a> {
+pub struct Level {
     /// true if cheats are enabled.  
     /// `allowCommands`
     pub allow_commands: bool,
@@ -71,11 +68,11 @@ pub struct Level<'a> {
 
     /// A collection of bossbars.  
     /// `CustomBossEvents`
-    pub custom_boss_events: KVPair<'a, CustomBossEvent<'a>>,
+    pub custom_boss_events: KVPair<CustomBossEvent>,
 
     /// Options for datapacks.  
     /// `DataPacks`
-    pub datapacks: Datapacks<'a>,
+    pub datapacks: Datapacks,
 
     /// An integer displaying the [data version](https://minecraft.wiki/w/Data_version).  
     /// `DataVersion`
@@ -100,14 +97,14 @@ pub struct Level<'a> {
 
     /// List of experimental features enabled for this world. Empty if there are no expirimental features enabled.  
     /// `enabled_features`
-    pub enabled_features: Vec<Cow<'a, Mutf8Str>>,
+    pub enabled_features: Vec<String>,
 
     /// The gamerules used in the world.  
     ///
     /// The value for the given rule. This is always an NBT string, which is either true or false for the majority of rules (with it being a number for some other rules, and any arbitrary string for a user-defined rule)  
     ///
     /// `GameRules`
-    pub game_rules: KVPair<'a, Cow<'a, Mutf8Str>>,
+    pub game_rules: KVPair<String>,
 
     /// The default game mode for the singleplayer player when they initially spawn.  
     /// `GameType`
@@ -115,7 +112,7 @@ pub struct Level<'a> {
 
     ///  the generation settings for each dimension.  
     /// `WorldGenSettings`
-    pub world_gen_settings: WorldGenSettings<'a>,
+    pub world_gen_settings: WorldGenSettings,
 
     /// If true, the player respawns in Spectator on death in singleplayer. Affects all three game modes.  
     /// `hardcore`
@@ -131,7 +128,7 @@ pub struct Level<'a> {
 
     /// The name of the level.  
     /// `LevelName`
-    pub level_name: Cow<'a, Mutf8Str>,
+    pub level_name: String,
 
     ///  true if the map generator should place structures such as villages, strongholds, and mineshafts. Defaults to 1. Always 1 if the world type is Customized.  
     /// `MapFeatures`
@@ -139,7 +136,7 @@ pub struct Level<'a> {
 
     /// The state of the Singleplayer player. This overrides the <player>.dat file with the same name as the Singleplayer player. This is saved by Servers only if it already exists, otherwise it is not saved for server worlds. See [Player.dat Format](https://minecraft.wiki/w/Player.dat_format#NBT_Structure).  
     /// `Player`
-    pub player: Option<Player<'a>>,
+    pub player: Option<Player>,
 
     /// true if the level is currently experiencing rain, snow, and cloud cover.  
     /// `raining`
@@ -187,7 +184,7 @@ pub struct Level<'a> {
 
     /// Information about the Minecraft version the world was saved in.
     /// `Version`
-    pub version_data: VersionData<'a>,
+    pub version_data: VersionData,
 
     /// The UUID of the current wandering trader in the world saved as four ints.  
     /// `WanderingTraderId`
@@ -208,25 +205,25 @@ pub struct Level<'a> {
 
 /// More detailed information about the Minecraft version the world was saved in.
 #[derive(Debug, Clone, PartialEq)]
-pub struct VersionData<'a> {
+pub struct VersionData {
     /// An integer displaying the data version.  
     /// `Id`
     pub id: i32,
 
     /// The version name as a string, e.g. "15w32b".  
     /// `Name`
-    pub name: Cow<'a, Mutf8Str>,
+    pub name: String,
 
     /// Developing series. In 1.18 experimental snapshots, it was set to "ccpreview". In others, set to "main".  
     /// `Series`
-    pub series: Cow<'a, Mutf8Str>,
+    pub series: String,
 
     /// Whether the version is a snapshot or not.  
     /// `Snapshot`
     pub snapshot: bool,
 }
 
-impl<'a> FromCompoundNbt for VersionData<'a> {
+impl FromCompoundNbt for VersionData {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -234,8 +231,8 @@ impl<'a> FromCompoundNbt for VersionData<'a> {
         let id = nbt
             .int("Id")
             .ok_or(SculkParseError::MissingField("Id".into()))?;
-        let name = get_owned_mutf8str(&nbt, "Name")?;
-        let series = get_owned_mutf8str(&nbt, "Series")?;
+        let name = get_owned_string(&nbt, "Name")?;
+        let series = get_owned_string(&nbt, "Series")?;
         let snapshot = get_bool(&nbt, "Snapshot");
 
         Ok(VersionData {
@@ -275,7 +272,7 @@ impl Difficulty {
     }
 }
 
-impl<'a> FromCompoundNbt for Level<'a> {
+impl FromCompoundNbt for Level {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -303,7 +300,7 @@ impl<'a> FromCompoundNbt for Level<'a> {
             .int("clearWeatherTime")
             .ok_or(SculkParseError::InvalidField("clearWeatherTime".into()))?;
 
-        let custom_boss_events: KVPair<'a, CustomBossEvent<'a>> = nbt
+        let custom_boss_events: KVPair<CustomBossEvent> = nbt
             .compound("CustomBossEvents")
             .map(|nbt| KVPair::from_compound_nbt(&nbt))
             .ok_or(SculkParseError::MissingField("CustomBossEvents".into()))??;
@@ -337,10 +334,10 @@ impl<'a> FromCompoundNbt for Level<'a> {
                 .strings()
                 .ok_or(SculkParseError::InvalidField("enabled_features".into()))?;
 
-            let mut vec: Vec<Cow<'a, Mutf8Str>> = vec![];
+            let mut vec: Vec<String> = vec![];
 
             for item in list.iter() {
-                vec.push(Cow::Owned((*item).to_owned()));
+                vec.push((*item).to_string());
             }
 
             vec
@@ -348,7 +345,7 @@ impl<'a> FromCompoundNbt for Level<'a> {
             vec![]
         };
 
-        let game_rules: KVPair<'a, Cow<'a, Mutf8Str>> = nbt
+        let game_rules: KVPair<String> = nbt
             .compound("GameRules")
             .map(|nbt| KVPair::from_compound_nbt(&nbt))
             .ok_or(SculkParseError::MissingField("GameRules".into()))??;
@@ -370,7 +367,7 @@ impl<'a> FromCompoundNbt for Level<'a> {
             .long("LastPlayed")
             .ok_or(SculkParseError::MissingField("LastPlayed".into()))?;
 
-        let level_name = get_owned_mutf8str(&nbt, "LevelName")?;
+        let level_name = get_owned_string(&nbt, "LevelName")?;
         let map_features = nbt.byte("MapFeatures").map(|b| b != 0).unwrap_or(true);
 
         let player = if let Some(nbt) = nbt.compound("Player") {

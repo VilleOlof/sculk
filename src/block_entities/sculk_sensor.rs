@@ -3,15 +3,15 @@ use crate::{error::SculkParseError, traits::FromCompoundNbt};
 use super::calibrated_sculk_sensor::Listener;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct SculkSensor<'a> {
+pub struct SculkSensor {
     /// The frequency of the last vibration.
     pub last_vibration_frequency: i32,
 
     /// The vibration event listener for this sculk shrieker, sculk sensor, or calibrated sculk sensor.
-    pub listener: Listener<'a>,
+    pub listener: Listener,
 }
 
-impl<'a> FromCompoundNbt for SculkSensor<'a> {
+impl FromCompoundNbt for SculkSensor {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,

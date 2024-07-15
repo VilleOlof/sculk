@@ -16,7 +16,7 @@ pub mod tile_tick;
 /// Represents a chunk in the world.  
 /// [Minecraft Wiki](https://minecraft.wiki/w/Chunk_format)  
 #[derive(Debug, Clone, PartialEq)]
-pub struct Chunk<'a> {
+pub struct Chunk {
     /// Version of the chunk NBT structure.  
     /// `DataVersion`
     pub data_version: i32,
@@ -40,10 +40,10 @@ pub struct Chunk<'a> {
     pub last_update: i64,
 
     /// List of Compounds, each tag is a section (also known as sub-chunk). All sections in the world's height are present in this list, even those who are empty (filled with air).  
-    pub sections: Vec<ChunkSection<'a>>,
+    pub sections: Vec<ChunkSection>,
 
     /// Each Compound in this list defines a block entity in the chunk.
-    pub block_entities: Vec<BlockEntity<'a>>,
+    pub block_entities: Vec<BlockEntity>,
 
     /// Only for proto-chunks (not confirmed for 1.18 format).   
     /// `CarvingMasks`
@@ -59,15 +59,15 @@ pub struct Chunk<'a> {
 
     /// A list of entities in the proto-chunks, used when generating. As of 1.17, this list is not present for fully generated chunks and entities are moved to a separated region files once the chunk is generated, see Entity format for more details (not confirmed for 1.18 format).  
     /// `Entities`
-    pub entities: Option<Vec<Entity<'a>>>,
+    pub entities: Option<Vec<Entity>>,
 
     /// A list of Compounds  
     /// Each Compound in this list is an "active" liquid in this chunk waiting to be updated. See [Tile Tick Format](https://minecraft.wiki/w/Chunk_format#Tile_tick_format).
-    pub fluid_ticks: Vec<TileTick<'a>>,
+    pub fluid_ticks: Vec<TileTick>,
 
     /// A list of Compounds  
     /// Each Compound in this list is an "active" block in this chunk waiting to be updated. These are used to save the state of redstone machines or falling sand, and other activity. See [Tile Tick Format](https://minecraft.wiki/w/Chunk_format#Tile_tick_format).
-    pub block_ticks: Vec<TileTick<'a>>,
+    pub block_ticks: Vec<TileTick>,
 
     /// The cumulative number of ticks players have been in this chunk. Note that this value increases faster when more players are in the chunk. Used for [Regional Difficulty](https://minecraft.wiki/w/Difficulty#Regional_difficulty).  
     /// `InhabitedTime`
@@ -84,7 +84,7 @@ pub struct Chunk<'a> {
     pub post_processing: Option<Vec<i16>>,
 
     /// Structure data in this chunk.
-    pub structures: Structures<'a>,
+    pub structures: Structures,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -120,7 +120,7 @@ pub struct CarvingMasks {
 }
 
 //
-impl<'a> FromCompoundNbt for Chunk<'a> {
+impl FromCompoundNbt for Chunk {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -312,8 +312,8 @@ impl FromCompoundNbt for CarvingMasks {
     }
 }
 
-impl<'a> Chunk<'a> {
-    pub fn from_bytes(bytes: &'a [u8]) -> Result<Self, SculkParseError> {
+impl Chunk {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, SculkParseError> {
         let nbt = simdnbt::borrow::read(&mut Cursor::new(bytes))?;
 
         let nbt = match nbt {

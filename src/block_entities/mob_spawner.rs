@@ -1,12 +1,10 @@
-use simdnbt::{borrow::NbtCompound, Mutf8Str};
-
 use crate::{
-    entity::MaybeEntity, error::SculkParseError, traits::FromCompoundNbt, util::get_owned_mutf8str,
+    entity::MaybeEntity, error::SculkParseError, traits::FromCompoundNbt, util::get_owned_string,
 };
-use std::borrow::Cow;
+use simdnbt::borrow::NbtCompound;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct MobSpawner<'a> {
+pub struct MobSpawner {
     /// Ticks until next spawn. If 0, it spawns immediately when a player enters its range. If set to -1 (this state never occurs in a natural spawner; it seems to be a feature accessed only via NBT editing), the spawner resets this and SpawnData as though it had just completed a successful spawn cycle, immediately when a player enters its range. Setting this to -1 can be useful if the player wants the game to properly randomize the spawner's Delay and SpawnData, rather than starting with pre-defined values.
     ///
     /// `Delay`
@@ -40,12 +38,12 @@ pub struct MobSpawner<'a> {
     /// Contains tags to copy to the next spawned entity(s) after spawning. Any of the entity or mob tags may be used. If a spawner specifies any of these tags, almost all variable data such as mob equipment, villager profession, sheep wool color, etc., are not automatically generated, and must also be manually specified (that this does not apply to position data, which are randomized as normal unless Pos is specified. Similarly, unless Size and Health are specified for a Slime or Magma Cube, these are still randomized). This also determines the appearance of the miniature entity spinning in the spawner cage. Warning: If SpawnPotentials exists, this tag gets overwritten after the next spawning attempt: see above for more details.
     ///
     /// `SpawnData`
-    pub spawn_data: SpawnData<'a>,
+    pub spawn_data: SpawnData,
 
     /// Optional. List of possible entities to spawn. If this tag does not exist, but SpawnData exists, Minecraft generates it the next time the spawner tries to spawn an entity. The generated list contains a single entry derived from the SpawnData tag.
     ///
     /// `SpawnPotentials`
-    pub spawn_potentials: Option<Vec<PotentialSpawn<'a>>>,
+    pub spawn_potentials: Option<Vec<PotentialSpawn>>,
 
     /// The radius around which the spawner attempts to place mobs randomly. The spawn area is square, includes the block the spawner is in, and is centered around the spawner's x,z coordinates - not the spawner itself. It is 2 blocks high, centered around the spawner's y coordinate (its bottom), allowing mobs to spawn as high as its top surface and as low as 1 block below its bottom surface. Vertical spawn coordinates are integers, while horizontal coordinates are floating point and weighted toward values near the spawner itself. Default value is 4.
     ///
@@ -55,23 +53,23 @@ pub struct MobSpawner<'a> {
 
 /// A potential future spawn. After the spawner makes an attempt at spawning, it chooses one of these entries at random and uses it to prepare for the next spawn, overwriting SpawnData.
 #[derive(Debug, Clone, PartialEq)]
-pub struct PotentialSpawn<'a> {
+pub struct PotentialSpawn {
     /// The chance that this spawn gets picked in comparison to other spawn weights. Must be positive and at least 1.
     pub weight: i32,
 
-    pub data: SpawnData<'a>,
+    pub data: SpawnData,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct SpawnData<'a> {
+pub struct SpawnData {
     /// An entity, including the entity id.
-    pub entity: MaybeEntity<'a>,
+    pub entity: MaybeEntity,
 
     /// Optional custom fields to override spawning requirements.
     pub custom_spawn_rules: Option<SpawnRules>,
 
     /// Optional. Determines the equipment the entity will wear.
-    pub equipment: Option<Equipment<'a>>,
+    pub equipment: Option<Equipment>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -84,9 +82,9 @@ pub struct SpawnRules {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Equipment<'a> {
+pub struct Equipment {
     /// Resource location of a loot table to use to generate the equipment
-    pub loot_table: Cow<'a, Mutf8Str>,
+    pub loot_table: String,
 
     /// Optional. When a determines the drop chances for every slot. When a , controls the drop chances per slot.
     pub slot_drop_chances: Option<DropChanceType>,
@@ -122,7 +120,7 @@ pub struct DropChances {
     pub offhand: Option<f32>,
 }
 
-impl<'a> FromCompoundNbt for MobSpawner<'a> {
+impl FromCompoundNbt for MobSpawner {
     fn from_compound_nbt(nbt: &NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -187,7 +185,7 @@ impl<'a> FromCompoundNbt for MobSpawner<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for PotentialSpawn<'a> {
+impl FromCompoundNbt for PotentialSpawn {
     fn from_compound_nbt(nbt: &NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -204,7 +202,7 @@ impl<'a> FromCompoundNbt for PotentialSpawn<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for SpawnData<'a> {
+impl FromCompoundNbt for SpawnData {
     fn from_compound_nbt(nbt: &NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -250,12 +248,12 @@ impl FromCompoundNbt for SpawnRules {
     }
 }
 
-impl<'a> FromCompoundNbt for Equipment<'a> {
+impl FromCompoundNbt for Equipment {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
-        let loot_table = get_owned_mutf8str(&nbt, "loot_table")?;
+        let loot_table = get_owned_string(&nbt, "loot_table")?;
         let slot_drop_chances = get_slot_drop_chances(&nbt);
 
         Ok(Equipment {

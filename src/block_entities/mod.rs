@@ -1,4 +1,4 @@
-use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_mutf8str};
+use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_string};
 use jukebox::Jukebox;
 
 pub mod variant;
@@ -41,69 +41,69 @@ pub mod vault;
 
 /// Represents unique data specific to a block entity.
 #[derive(Debug, Clone, PartialEq)]
-pub enum BlockEntityKind<'a> {
+pub enum BlockEntityKind {
     /// `minecraft:<color>_banner` or `minecraft:<color>_wall_banner`
-    Banners(banners::Banner<'a>),
+    Banners(banners::Banner),
 
     /// `minecraft:barrel`
-    Barrel(barrel::Barrel<'a>),
+    Barrel(barrel::Barrel),
 
     /// `minecraft:beacon`
-    Beacon(beacon::Beacon<'a>),
+    Beacon(beacon::Beacon),
 
     /// `minecraft:<color>_bed`
     Bed,
 
     /// minecraft:beehive
-    Beehive(beehive::Beehive<'a>),
+    Beehive(beehive::Beehive),
 
     /// `minecraft:bell`
     Bell,
 
     /// `minecraft:blast_furnace`
-    BlastFurnace(furnace::Furnace<'a>),
+    BlastFurnace(furnace::Furnace),
 
     /// `minecraft:brewing_stand`
-    BrewingStand(brewing_stand::BrewingStand<'a>),
+    BrewingStand(brewing_stand::BrewingStand),
 
     /// `minecraft:calibrated_sculk_sensor`
-    CalibratedSculkSensor(calibrated_sculk_sensor::CalibratedSculkSensor<'a>),
+    CalibratedSculkSensor(calibrated_sculk_sensor::CalibratedSculkSensor),
 
     /// `minecraft:campfire`
-    Campfire(campfire::Campfire<'a>),
+    Campfire(campfire::Campfire),
 
     /// `minecraft:chiseled_bookshelf`
-    ChiseledBookshelf(chiseled_bookshelf::ChiseledBookshelf<'a>),
+    ChiseledBookshelf(chiseled_bookshelf::ChiseledBookshelf),
 
     /// `minecraft:chest`
-    Chest(chest::Chest<'a>),
+    Chest(chest::Chest),
 
     /// `minecraft:comparator`
     Comparator(comparator::Comparator),
 
     /// `minecraft:command_block`, `minecraft:chain_command_block`, `minecraft:repeating_command_block`
-    CommandBlock(command_block::CommandBlock<'a>),
+    CommandBlock(command_block::CommandBlock),
 
     /// `minecraft:conduit`
     Conduit(conduit::Conduit),
 
     /// `minecraft:crafter`
-    Crafter(crafter::Crafter<'a>),
+    Crafter(crafter::Crafter),
 
     /// `minecraft:daylight_detector`
     DaylightDetector,
 
     /// `minecraft:decorated_pot`
-    DecoratedPot(decorated_pot::DecoratedPot<'a>),
+    DecoratedPot(decorated_pot::DecoratedPot),
 
     /// `minecraft:dispenser`
-    Dispenser(dispenser::Dispenser<'a>),
+    Dispenser(dispenser::Dispenser),
 
     /// `minecraft:dropper`
-    Dropper(dropper::Dropper<'a>),
+    Dropper(dropper::Dropper),
 
     /// `minecraft:enchanting_table`
-    EnchantingTable(enchanting_table::EnchantingTable<'a>),
+    EnchantingTable(enchanting_table::EnchantingTable),
 
     /// `minecraft:ender_chest`
     EnderChest,
@@ -115,74 +115,74 @@ pub enum BlockEntityKind<'a> {
     EndPortal,
 
     /// `minecraft:furnace`
-    Furnace(furnace::Furnace<'a>),
+    Furnace(furnace::Furnace),
 
     /// `minecraft:<wood>_hanging_sign` or `minecraft:<wood>_wall_hanging_sign`
-    HangingSign(sign::Sign<'a>),
+    HangingSign(sign::Sign),
 
     /// `minecraft:hopper`
-    Hopper(hopper::Hopper<'a>),
+    Hopper(hopper::Hopper),
 
     /// `minecraft:jigsaw`
-    Jigsaw(jigsaw::Jigsaw<'a>),
+    Jigsaw(jigsaw::Jigsaw),
 
     /// `minecraft:jukebox`
-    Jukebox(jukebox::Jukebox<'a>),
+    Jukebox(jukebox::Jukebox),
 
     /// `minecraft:lectern`
-    Lectern(lectern::Lectern<'a>),
+    Lectern(lectern::Lectern),
 
     /// `minecraft:mob_spawner`
-    MobSpawner(mob_spawner::MobSpawner<'a>),
+    MobSpawner(mob_spawner::MobSpawner),
 
     /// `minecraft:piston`
-    Piston(piston::Piston<'a>),
+    Piston(piston::Piston),
 
     /// `minecraft:sculk_catalyst`
     SculkCatalyst(sculk_catalyst::SculkCatalyst),
 
     /// `minecraft:sculk_sensor`
-    SculkSensor(sculk_sensor::SculkSensor<'a>),
+    SculkSensor(sculk_sensor::SculkSensor),
 
     /// `minecraft:sculk_shrieker`
-    SculkShrieker(sculk_shrieker::SculkShrieker<'a>),
+    SculkShrieker(sculk_shrieker::SculkShrieker),
 
     /// `minecraft:<color>_shulker_box`
-    ShulkerBox(shulker_box::ShulkerBox<'a>),
+    ShulkerBox(shulker_box::ShulkerBox),
 
     /// `minecraft:<wood>_sign` or `minecraft:<wood>_wall_sign`
-    Sign(sign::Sign<'a>),
+    Sign(sign::Sign),
 
     /// `minecraft:skull`, `minecraft:skeleton_skull`, `minecraft:wither_skeleton_skull`, `minecraft:zombie_head`, `minecraft:player_head`, `minecraft:creeper_head`, `minecraft:dragon_head`, `minecraft:piglin_head`  
     /// And their wall variants.
-    Skull(skull::Skull<'a>),
+    Skull(skull::Skull),
 
     /// `minecraft:structure_block`
-    StructureBlock(structure_block::StructureBlock<'a>),
+    StructureBlock(structure_block::StructureBlock),
 
     /// `minecraft:smoker`
-    Smoker(furnace::Furnace<'a>),
+    Smoker(furnace::Furnace),
 
     /// `minecraft:soul_campfire`
-    SoulCampfire(campfire::Campfire<'a>),
+    SoulCampfire(campfire::Campfire),
 
     /// `minecraft:suspicious_gravel`
-    SuspiciousGravel(suspicious_block::SuspiciousBlock<'a>),
+    SuspiciousGravel(suspicious_block::SuspiciousBlock),
 
     /// `minecraft:suspicious_sand`
-    SuspiciousSand(suspicious_block::SuspiciousBlock<'a>),
+    SuspiciousSand(suspicious_block::SuspiciousBlock),
 
     /// `minecraft:trapped_chest`
-    TrappedChest(chest::Chest<'a>),
+    TrappedChest(chest::Chest),
 
     /// `minecraft:trail_spawner`
-    TrialSpawner(trail_spawner::TrailSpawner<'a>),
+    TrialSpawner(trail_spawner::TrailSpawner),
 
     /// `minecraft:vault`
-    Vault(vault::Vault<'a>),
+    Vault(vault::Vault),
 }
 
-impl<'a> FromCompoundNbt for BlockEntityKind<'a> {
+impl FromCompoundNbt for BlockEntityKind {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -224,13 +224,13 @@ impl<'a> FromCompoundNbt for BlockEntityKind<'a> {
         use trail_spawner::TrailSpawner;
         use vault::Vault;
 
-        let id = get_owned_mutf8str(&nbt, "id").map_err(|_| {
+        let id = get_owned_string(&nbt, "id").map_err(|_| {
             SculkParseError::MissingField(
                 "BlockEntityKind requires a parent block entity tag, no / invalid id found".into(),
             )
         })?;
 
-        let kind = match id.to_str().as_ref() {
+        let kind = match id.as_str() {
             "minecraft:banner"
             | "minecraft:white_banner"
             | "minecraft:orange_banner"

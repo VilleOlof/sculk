@@ -3,14 +3,12 @@ use crate::{
     error::SculkParseError,
     item::Item,
     traits::FromCompoundNbt,
-    util::{get_bool, get_owned_mutf8str, get_owned_optional_mutf8str, get_t_compound_vec},
+    util::{get_bool, get_owned_optional_string, get_owned_string, get_t_compound_vec},
     uuid::Uuid,
 };
 use abilities::Abilities;
 use game_type::GameType;
 use recipe_book::RecipeBook;
-use simdnbt::Mutf8Str;
-use std::borrow::Cow;
 
 pub mod abilities;
 pub mod game_type;
@@ -19,7 +17,7 @@ pub mod recipe_book;
 /// Represents a player's data.  
 /// Often confined in a `[uuid].dat` file or in the `level.dat` file in singeplayer.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Player<'a> {
+pub struct Player {
     // Entity, except for the tags: CustomName, CustomNameVisible, and Glowing.
     // Mobs, except for the tags: HandItems, ArmorItems, HandDropChances, ArmorDropChances, CanPickUpLoot, PersistenceRequired, Leash
     //
@@ -32,11 +30,11 @@ pub struct Player<'a> {
 
     /// The ID of the dimension the player is in. Used to store the players last known location along with Pos.  
     /// `Dimension`
-    pub dimension: Cow<'a, Mutf8Str>,
+    pub dimension: String,
 
     ///  Each compound tag in this list is an item in the player's 27-slot ender chest inventory. When empty, list type may have unexpected value.  
     /// `EnderItems`
-    pub ender_items: Vec<Item<'a>>,
+    pub ender_items: Vec<Item>,
 
     ///  May not exist. A compound of 3 doubles, describing the Overworld position from which the player entered the Nether. Used by the nether_travel advancement trigger. Set every time the player passes through a portal from the Overworld to the Nether. When entering a dimension other than the nether (not by respawning) this tag is removed. Entering the Nether without using a portal does not update this tag.  
     /// `enteredNetherPosition`
@@ -61,11 +59,11 @@ pub struct Player<'a> {
     ///  Each compound tag in this list is an item in the player's inventory. (Note: when empty, list type may have [unexpected value](https://minecraft.wiki/w/NBT#As_used_in_Minecraft).)   
     /// See this image for slot numbers: [Inventory](https://minecraft.wiki/images/Items_slot_number.png?a8367).  
     /// `Inventory`
-    pub inventory: Vec<Item<'a>>,
+    pub inventory: Vec<Item>,
 
     /// May not exist. Location of the player's last death.
     /// `LastDeathLocation`
-    pub last_death_location: Option<DeathLocation<'a>>,
+    pub last_death_location: Option<DeathLocation>,
 
     /// The current game mode of the player. 0 means Survival, 1 means Creative, 2 means Adventure, and 3 means Spectator.  
     /// `playerGameType`
@@ -77,11 +75,11 @@ pub struct Player<'a> {
 
     /// Contains a JSON object detailing recipes the player has unlocked.  
     /// `recipeBook`
-    pub recipe_book: RecipeBook<'a>,
+    pub recipe_book: RecipeBook,
 
     /// May not exist. The root entity that the player is riding.  
     /// `RootVehicle`
-    pub root_vechile: Option<Vechile<'a>>,
+    pub root_vechile: Option<Vechile>,
 
     /// The score displayed upon death.
     /// `Score`
@@ -97,11 +95,11 @@ pub struct Player<'a> {
 
     /// The entity that is on the player's left shoulder. Always displays as a parrot.  
     /// `ShoulderEntityLeft`
-    pub shoulder_entity_left: Option<Entity<'a>>,
+    pub shoulder_entity_left: Option<Entity>,
 
     /// The entity that is on the player's right shoulder. Always displays as a parrot.  
     /// `ShoulderEntityRight`
-    pub shoulder_entity_right: Option<Entity<'a>>,
+    pub shoulder_entity_right: Option<Entity>,
 
     /// The number of game ticks the player had been in bed. 0 when the player is not sleeping. When in bed, increases up to 100 ticks, then stops. Skips the night after enough players in beds have reached 100 (see Bed § Passing the night). When getting out of bed, instantly changes to 100 ticks and then increases for another 9 ticks (up to 109 ticks) before returning to 0 ticks.
     /// `SleepTimer`
@@ -109,7 +107,7 @@ pub struct Player<'a> {
 
     /// May not exist. The dimension of the player's bed or respawn anchor. These tags are only removed if the player attempts to respawn with no valid bed or respawn anchor to spawn at at these coordinates. They are unaffected by breaking a bed or respawn anchor at these coordinates, and are unaffected by the player's death.
     /// `SpawnDimension`
-    pub spawn_dimension: Option<Cow<'a, Mutf8Str>>,
+    pub spawn_dimension: Option<String>,
 
     /// may not exist. true if the player should spawn at the below coordinates even if no bed can be found.
     /// `SpawnForced`
@@ -160,21 +158,21 @@ pub struct WardenTracker {
 
 /// The root entity that the player is riding.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Vechile<'a> {
+pub struct Vechile {
     /// The UUID of the entity the player is riding, stored as four ints.  
     /// `Attach`
     pub attach: Uuid,
 
     /// The NBT data of the root vehicle.  
     /// `Entity`
-    pub entity: Entity<'a>,
+    pub entity: Entity,
 }
 
 /// The location of the player's last death.
 #[derive(Debug, Clone, PartialEq)]
-pub struct DeathLocation<'a> {
+pub struct DeathLocation {
     /// Dimension of last death.
-    pub dimension: Cow<'a, Mutf8Str>,
+    pub dimension: String,
 
     /// Coordinates of last death.
     pub pos: Vec<i32>,
@@ -191,7 +189,7 @@ pub struct NetherPosition {
     z: f64,
 }
 
-impl<'a> FromCompoundNbt for Player<'a> {
+impl FromCompoundNbt for Player {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -205,7 +203,7 @@ impl<'a> FromCompoundNbt for Player<'a> {
             .int("DataVersion")
             .ok_or(SculkParseError::MissingField("DataVersion".into()))?;
 
-        let dimension = get_owned_mutf8str(&nbt, "Dimension")?;
+        let dimension = get_owned_string(&nbt, "Dimension")?;
         let ender_items = get_t_compound_vec(&nbt, "EnderItems", Item::from_compound_nbt)?;
 
         let entered_nether_position = if let Some(nbt) = nbt.compound("enteredNetherPosition") {
@@ -280,7 +278,7 @@ impl<'a> FromCompoundNbt for Player<'a> {
             .short("SleepTimer")
             .ok_or(SculkParseError::MissingField("SleepTimer".into()))?;
 
-        let spawn_dimension = get_owned_optional_mutf8str(&nbt, "SpawnDimension");
+        let spawn_dimension = get_owned_optional_string(&nbt, "SpawnDimension");
 
         let spawn_forced = nbt.byte("SpawnForced").map(|b| b != 0);
 
@@ -361,7 +359,7 @@ impl FromCompoundNbt for WardenTracker {
     }
 }
 
-impl<'a> FromCompoundNbt for Vechile<'a> {
+impl FromCompoundNbt for Vechile {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -380,12 +378,12 @@ impl<'a> FromCompoundNbt for Vechile<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for DeathLocation<'a> {
+impl FromCompoundNbt for DeathLocation {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
-        let dimension = get_owned_mutf8str(&nbt, "dimension")?;
+        let dimension = get_owned_string(&nbt, "dimension")?;
         let pos = nbt
             .int_array("pos")
             .ok_or(SculkParseError::MissingField("pos".into()))?;

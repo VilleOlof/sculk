@@ -2,20 +2,18 @@ use crate::{
     error::SculkParseError,
     kv::KVPair,
     traits::FromCompoundNbt,
-    util::{get_owned_mutf8str, get_t_compound_vec},
+    util::{get_owned_string, get_t_compound_vec},
 };
-use simdnbt::Mutf8Str;
-use std::borrow::Cow;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct ChunkSection<'a> {
+pub struct ChunkSection {
     /// The Y position of this section.  
     /// `Y`
     pub y: i8,
 
-    pub block_states: Option<BlockStates<'a>>,
+    pub block_states: Option<BlockStates>,
 
-    pub biomes: Option<Biomes<'a>>,
+    pub biomes: Option<Biomes>,
 
     pub block_light: Option<Vec<u8>>,
 
@@ -23,9 +21,9 @@ pub struct ChunkSection<'a> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Biomes<'a> {
+pub struct Biomes {
     /// Set of different biomes used in this particular section.  
-    pub palette: Vec<PaletteNoProps<'a>>,
+    pub palette: Vec<PaletteNoProps>,
 
     /// A packed array of 64 indices pointing to the palette, stored in an array of 64-bit integers ( Longs).
     ///
@@ -35,9 +33,9 @@ pub struct Biomes<'a> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct BlockStates<'a> {
+pub struct BlockStates {
     /// Set of different block states used in this particular section.  
-    pub palette: Vec<Palette<'a>>,
+    pub palette: Vec<Palette>,
 
     /// A packed array of 4096 indices pointing to the palette, stored in an array of 64-bit integers ( Longs).  
     ///
@@ -47,24 +45,24 @@ pub struct BlockStates<'a> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Palette<'a> {
+pub struct Palette {
     /// Block resource location.  
     /// `Name`
-    pub name: Cow<'a, Mutf8Str>,
+    pub name: String,
 
     /// List of block state properties, with name being the name of the block state property.   
     /// `Properties`
-    pub properties: KVPair<'a, Cow<'a, Mutf8Str>>,
+    pub properties: KVPair<String>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct PaletteNoProps<'a> {
+pub struct PaletteNoProps {
     /// Block resource location.  
     /// `Name`
-    pub name: Cow<'a, Mutf8Str>,
+    pub name: String,
 }
 
-impl<'a> FromCompoundNbt for ChunkSection<'a> {
+impl FromCompoundNbt for ChunkSection {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -102,7 +100,7 @@ impl<'a> FromCompoundNbt for ChunkSection<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for Biomes<'a> {
+impl FromCompoundNbt for Biomes {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -115,7 +113,7 @@ impl<'a> FromCompoundNbt for Biomes<'a> {
             palette
                 .iter()
                 .map(|s| PaletteNoProps {
-                    name: Cow::Owned((*s).to_owned()),
+                    name: (*s).to_string(),
                 })
                 .collect::<Vec<PaletteNoProps>>()
         } else {
@@ -129,7 +127,7 @@ impl<'a> FromCompoundNbt for Biomes<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for BlockStates<'a> {
+impl FromCompoundNbt for BlockStates {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -143,28 +141,28 @@ impl<'a> FromCompoundNbt for BlockStates<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for PaletteNoProps<'a> {
+impl FromCompoundNbt for PaletteNoProps {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
     where
         Self: Sized,
     {
-        let name = get_owned_mutf8str(&nbt, "name")?;
+        let name = get_owned_string(&nbt, "name")?;
 
         Ok(PaletteNoProps { name })
     }
 }
 
-impl<'a> FromCompoundNbt for Palette<'a> {
+impl FromCompoundNbt for Palette {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
     where
         Self: Sized,
     {
-        let name = get_owned_mutf8str(&nbt, "Name")?;
-        let properties = KVPair::<'a, Cow<'a, Mutf8Str>>::from_compound_nbt(&nbt)?;
+        let name = get_owned_string(&nbt, "Name")?;
+        let properties = KVPair::<String>::from_compound_nbt(&nbt)?;
 
         Ok(Palette { name, properties })
     }

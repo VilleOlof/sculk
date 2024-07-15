@@ -1,25 +1,21 @@
-use std::borrow::Cow;
-
-use simdnbt::Mutf8Str;
-
-use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_mutf8str};
+use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_string};
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Jigsaw<'a> {
+pub struct Jigsaw {
     /// The block that this jigsaw block becomes.
-    pub final_state: Cow<'a, Mutf8Str>,
+    pub final_state: String,
 
     /// The joint option value, either "rollable" or "aligned".
     pub joint: JigsawJoint,
 
     /// The jigsaw block's name. This jigsaw block gets aligned with another structure's jigsaw block that has this value in the target tag.
-    pub name: Cow<'a, Mutf8Str>,
+    pub name: String,
 
     /// The jigsaw block's target pool to select a structure from.
-    pub pool: Cow<'a, Mutf8Str>,
+    pub pool: String,
 
     /// The jigsaw block's target name. This jigsaw block gets aligned with another structure's jigsaw block that has this value in the name tag.
-    pub target: Cow<'a, Mutf8Str>,
+    pub target: String,
 
     /// Priority of this jigsaw block being selected for generation. Jigsaw blocks with higher selection priority get selected first.
     pub selection_priority: i32,
@@ -44,22 +40,22 @@ impl From<&str> for JigsawJoint {
     }
 }
 
-impl<'a> FromCompoundNbt for Jigsaw<'a> {
+impl FromCompoundNbt for Jigsaw {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
     where
         Self: Sized,
     {
-        let final_state = get_owned_mutf8str(&nbt, "final_state")?;
+        let final_state = get_owned_string(&nbt, "final_state")?;
         let joint = nbt
             .string("joint")
             .map(|s| JigsawJoint::from(s.to_str().as_ref()))
             .ok_or(SculkParseError::MissingField("joint".into()))?;
 
-        let name = get_owned_mutf8str(&nbt, "name")?;
-        let pool = get_owned_mutf8str(&nbt, "pool")?;
-        let target = get_owned_mutf8str(&nbt, "target")?;
+        let name = get_owned_string(&nbt, "name")?;
+        let pool = get_owned_string(&nbt, "pool")?;
+        let target = get_owned_string(&nbt, "target")?;
         let selection_priority = nbt
             .int("selection_priority")
             .ok_or(SculkParseError::MissingField("selection_priority".into()))?;

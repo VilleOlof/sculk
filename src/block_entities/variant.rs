@@ -50,7 +50,7 @@ pub enum BlockEntityVariant {
     Vault,
 }
 
-impl<'a> BlockEntityKind<'a> {
+impl BlockEntityKind {
     pub fn variant(&self) -> BlockEntityVariant {
         match self {
             BlockEntityKind::Banners(_) => BlockEntityVariant::Banners,

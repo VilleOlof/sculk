@@ -4,22 +4,22 @@ use crate::{
     error::SculkParseError,
     kv::KVPair,
     traits::FromCompoundNbt,
-    util::{get_bool, get_owned_mutf8str},
+    util::{get_bool, get_owned_string},
     uuid::Uuid,
 };
-use simdnbt::Mutf8Str;
-use std::{borrow::Cow, collections::HashMap};
+
+use std::collections::HashMap;
 
 /// A custom boss bar event.
 #[derive(Debug, Clone, PartialEq)]
-pub struct CustomBossEvent<'a> {
+pub struct CustomBossEvent {
     ///  A list of players that may see this boss bar.  
     /// `Players`
     pub players: Vec<Uuid>,
 
     /// ID of the color of the bossbar. Also sets the color of the display text of the bossbar, provided that the display text does not explicitly define a color for itself. See [color codes](https://minecraft.wiki/w/Formatting_codes#Color_codes) for accepted values.  
     /// `Color`
-    pub color: Cow<'a, Mutf8Str>,
+    pub color: String,
 
     /// If the bossbar should create fog.  
     /// `CreateWorldFog`
@@ -39,7 +39,7 @@ pub struct CustomBossEvent<'a> {
 
     /// The display name of the bossbar as a [JSON text component](https://minecraft.wiki/w/Commands#Raw_JSON_text).  
     /// `Name`
-    pub name: Cow<'a, Mutf8Str>,
+    pub name: String,
 
     /// The ID of the overlay to be shown over the health bar.  
     /// `Overlay`
@@ -84,7 +84,7 @@ impl From<&str> for BossEventOverlay {
     }
 }
 
-impl<'a> FromCompoundNbt for KVPair<'a, CustomBossEvent<'a>> {
+impl FromCompoundNbt for KVPair<CustomBossEvent> {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -98,14 +98,14 @@ impl<'a> FromCompoundNbt for KVPair<'a, CustomBossEvent<'a>> {
                 None => continue,
             };
 
-            map.insert(Cow::Owned(key), value);
+            map.insert(key, value);
         }
 
         Ok(KVPair::new(map))
     }
 }
 
-impl<'a> FromCompoundNbt for CustomBossEvent<'a> {
+impl FromCompoundNbt for CustomBossEvent {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -129,7 +129,7 @@ impl<'a> FromCompoundNbt for CustomBossEvent<'a> {
             vec![]
         };
 
-        let color = get_owned_mutf8str(&nbt, "Color")?;
+        let color = get_owned_string(&nbt, "Color")?;
         let create_world_fog = get_bool(&nbt, "CreateWorldFog");
         let darken_screen = get_bool(&nbt, "DarkenScreen");
         let max = nbt
@@ -139,7 +139,7 @@ impl<'a> FromCompoundNbt for CustomBossEvent<'a> {
             .int("Value")
             .ok_or(SculkParseError::MissingField("Value".into()))?;
 
-        let name = get_owned_mutf8str(&nbt, "Name")?;
+        let name = get_owned_string(&nbt, "Name")?;
 
         let overlay = nbt
             .string("Overlay")

@@ -1,33 +1,30 @@
-use simdnbt::Mutf8Str;
-
 use crate::{
     item::Item,
     traits::FromCompoundNbt,
     util::{get_loot_table_data, get_optional_lock, get_optional_name, get_t_compound_vec},
 };
-use std::borrow::Cow;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Barrel<'a> {
+pub struct Barrel {
     /// Optional. The name of this container in JSON text component, which appears in its GUI where the default name ordinarily appears.
     ///
     /// `CustomName`
-    pub custom_name: Option<Cow<'a, Mutf8Str>>,
+    pub custom_name: Option<String>,
 
     /// List of items in the container.
     ///
     /// `Items`
-    pub items: Vec<Item<'a>>,
+    pub items: Vec<Item>,
 
     /// Optional. When not blank, prevents the container from being opened unless the opener is holding an item whose name matches this string
     ///
     ///`Lock`
-    pub lock: Option<Cow<'a, Mutf8Str>>,
+    pub lock: Option<String>,
 
     /// Optional. Name of the loot table to use. If this is used in a chest-like container, the loot table generates its content when it is opened. Generating the items in the container removes both loot table tags ( LootTable and  LootTableSeed).
     ///
     /// `LootTable`
-    pub loot_table: Option<Cow<'a, Mutf8Str>>,
+    pub loot_table: Option<String>,
 
     /// Optional. Seed for generating the loot table. The default value works similarly to the seeds for worlds, where value of 0 or an omitted value causes the game to use a random seed.
     ///
@@ -35,7 +32,7 @@ pub struct Barrel<'a> {
     pub loot_table_seed: Option<i64>,
 }
 
-impl<'a> FromCompoundNbt for Barrel<'a> {
+impl FromCompoundNbt for Barrel {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>

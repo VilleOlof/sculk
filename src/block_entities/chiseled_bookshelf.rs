@@ -3,19 +3,19 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct ChiseledBookshelf<'a> {
+pub struct ChiseledBookshelf {
     /// List of books in the bookshelf.  
     ///
     /// The valid slot numbers are 0-5.
     ///
     /// `Items`
-    pub items: Vec<Item<'a>>,
+    pub items: Vec<Item>,
 
     /// Last interacted slot (0–5), or -1 if no slot has been interacted with yet.
     pub last_interacted_slot: i32,
 }
 
-impl<'a> FromCompoundNbt for ChiseledBookshelf<'a> {
+impl FromCompoundNbt for ChiseledBookshelf {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>

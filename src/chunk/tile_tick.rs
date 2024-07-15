@@ -1,11 +1,9 @@
-use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_mutf8str};
-use simdnbt::Mutf8Str;
-use std::borrow::Cow;
+use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_string};
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct TileTick<'a> {
+pub struct TileTick {
     /// The ID of the block; used to activate the correct block update procedure.
-    pub i: Cow<'a, Mutf8Str>,
+    pub i: String,
 
     /// If multiple tile ticks are scheduled for the same tick, tile ticks with lower p are processed first. If they also have the same p, the order is unknown.
     pub p: i32,
@@ -21,14 +19,14 @@ pub struct TileTick<'a> {
     pub z: i32,
 }
 
-impl<'a> FromCompoundNbt for TileTick<'a> {
+impl FromCompoundNbt for TileTick {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
     where
         Self: Sized,
     {
-        let i = get_owned_mutf8str(&nbt, "i")?;
+        let i = get_owned_string(&nbt, "i")?;
         let p = nbt
             .int("p")
             .ok_or(SculkParseError::MissingField("p".into()))?;

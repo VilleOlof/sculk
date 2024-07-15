@@ -1,22 +1,18 @@
 use crate::{components::Components, error::SculkParseError, traits::FromCompoundNbt};
-use simdnbt::{
-    borrow::{NbtCompound, NbtList},
-    Mutf8Str,
-};
-use std::borrow::Cow;
+use simdnbt::borrow::{NbtCompound, NbtList};
 
 /// The version of Minecraft that this library is designed to work with.  
 /// Formatted exactly as minecraft versions are.
 #[allow(dead_code)]
 pub const MC_VERSION: &str = "1.21";
 
-pub struct LootTableData<'a> {
-    pub loot_table: Option<Cow<'a, Mutf8Str>>,
+pub struct LootTableData {
+    pub loot_table: Option<String>,
     pub loot_table_seed: Option<i64>,
 }
 
-pub fn get_loot_table_data<'a>(nbt: &NbtCompound) -> LootTableData<'a> {
-    let loot_table = get_owned_optional_mutf8str(&nbt, "LootTable");
+pub fn get_loot_table_data(nbt: &NbtCompound) -> LootTableData {
+    let loot_table = get_owned_optional_string(&nbt, "LootTable");
 
     let loot_table_seed = nbt.long("LootTableSeed");
 
@@ -29,29 +25,23 @@ pub fn get_loot_table_data<'a>(nbt: &NbtCompound) -> LootTableData<'a> {
 // TODO: convert get_owned_mutf8str to borrowed Cow
 // Making this borrowed would save like 50µs per call.
 // But i just dont know how to deal with it and its lifetimes.
-pub fn get_owned_mutf8str<'a>(
-    nbt: &NbtCompound,
-    key: &'static str,
-) -> Result<Cow<'a, Mutf8Str>, SculkParseError> {
+pub fn get_owned_string(nbt: &NbtCompound, key: &'static str) -> Result<String, SculkParseError> {
     Ok(nbt
         .string(key)
-        .map(|s| Cow::Owned(s.to_owned()))
+        .map(|s| s.to_string())
         .ok_or(SculkParseError::InvalidField(key.into()))?)
 }
 
-pub fn get_owned_optional_mutf8str<'a>(
-    nbt: &NbtCompound,
-    key: &'static str,
-) -> Option<Cow<'a, Mutf8Str>> {
-    nbt.string(key).map(|s| Cow::Owned(s.to_owned()))
+pub fn get_owned_optional_string(nbt: &NbtCompound, key: &'static str) -> Option<String> {
+    nbt.string(key).map(|s| s.to_string())
 }
 
-pub fn get_optional_lock<'a>(nbt: &NbtCompound) -> Option<Cow<'a, Mutf8Str>> {
-    nbt.string("Lock").map(|s| Cow::Owned(s.to_owned()))
+pub fn get_optional_lock<'a>(nbt: &NbtCompound) -> Option<String> {
+    nbt.string("Lock").map(|s| s.to_string())
 }
 
-pub fn get_optional_name<'a>(nbt: &NbtCompound) -> Option<Cow<'a, Mutf8Str>> {
-    nbt.string("CustomName").map(|s| Cow::Owned(s.to_owned()))
+pub fn get_optional_name<'a>(nbt: &NbtCompound) -> Option<String> {
+    nbt.string("CustomName").map(|s| s.to_string())
 }
 
 pub fn get_bool(nbt: &NbtCompound, key: &'static str) -> bool {
@@ -138,9 +128,7 @@ pub fn get_t_list<T>(
         .collect::<Result<Vec<T>, SculkParseError>>()?)
 }
 
-pub fn get_optional_components<'a>(
-    nbt: &NbtCompound,
-) -> Result<Option<Components<'a>>, SculkParseError> {
+pub fn get_optional_components(nbt: &NbtCompound) -> Result<Option<Components>, SculkParseError> {
     match Components::from_compound_nbt(&nbt) {
         Ok(components) => Ok(Some(components)),
         // Only return None if the field is missing

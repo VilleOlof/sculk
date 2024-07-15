@@ -1,18 +1,16 @@
 //! Structures and parsers for a player's recipe book.
 
 use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_bool};
-use simdnbt::Mutf8Str;
-use std::borrow::Cow;
 
 /// A player's recipe book.
 #[derive(Debug, Clone, PartialEq)]
-pub struct RecipeBook<'a> {
+pub struct RecipeBook {
     /// A list of all recipes the player has seen.
-    pub recipes: Vec<Cow<'a, Mutf8Str>>,
+    pub recipes: Vec<String>,
 
     /// A list of all recipes the player has unlocked, but not viewed in the crafting helper yet.  
     /// `toBeDisplayed`
-    pub to_be_displayed: Vec<Cow<'a, Mutf8Str>>,
+    pub to_be_displayed: Vec<String>,
 
     /// True if the player has enabled the "Show Craftable" feature in the crafting recipe book.  
     /// `isFilteringCraftable`
@@ -47,7 +45,7 @@ pub struct RecipeBook<'a> {
     pub is_smoker_gui_open: bool,
 }
 
-impl<'a> FromCompoundNbt for RecipeBook<'a> {
+impl FromCompoundNbt for RecipeBook {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -59,11 +57,11 @@ impl<'a> FromCompoundNbt for RecipeBook<'a> {
                 .strings()
                 .ok_or(SculkParseError::InvalidField("recipes".into()))?;
 
-            let mut recipes: Vec<Cow<'a, Mutf8Str>> = vec![];
+            let mut recipes: Vec<String> = vec![];
 
             for recipe in list {
-                let str = (*recipe).to_owned();
-                recipes.push(Cow::Owned(str));
+                let str = (*recipe).to_string();
+                recipes.push(str);
             }
 
             recipes
@@ -76,11 +74,11 @@ impl<'a> FromCompoundNbt for RecipeBook<'a> {
                 .strings()
                 .ok_or(SculkParseError::InvalidField("toBeDisplayed".into()))?;
 
-            let mut displays: Vec<Cow<'a, Mutf8Str>> = vec![];
+            let mut displays: Vec<String> = vec![];
 
             for display in list {
-                let str = (*display).to_owned();
-                displays.push(Cow::Owned(str));
+                let str = (*display).to_string();
+                displays.push(str);
             }
 
             displays

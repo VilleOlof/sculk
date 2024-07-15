@@ -1,33 +1,31 @@
 //! Banner patterns are used in banners to determine the pattern of the banner.
 
 use crate::{
-    color::Color, error::SculkParseError, traits::FromCompoundNbt, util::get_owned_mutf8str,
+    color::Color, error::SculkParseError, traits::FromCompoundNbt, util::get_owned_string,
 };
-use simdnbt::Mutf8Str;
-use std::borrow::Cow;
 
 /// Represents a banner pattern.
 #[derive(Debug, Clone, PartialEq)]
-pub struct BannerPattern<'a> {
+pub struct BannerPattern {
     /// Dye color of the section.
     pub color: Color,
 
     /// Banner pattern (referenced by ID or inlined)
-    pub pattern: Pattern<'a>,
+    pub pattern: Pattern,
 }
 
 /// Either an id reference to a pattern or an inlined pattern.
 #[derive(Debug, Clone, PartialEq)]
-pub enum Pattern<'a> {
+pub enum Pattern {
     /// The resource location for the texture asset.
     ID(ResourceName),
 
     /// The translation key for displaying the banner tooltip.
     Pattern {
         /// The asset ID of the pattern.
-        asset_id: Cow<'a, Mutf8Str>,
+        asset_id: String,
         /// The translation key for displaying the banner tooltip.
-        translation_key: Cow<'a, Mutf8Str>,
+        translation_key: String,
     },
 }
 
@@ -127,7 +125,7 @@ impl From<&str> for ResourceName {
     }
 }
 
-impl<'a> FromCompoundNbt for BannerPattern<'a> {
+impl FromCompoundNbt for BannerPattern {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -146,8 +144,8 @@ impl<'a> FromCompoundNbt for BannerPattern<'a> {
             Pattern::ID(resource)
         } else if let Some(_) = nbt.compound("pattern") {
             // Inlined pattern
-            let asset_id = get_owned_mutf8str(&nbt, "asset_id")?;
-            let translation_key = get_owned_mutf8str(&nbt, "translation_key")?;
+            let asset_id = get_owned_string(&nbt, "asset_id")?;
+            let translation_key = get_owned_string(&nbt, "translation_key")?;
 
             Pattern::Pattern {
                 asset_id,

@@ -4,9 +4,9 @@ use crate::{entity::Entity, error::SculkParseError, traits::FromCompoundNbt};
 
 /// A bee entity in a hive.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Bee<'a> {
+pub struct Bee {
     /// The NBT data of the entity in the hive.
-    pub entity_data: Entity<'a>,
+    pub entity_data: Entity,
 
     /// The minimum amount of time in ticks for this entity to stay in the hive.
     pub min_ticks_in_hive: i32,
@@ -15,7 +15,7 @@ pub struct Bee<'a> {
     pub ticks_in_hive: i32,
 }
 
-impl<'a> FromCompoundNbt for Bee<'a> {
+impl FromCompoundNbt for Bee {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>

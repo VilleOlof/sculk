@@ -1,11 +1,11 @@
 //! Map decorations component.
 
 use crate::{error::SculkParseError, kv::KVPair, traits::FromCompoundNbt};
-use std::{borrow::Cow, collections::HashMap};
+use std::collections::HashMap;
 
 /// Decorations on a map.
 #[derive(Debug, Clone, PartialEq)]
-pub struct MapDecorations<'a>(KVPair<'a, MapIcon>);
+pub struct MapDecorations(KVPair<MapIcon>);
 
 /// The key-value pair of a single icon, where the key is an arbitrary unique string identifying the decoration.
 #[derive(Debug, Clone, PartialEq)]
@@ -105,7 +105,7 @@ impl MapIconType {
     }
 }
 
-impl<'a> FromCompoundNbt for MapDecorations<'a> {
+impl FromCompoundNbt for MapDecorations {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -116,7 +116,7 @@ impl<'a> FromCompoundNbt for MapDecorations<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for KVPair<'a, MapIcon> {
+impl FromCompoundNbt for KVPair<MapIcon> {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
@@ -131,7 +131,7 @@ impl<'a> FromCompoundNbt for KVPair<'a, MapIcon> {
                 SculkParseError::InvalidField("minecraft:map_decorations".into()),
             )?)?;
 
-            map.insert(Cow::Owned(key), value);
+            map.insert(key, value);
         }
 
         Ok(KVPair::new(map))

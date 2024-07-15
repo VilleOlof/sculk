@@ -1,19 +1,17 @@
-use std::{borrow::Cow, collections::HashMap};
-
-use simdnbt::Mutf8Str;
+use std::collections::HashMap;
 
 use crate::{
     error::SculkParseError,
     traits::FromCompoundNbt,
-    util::{get_bool, get_owned_mutf8str},
+    util::{get_bool, get_owned_string},
 };
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Piston<'a> {
+pub struct Piston {
     /// The moving block represented by this block entity.
     ///
     /// `blockState`
-    pub block_state: BlockState<'a>,
+    pub block_state: BlockState,
 
     /// true if the piston is extending instead of withdrawing.
     pub extending: bool,
@@ -29,12 +27,12 @@ pub struct Piston<'a> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct BlockState<'a> {
+pub struct BlockState {
     /// The identifier of the block to use.
-    pub name: Cow<'a, Mutf8Str>,
+    pub name: String,
 
     /// (Optional, can be empty) Block properties. Unspecified properties of the specified block will be set to their default values.
-    pub properties: Option<HashMap<Cow<'a, String>, Cow<'a, Mutf8Str>>>,
+    pub properties: Option<HashMap<String, String>>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -61,7 +59,7 @@ impl From<i32> for Facing {
     }
 }
 
-impl<'a> FromCompoundNbt for Piston<'a> {
+impl FromCompoundNbt for Piston {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -97,26 +95,24 @@ impl<'a> FromCompoundNbt for Piston<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for BlockState<'a> {
+impl FromCompoundNbt for BlockState {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
     where
         Self: Sized,
     {
-        let name = get_owned_mutf8str(&nbt, "name")?;
+        let name = get_owned_string(&nbt, "name")?;
 
         let properties = if let Some(props) = nbt.compound("properties") {
             let mut map = HashMap::new();
 
             for (key, value) in props.iter() {
-                let key: Cow<'a, String> = Cow::Owned(key.to_string());
-                let value: Cow<'a, Mutf8Str> = Cow::Owned(
-                    value
-                        .string()
-                        .map(|s| s.to_owned())
-                        .ok_or(SculkParseError::InvalidField("properties".into()))?,
-                );
+                let key: String = key.to_string();
+                let value: String = value
+                    .string()
+                    .map(|s| s.to_string())
+                    .ok_or(SculkParseError::InvalidField("properties".into()))?;
 
                 map.insert(key, value);
             }

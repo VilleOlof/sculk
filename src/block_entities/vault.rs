@@ -1,33 +1,30 @@
-use simdnbt::Mutf8Str;
-
 use crate::{
     error::SculkParseError,
     item::Item,
     traits::FromCompoundNbt,
-    util::{get_owned_optional_mutf8str, get_t_compound_vec},
+    util::{get_owned_optional_string, get_t_compound_vec},
     uuid::Uuid,
 };
-use std::borrow::Cow;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Vault<'a> {
+pub struct Vault {
     /// Configuration data that does not automatically change. All fields are optional.
-    pub config: VaultConfig<'a>,
+    pub config: VaultConfig,
 
     /// Data that is only stored on the server.
-    pub server_data: VaultServerData<'a>,
+    pub server_data: VaultServerData,
 
     /// Data that is synced between the server and client.
-    pub shared_data: VaultSharedData<'a>,
+    pub shared_data: VaultSharedData,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct VaultConfig<'a> {
+pub struct VaultConfig {
     ///  A resource location to the loot table that is ejected when unlocking the vault. Defaults to "minecraft:chests/trial_chambers/reward"
-    pub loot_table: Option<Cow<'a, Mutf8Str>>,
+    pub loot_table: Option<String>,
 
     /// A resource location to the loot table that is used to display items in the vault. If not present, the game uses the loot_table field.
-    pub override_loot_table_to_display: Option<Cow<'a, Mutf8Str>>,
+    pub override_loot_table_to_display: Option<String>,
 
     /// The range in blocks when the vault should activate. Defaults to 4.
     pub activation_range: Option<i32>,
@@ -36,11 +33,11 @@ pub struct VaultConfig<'a> {
     pub deactivation_range: Option<i32>,
 
     /// The key item that is used to check for valid keys. Defaults to "minecraft:trial_key"
-    pub key_item: Item<'a>,
+    pub key_item: Item,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct VaultServerData<'a> {
+pub struct VaultServerData {
     ///  A set of player UUIDs that have already received their rewards from this vault.
     pub rewarded_players: Vec<Uuid>,
 
@@ -48,16 +45,16 @@ pub struct VaultServerData<'a> {
     pub state_updating_resumes_at: i64,
 
     /// List of item stacks that have been rolled by the loot table and are waiting to be ejected.
-    pub items_to_eject: Vec<Item<'a>>,
+    pub items_to_eject: Vec<Item>,
 
     /// The total amount of item stacks that need to be ejected.
     pub total_ejections_needed: i32,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct VaultSharedData<'a> {
+pub struct VaultSharedData {
     /// The item that is currently being displayed.
-    pub display_item: Item<'a>,
+    pub display_item: Item,
 
     /// A set of player UUIDs that are within range of the vault.
     pub connected_players: Vec<Uuid>,
@@ -66,7 +63,7 @@ pub struct VaultSharedData<'a> {
     pub connected_particles_range: f64,
 }
 
-impl<'a> FromCompoundNbt for Vault<'a> {
+impl FromCompoundNbt for Vault {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -97,15 +94,15 @@ impl<'a> FromCompoundNbt for Vault<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for VaultConfig<'a> {
+impl FromCompoundNbt for VaultConfig {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
-        let loot_table = get_owned_optional_mutf8str(&nbt, "loot_table");
+        let loot_table = get_owned_optional_string(&nbt, "loot_table");
 
         let override_loot_table_to_display =
-            get_owned_optional_mutf8str(&nbt, "override_loot_table_to_display");
+            get_owned_optional_string(&nbt, "override_loot_table_to_display");
 
         let activation_range = nbt.int("activation_range");
         let deactivation_range = nbt.int("deactivation_range");
@@ -126,7 +123,7 @@ impl<'a> FromCompoundNbt for VaultConfig<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for VaultServerData<'a> {
+impl FromCompoundNbt for VaultServerData {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
@@ -156,7 +153,7 @@ impl<'a> FromCompoundNbt for VaultServerData<'a> {
     }
 }
 
-impl<'a> FromCompoundNbt for VaultSharedData<'a> {
+impl FromCompoundNbt for VaultSharedData {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
     ) -> Result<Self, crate::error::SculkParseError>
