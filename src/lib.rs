@@ -27,11 +27,11 @@ pub mod level;
 pub mod map;
 pub mod player;
 pub mod rarity;
+pub mod traits;
 pub mod uuid;
 
 // Internal modules.
 mod kv;
-mod traits;
 mod util;
 
 #[cfg(feature = "stats")]
