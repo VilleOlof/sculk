@@ -17,7 +17,7 @@ pub struct Item {
 
     /// Number of items stacked in this inventory slot. Any item can be stacked, even if unstackable through normal means. Defaults to 1.  
     ///
-    /// `Count`
+    /// `count`
     pub count: i32,
 
     /// Optional map of data components. Additional information about the item.
@@ -33,7 +33,7 @@ pub struct ItemWithNoSlot {
     pub id: String,
 
     /// Number of items stacked in this inventory slot. Any item can be stacked, even if unstackable through normal means. Defaults to 1.  
-    /// Actual name: `Count`
+    /// Actual name: `count`
     pub count: i32,
 
     /// Optional map of data components. Additional information about the item.
@@ -53,7 +53,7 @@ impl FromCompoundNbt for Item {
 
         let id = get_owned_string(&nbt, "id")?;
 
-        let count = nbt.int("Count").unwrap_or(1);
+        let count = nbt.int("count").unwrap_or(1);
 
         let components = get_optional_components(&nbt)?;
 
