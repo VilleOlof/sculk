@@ -24,9 +24,7 @@ impl FromCompoundNbt for Datapacks {
         Self: Sized,
     {
         let disabled = if let Some(nbt) = nbt.list("Disabled") {
-            let list = nbt
-                .strings()
-                .ok_or(SculkParseError::InvalidField("Disabled".into()))?;
+            let list = nbt.strings().unwrap_or_default();
 
             let mut vec: Vec<String> = vec![];
 
@@ -40,9 +38,7 @@ impl FromCompoundNbt for Datapacks {
         };
 
         let enabled = if let Some(nbt) = nbt.list("Enabled") {
-            let list = nbt
-                .strings()
-                .ok_or(SculkParseError::InvalidField("Enabled".into()))?;
+            let list = nbt.strings().unwrap_or_default();
 
             let mut vec: Vec<String> = vec![];
 
