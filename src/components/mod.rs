@@ -82,7 +82,7 @@ impl Components {
 
     /// Get a component by its key.  
     /// Returns `None` if the key does not exist.
-    fn get(&self, key: &str) -> Option<&Component> {
+    pub fn get(&self, key: &str) -> Option<&Component> {
         self.0.get(key)
     }
 }
