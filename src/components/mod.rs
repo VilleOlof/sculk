@@ -196,7 +196,7 @@ impl FromCompoundNbt for Components {
                     ))?;
                     Component::CustomModelData(value)
                 }
-                "custom_name" => {
+                "minecraft:custom_name" => {
                     let value = value
                         .string()
                         .ok_or(SculkParseError::InvalidField("custom_name".into()))?;

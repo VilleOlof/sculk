@@ -1,7 +1,7 @@
 //! Lists what datapacks are enabled and disabled in a world.  
 //! You may think at first this is the actual datapacks but nah nah.
 
-use crate::{error::SculkParseError, traits::FromCompoundNbt};
+use crate::traits::FromCompoundNbt;
 
 /// What datapacks are enabled and disabled in a world.
 #[derive(Debug, Clone, PartialEq)]
