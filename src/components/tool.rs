@@ -28,13 +28,22 @@ pub struct Tool {
 pub struct ToolRules {
     /// The blocks to match with. Can be a block ID or a block tag with a #, or a list of block IDs.  
     /// **NOTE:** This is always a list here, even if it only contains one block.
-    pub blocks: Vec<String>,
+    pub blocks: ToolRulesBlocks,
 
     ///  If the blocks match, overrides the default mining speed. Optional.
     pub speed: Option<f32>,
 
     /// If the blocks match, overrides whether or not this tool is considered correct to mine at its most efficient speed, and to drop items if the block's loot table requires it. Optional.
     pub correct_for_drops: Option<bool>,
+}
+
+/// A block or tag that a tool can have special behavior with.
+#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(untagged))]
+pub enum ToolRulesBlocks {
+    Single(String),
+    Multiple(Vec<String>),
 }
 
 impl FromCompoundNbt for Tool {
@@ -102,7 +111,7 @@ impl FromCompoundNbt for ToolRules {
         let correct_for_drops = nbt.byte("correct_for_drops").map(|b| b != 0);
 
         Ok(ToolRules {
-            blocks,
+            blocks: ToolRulesBlocks::Multiple(blocks),
             speed,
             correct_for_drops,
         })
