@@ -54,6 +54,7 @@ pub struct Modifier {
 /// Slot or slot type the item must be in for the modifier to take effect.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 pub enum SlotType {
     /// `any`
     Any,
@@ -80,13 +81,14 @@ pub enum SlotType {
 /// Modifier operation.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 pub enum Operation {
     /// `add_value`
-    Add,
+    AddValue,
     /// `add_multiplied_base`
-    MultiplyBase,
+    AddMultipliedBase,
     /// `add_multiplied_total`
-    MultiplyTotal,
+    AddMultipliedTotal,
 }
 
 impl FromCompoundNbt for AttributeModifier {
@@ -188,9 +190,9 @@ impl SlotType {
 impl Operation {
     fn from_str(value: &str) -> Result<Self, SculkParseError> {
         match value {
-            "add_value" => Ok(Operation::Add),
-            "add_multiplied_base" => Ok(Operation::MultiplyBase),
-            "add_multiplied_total" => Ok(Operation::MultiplyTotal),
+            "add_value" => Ok(Operation::AddValue),
+            "add_multiplied_base" => Ok(Operation::AddMultipliedBase),
+            "add_multiplied_total" => Ok(Operation::AddMultipliedTotal),
             _ => Err(SculkParseError::InvalidField(value.into())),
         }
     }
