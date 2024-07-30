@@ -63,6 +63,30 @@ impl Deref for Components {
     }
 }
 
+impl Default for Components {
+    fn default() -> Self {
+        Self(HashMap::new())
+    }
+}
+
+impl Components {
+    /// Get a reference to the internal map.
+    pub fn map(&self) -> &InternalMap {
+        &self.0
+    }
+
+    /// Get a mutable reference to the internal map.
+    pub fn map_mut(&mut self) -> &mut InternalMap {
+        &mut self.0
+    }
+
+    /// Get a component by its key.  
+    /// Returns `None` if the key does not exist.
+    fn get(&self, key: &str) -> Option<&Component> {
+        self.0.get(key)
+    }
+}
+
 impl FromCompoundNbt for Components {
     fn from_compound_nbt(
         nbt: &simdnbt::borrow::NbtCompound,
