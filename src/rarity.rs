@@ -3,6 +3,7 @@ use crate::error::SculkParseError;
 /// Represents the rarity of an item.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 pub enum Rarity {
     /// Common rarity.
     Common,
