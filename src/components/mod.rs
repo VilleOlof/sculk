@@ -1,4 +1,7 @@
-use std::{collections::HashMap, ops::Deref};
+use std::{
+    collections::HashMap,
+    ops::{Deref, DerefMut},
+};
 
 use attribute_modifiers::AttributeModifier;
 use banner_patterns::BannerPattern;
@@ -60,6 +63,12 @@ impl Deref for Components {
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+impl DerefMut for Components {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }
 

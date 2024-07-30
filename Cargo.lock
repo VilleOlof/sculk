@@ -89,7 +89,7 @@ dependencies = [
 
 [[package]]
 name = "sculk"
-version = "0.2.21"
+version = "0.2.22"
 dependencies = [
  "flate2",
  "serde",
