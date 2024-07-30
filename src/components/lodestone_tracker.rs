@@ -13,6 +13,7 @@ pub struct LodestoneTracker {
     pub target: Option<LodestoneTarget>,
 
     ///  If `true`, the component is removed when the lodestone is broken. If `false`, the component is kept. Defaults to `true`.
+    #[cfg_attr(feature = "serde", serde(default = "crate::util::default_true"))]
     pub tracked: bool,
 }
 

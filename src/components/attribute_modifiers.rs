@@ -11,6 +11,7 @@ use crate::{
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct AttributeModifiers {
     /// Show or hide attribute modifiers on this item's tooltip. Defaults to `true`.
+    #[cfg_attr(feature = "serde", serde(default = "crate::util::default_true"))]
     pub show_in_tooltip: bool,
 
     /// Contains attribute modifiers on this item which modify attributes of the wearer or holder (if the item is not in the hand or armor slots, it has no effect).

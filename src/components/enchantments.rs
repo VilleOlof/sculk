@@ -10,6 +10,7 @@ pub struct Enchantments {
     pub levels: KVPair<i32>,
 
     /// Show or hide enchantments on this item's tooltip. Defaults to true.
+    #[cfg_attr(feature = "serde", serde(default = "crate::util::default_true"))]
     pub show_in_tooltip: bool,
 }
 

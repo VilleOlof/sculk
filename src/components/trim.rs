@@ -13,6 +13,7 @@ pub struct Trim {
     pub material: String,
 
     /// Show or hide the trim on this item's tooltip. Defaults to true.
+    #[cfg_attr(feature = "serde", serde(default = "crate::util::default_true"))]
     pub show_in_tooltip: bool,
 }
 

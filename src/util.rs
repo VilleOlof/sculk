@@ -11,6 +11,11 @@ pub struct LootTableData {
     pub loot_table_seed: Option<i64>,
 }
 
+#[cfg(feature = "serde")]
+pub fn default_true() -> bool {
+    true
+}
+
 pub fn get_loot_table_data(nbt: &NbtCompound) -> LootTableData {
     let loot_table = get_owned_optional_string(&nbt, "LootTable");
 

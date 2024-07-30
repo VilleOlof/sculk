@@ -7,6 +7,7 @@ use crate::traits::FromCompoundNbt;
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Unbreakable {
     /// Show or hide the "Unbreakable" line on this item's tooltip. Defaults to true.  
+    #[cfg_attr(feature = "serde", serde(default = "crate::util::default_true"))]
     pub show_in_tooltip: bool,
 }
 

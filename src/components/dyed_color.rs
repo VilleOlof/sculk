@@ -14,6 +14,7 @@ pub enum DyedColor {
         /// The RGB color.
         rgb: RGB,
         /// If the color should be shown in the tooltip.
+        #[cfg_attr(feature = "serde", serde(default = "crate::util::default_true"))]
         show_in_tooltip: bool,
     },
 }

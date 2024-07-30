@@ -15,6 +15,7 @@ pub enum CanBreak {
         predicates: Vec<Predicate>,
 
         /// Show or hide the "Can break" line on this item's tooltip. Defaults to true.
+        #[cfg_attr(feature = "serde", serde(default = "crate::util::default_true"))]
         show_in_tooltip: bool,
     },
 
@@ -30,6 +31,7 @@ pub enum CanBreak {
         state: Option<BlockState>,
 
         /// Show or hide the "Can break" line on this item's tooltip. Defaults to true.
+        #[cfg_attr(feature = "serde", serde(default = "crate::util::default_true"))]
         show_in_tooltip: bool,
     },
 }

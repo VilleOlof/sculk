@@ -21,6 +21,7 @@ pub struct WrittenBookContent {
     pub generation: i32,
 
     ///  If true, the JSON text components have already been resolved (such as entity selectors and scores). If false, they are resolved when this book is opened by a player for the first time. Defaults to false.
+    #[cfg_attr(feature = "serde", serde(default = "bool::default"))]
     pub resolved: bool,
 }
 

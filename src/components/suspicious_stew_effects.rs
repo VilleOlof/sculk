@@ -2,6 +2,11 @@
 
 use crate::{traits::FromCompoundNbt, util::get_owned_string};
 
+#[cfg(feature = "serde")]
+fn default_duration() -> i32 {
+    160
+}
+
 /// The effects of a suspicious stew.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -10,6 +15,7 @@ pub struct SuspiciousStewEffects {
     pub id: String,
 
     /// The duration of the effect in ticks. Defaults to 160.
+    #[cfg_attr(feature = "serde", serde(default = "default_duration"))]
     pub duration: i32,
 }
 

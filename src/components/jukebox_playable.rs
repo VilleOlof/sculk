@@ -10,6 +10,7 @@ pub struct JukeboxPlayable {
     pub song: String,
 
     /// If `true`, the song is shown in the tooltip of the item. Defaults to `true`.
+    #[cfg_attr(feature = "serde", serde(default = "crate::util::default_true"))]
     pub show_in_tooltip: bool,
 }
 

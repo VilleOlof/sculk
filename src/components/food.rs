@@ -8,6 +8,16 @@ use crate::{
 
 use super::Components;
 
+#[cfg(feature = "serde")]
+fn default_eat_seconds() -> f32 {
+    1.6
+}
+
+#[cfg(feature = "serde")]
+fn default_prob() -> f32 {
+    1.0
+}
+
 /// The food component.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -19,9 +29,11 @@ pub struct Food {
     pub saturation: f32,
 
     ///  If true, this item can be eaten even if the player is not hungry. Defaults to false.
+    #[cfg_attr(feature = "serde", serde(default = "bool::default"))]
     pub can_always_eat: bool,
 
     /// The number of seconds taken by this item to be eaten. Defaults to 1.6.
+    #[cfg_attr(feature = "serde", serde(default = "default_eat_seconds"))]
     pub eat_seconds: f32,
 
     /// The item to replace this item with when it is eaten.
@@ -50,6 +62,7 @@ pub struct Effect {
     pub effect: EffectDetails,
 
     /// The chance for the effect to be applied. Must be a positive float between 0 and 1. Defaults to 1.
+    #[cfg_attr(feature = "serde", serde(default = "default_prob"))]
     pub probability: f32,
 }
 

@@ -3,6 +3,11 @@
 use super::firework_explosion::FireworkExplosion;
 use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_t_list};
 
+#[cfg(feature = "serde")]
+fn default_flight_duration() -> i8 {
+    1
+}
+
 /// A firework rocket item.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -11,6 +16,7 @@ pub struct Fireworks {
     pub explosions: Vec<FireworkExplosion>,
 
     /// The flight duration of this firework rocket, i.e. the number of gunpowders used to craft it. Must be an integer between -128 and 127. Defaults to 1.
+    #[cfg_attr(feature = "serde", serde(default = "default_flight_duration"))]
     pub flight_duration: i8,
 }
 
