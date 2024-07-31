@@ -3,8 +3,13 @@
 use crate::{error::SculkParseError, traits::FromCompoundNbt};
 
 #[cfg(feature = "serde")]
-fn default_one() -> f32 {
+fn default_f32() -> f32 {
     1.0
+}
+
+#[cfg(feature = "serde")]
+fn default_i32() -> i32 {
+    1
 }
 
 /// A tool that can be used to mine blocks.
@@ -12,11 +17,11 @@ fn default_one() -> f32 {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Tool {
     /// The default mining speed of this tool, used if no rules override it. Defaults to 1.0.
-    #[cfg_attr(feature = "serde", serde(default = "default_one"))]
+    #[cfg_attr(feature = "serde", serde(default = "default_f32"))]
     pub default_mining_speed: f32,
 
     /// The amount of durability to remove each time a block is broken with this tool. Must be a non-negative integer.
-    #[cfg_attr(feature = "serde", serde(default = "default_one"))]
+    #[cfg_attr(feature = "serde", serde(default = "default_i32"))]
     // this may be incorrect but wiki mentions no specific default value
     pub damage_per_block: i32,
 
