@@ -40,6 +40,7 @@ pub struct Food {
     pub using_converts_to: Option<FoodConvertedItem>,
 
     ///  A list of effects applied by this item when eaten.
+    #[cfg_attr(feature = "serde", serde(default))]
     pub effects: Vec<Effect>,
 }
 
