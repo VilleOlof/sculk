@@ -592,6 +592,14 @@ impl FromCompoundNbt for Player {
     }
 }
 
+impl Player {
+    /// Returns the data version of the player.
+    pub fn get_data_version(nbt: &simdnbt::borrow::NbtCompound) -> Result<i32, SculkParseError> {
+        nbt.int("DataVersion")
+            .ok_or(SculkParseError::MissingField("DataVersion".into()))
+    }
+}
+
 impl FromCompoundNbt for WardenTracker {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where

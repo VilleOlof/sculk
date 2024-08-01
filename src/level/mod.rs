@@ -480,6 +480,14 @@ impl FromCompoundNbt for Level {
     }
 }
 
+impl Level {
+    /// Get the data version from the level.dat file.
+    pub fn get_data_version(nbt: &simdnbt::borrow::NbtCompound) -> Result<i32, SculkParseError> {
+        nbt.int("DataVersion")
+            .ok_or(SculkParseError::MissingField("DataVersion".into()))
+    }
+}
+
 #[cfg(test)]
 #[test]
 fn simple_level_test() {
