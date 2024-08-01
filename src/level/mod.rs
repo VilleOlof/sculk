@@ -483,6 +483,11 @@ impl FromCompoundNbt for Level {
 impl Level {
     /// Get the data version from the level.dat file.
     pub fn get_data_version(nbt: &simdnbt::borrow::NbtCompound) -> Result<i32, SculkParseError> {
+        // The level.dat file is a compound tag with a single compound tag called "Data"
+        let nbt = nbt
+            .compound("Data")
+            .ok_or(SculkParseError::MissingField("Data".into()))?;
+
         nbt.int("DataVersion")
             .ok_or(SculkParseError::MissingField("DataVersion".into()))
     }
