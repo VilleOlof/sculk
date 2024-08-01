@@ -294,16 +294,19 @@ impl FromCompoundNbt for Entity {
 
         let silent = nbt.byte("Silent").map(|b| b != 0);
 
-        let tags_list = nbt
-            .list("Tags")
-            .ok_or(SculkParseError::MissingField("Tags".into()))?;
-        let mut tags: Vec<String> = vec![];
-        for tag in tags_list
-            .strings()
-            .ok_or(SculkParseError::InvalidField("Tags".into()))?
-        {
-            tags.push((*tag).to_string());
-        }
+        let tags = if let Some(tags_list) = nbt.list("Tags") {
+            let mut tags: Vec<String> = vec![];
+            for tag in tags_list
+                .strings()
+                .ok_or(SculkParseError::InvalidField("Tags".into()))?
+            {
+                tags.push((*tag).to_string());
+            }
+
+            tags
+        } else {
+            vec![]
+        };
 
         let ticks_frozen = nbt.int("TicksFrozen");
         let uuid = nbt
