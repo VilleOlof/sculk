@@ -285,11 +285,11 @@ pub struct WardenTracker {
 pub struct Vechile {
     /// The UUID of the entity the player is riding, stored as four ints.  
     /// `Attach`
-    pub attach: Uuid,
+    pub attach: Option<Uuid>,
 
     /// The NBT data of the root vehicle.  
     /// `Entity`
-    pub entity: Entity,
+    pub entity: Option<Entity>,
 }
 
 /// The location of the player's last death.
@@ -632,15 +632,17 @@ impl FromCompoundNbt for Vechile {
     where
         Self: Sized,
     {
-        let attach = nbt
-            .int_array("attach")
-            .map(Uuid::from)
-            .ok_or(SculkParseError::MissingField("attach".into()))?;
+        let attach = if let Some(attach) = nbt.int_array("attach") {
+            Some(Uuid::from(attach))
+        } else {
+            None
+        };
 
-        let entity = nbt
-            .compound("Entity")
-            .map(|nbt| Entity::from_compound_nbt(&nbt))
-            .ok_or(SculkParseError::MissingField("Entity".into()))??;
+        let entity = if let Some(entity) = nbt.compound("Entity") {
+            Some(Entity::from_compound_nbt(&entity)?)
+        } else {
+            None
+        };
 
         Ok(Vechile { attach, entity })
     }
