@@ -53,7 +53,9 @@ impl FromCompoundNbt for Item {
 
         let id = get_owned_string(&nbt, "id")?;
 
-        let count = nbt.int("count").unwrap_or(1);
+        let count = nbt
+            .int("count")
+            .unwrap_or_else(|| nbt.int("Count").unwrap_or(1));
 
         let components = get_optional_components(&nbt)?;
 
@@ -75,7 +77,9 @@ impl FromCompoundNbt for ItemWithNoSlot {
     {
         let id = get_owned_string(&nbt, "id")?;
 
-        let count = nbt.int("Count").unwrap_or(1);
+        let count = nbt
+            .int("count")
+            .unwrap_or_else(|| nbt.int("Count").unwrap_or(1));
 
         let components = get_optional_components(&nbt)?;
 
