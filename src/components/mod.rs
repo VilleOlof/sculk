@@ -195,7 +195,7 @@ impl FromCompoundNbt for Components {
                     Component::ChargedProjectiles(items)
                 }
                 "minecraft:container" => {
-                    let items = if let Some(list) = nbt.list("minecraft:container") {
+                    let items = if let Some(list) = value.list() {
                         let list = list
                             .compounds()
                             .ok_or(SculkParseError::InvalidField("minecraft:container".into()))?;

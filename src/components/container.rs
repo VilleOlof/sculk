@@ -20,7 +20,11 @@ impl FromCompoundNbt for Container {
     where
         Self: Sized,
     {
-        let item = ItemWithNoSlot::from_compound_nbt(&nbt)?;
+        let item = nbt
+            .compound("item")
+            .map(|i| ItemWithNoSlot::from_compound_nbt(&i))
+            .ok_or(crate::error::SculkParseError::MissingField("item".into()))??;
+
         let slot = nbt
             .int("slot")
             .ok_or(crate::error::SculkParseError::MissingField("slot".into()))?;
