@@ -306,9 +306,9 @@ impl FromCompoundNbt for Components {
                     ))?;
                     Component::HideTooltip(value != 0)
                 }
-                "minecraft:instrument" => {
-                    Component::Instrument(instrument::Instrument::from_compound_nbt(&nbt)?)
-                }
+                "minecraft:instrument" => Component::Instrument(
+                    instrument::Instrument::from_compound_nbt(&nbt_components)?,
+                ),
                 "minecraft:intangible_projectile" => {
                     let value = value.byte().ok_or(SculkParseError::InvalidField(
                         "minecraft:intangible_projectile".into(),

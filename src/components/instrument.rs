@@ -5,6 +5,7 @@ use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_str
 /// (referenced by ID or inlined)
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(untagged))]
 pub enum Instrument {
     /// The ID of the instrument.
     ID(String),
@@ -29,6 +30,7 @@ pub struct InstrumentData {
 /// (referenced by ID or inlined)
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(untagged))]
 pub enum SoundEvent {
     /// The ID of the sound event.
     ID(String),
@@ -52,6 +54,8 @@ impl FromCompoundNbt for Instrument {
     where
         Self: Sized,
     {
+        crate::util::dump_nbt(&nbt);
+
         if let Some(id) = nbt.string("minecraft:instrument") {
             return Ok(Instrument::ID(id.to_string()));
         } else if let Some(compound) = nbt.compound("minecraft:instrument") {
