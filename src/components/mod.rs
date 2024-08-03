@@ -420,7 +420,7 @@ impl FromCompoundNbt for Components {
                     Component::PotDecorations(decorations)
                 }
                 "minecraft:potion_contents" => Component::PotionContents(
-                    potion_contents::PotionContents::from_compound_nbt(&nbt)?,
+                    potion_contents::PotionContents::from_compound_nbt(&nbt_components)?,
                 ),
                 "minecraft:profile" => {
                     Component::Profile(SkullProfile::from_component_compound_nbt(&nbt)?)

@@ -54,8 +54,6 @@ impl FromCompoundNbt for Instrument {
     where
         Self: Sized,
     {
-        crate::util::dump_nbt(&nbt);
-
         if let Some(id) = nbt.string("minecraft:instrument") {
             return Ok(Instrument::ID(id.to_string()));
         } else if let Some(compound) = nbt.compound("minecraft:instrument") {

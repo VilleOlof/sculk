@@ -11,6 +11,7 @@ use super::food::EffectDetails;
 /// The contents of a potion item.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(untagged))]
 pub enum PotionContents {
     /// A resource location string representing the potion type.
     String(String),
