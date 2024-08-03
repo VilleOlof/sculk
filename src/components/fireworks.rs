@@ -13,6 +13,7 @@ fn default_flight_duration() -> i8 {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Fireworks {
     /// List of the explosion effects caused by this [firework rocket](https://minecraft.wiki/w/Firework_rocket). Has a maximum of 256 explosions.  
+    #[cfg_attr(feature = "serde", serde(default))]
     pub explosions: Vec<FireworkExplosion>,
 
     /// The flight duration of this firework rocket, i.e. the number of gunpowders used to craft it. Must be an integer between -128 and 127. Defaults to 1.  
