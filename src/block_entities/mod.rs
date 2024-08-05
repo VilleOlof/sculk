@@ -446,7 +446,7 @@ impl FromCompoundNbt for BlockEntityKind {
             "minecraft:trapped_chest" => {
                 BlockEntityKind::TrappedChest(Chest::from_compound_nbt(&nbt)?)
             }
-            "minecraft:trail_spawner" => {
+            "minecraft:trial_spawner" => {
                 BlockEntityKind::TrialSpawner(TrailSpawner::from_compound_nbt(&nbt)?)
             }
             "minecraft:vault" => BlockEntityKind::Vault(Vault::from_compound_nbt(&nbt)?),
