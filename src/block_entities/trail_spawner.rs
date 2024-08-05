@@ -109,15 +109,9 @@ impl FromCompoundNbt for TrailSpawner {
         let registered_players = Uuid::from_nbt_to_vec(&nbt, "registered_players");
         let current_mobs = Uuid::from_nbt_to_vec(&nbt, "current_mobs");
 
-        let cooldown_ends_at = nbt
-            .long("cooldown_ends_at")
-            .ok_or(SculkParseError::MissingField("cooldown_ends_at".into()))?;
-        let next_mob_spawns_at = nbt
-            .long("next_mob_spawns_at")
-            .ok_or(SculkParseError::MissingField("next_mob_spawns_at".into()))?;
-        let total_mobs_spawned = nbt
-            .int("total_mobs_spawned")
-            .ok_or(SculkParseError::MissingField("total_mobs_spawned".into()))?;
+        let cooldown_ends_at = nbt.long("cooldown_ends_at").unwrap_or(0);
+        let next_mob_spawns_at = nbt.long("next_mob_spawns_at").unwrap_or(0);
+        let total_mobs_spawned = nbt.int("total_mobs_spawned").unwrap_or(0);
 
         let spawn_data = nbt
             .compound("spawn_data")
