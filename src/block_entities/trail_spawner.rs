@@ -91,17 +91,9 @@ impl FromCompoundNbt for TrailSpawner {
     where
         Self: Sized,
     {
-        let required_player_range =
-            nbt.int("required_player_range")
-                .ok_or(SculkParseError::MissingField(
-                    "required_player_range".into(),
-                ))?;
+        let required_player_range = nbt.int("required_player_range").unwrap_or(14);
 
-        let target_cooldown_length =
-            nbt.int("target_cooldown_length")
-                .ok_or(SculkParseError::MissingField(
-                    "target_cooldown_length".into(),
-                ))?;
+        let target_cooldown_length = nbt.int("target_cooldown_length").unwrap_or(36000);
 
         let normal_config = if let Some(nbt) = nbt.compound("normal_config") {
             Some(TrailSpawnerConfig::from_compound_nbt(&nbt)?)
