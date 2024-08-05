@@ -1,6 +1,6 @@
 use crate::{
     error::SculkParseError,
-    item::Item,
+    item::{Item, ItemWithNoSlot},
     traits::FromCompoundNbt,
     util::{get_owned_optional_string, get_t_compound_vec},
     uuid::Uuid,
@@ -35,7 +35,7 @@ pub struct VaultConfig {
     pub deactivation_range: Option<i32>,
 
     /// The key item that is used to check for valid keys. Defaults to "minecraft:trial_key"
-    pub key_item: Item,
+    pub key_item: ItemWithNoSlot,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -112,7 +112,7 @@ impl FromCompoundNbt for VaultConfig {
         let deactivation_range = nbt.int("deactivation_range");
 
         let key_item = if let Some(nbt) = nbt.compound("key_item") {
-            Item::from_compound_nbt(&nbt)?
+            ItemWithNoSlot::from_compound_nbt(&nbt)?
         } else {
             return Err(SculkParseError::MissingField("key_item".into()));
         };
