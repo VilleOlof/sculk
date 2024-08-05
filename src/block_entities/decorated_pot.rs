@@ -1,5 +1,6 @@
 use crate::{
-    error::SculkParseError, item::Item, traits::FromCompoundNbt, util::get_loot_table_data,
+    error::SculkParseError, item::ItemWithNoSlot, traits::FromCompoundNbt,
+    util::get_loot_table_data,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -11,7 +12,7 @@ pub struct DecoratedPot {
     pub sherds: Vec<String>,
 
     /// The item stored within the pot. A decorated pot does not use Slot to describe its contents, even though it functionally has 1 item slot.
-    pub item: Item,
+    pub item: ItemWithNoSlot,
 
     /// Optional. Name of the loot table to use. If this is used in a chest-like container, the loot table generates its content when it is opened. Generating the items in the container removes both loot table tags ( LootTable and  LootTableSeed).
     ///
@@ -42,9 +43,9 @@ impl FromCompoundNbt for DecoratedPot {
         }
 
         let item = nbt
-            .compound("Item")
-            .map(|i| Item::from_compound_nbt(&i))
-            .ok_or(SculkParseError::MissingField("Item".into()))??;
+            .compound("item")
+            .map(|i| ItemWithNoSlot::from_compound_nbt(&i))
+            .ok_or(SculkParseError::MissingField("item".into()))??;
 
         let loot_table = get_loot_table_data(&nbt);
 
