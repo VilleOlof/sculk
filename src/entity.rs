@@ -239,18 +239,18 @@ impl FromCompoundNbt for Entity {
 
         let invulnerable = nbt.byte("Invulnerable").map(|b| b != 0);
 
-        let motion_list = nbt
-            .list("Motion")
-            .ok_or(SculkParseError::MissingField("Motion".into()))?;
+        let motion = if let Some(motion_list) = nbt.list("Motion") {
+            if let Some(doubles) = motion_list.doubles() {
+                let mut _motion: [f64; 3] = [0.0; 3];
 
-        let motion = if let Some(doubles) = motion_list.doubles() {
-            let mut _motion: [f64; 3] = [0.0; 3];
+                for (i, double) in doubles.iter().enumerate() {
+                    _motion[i] = *double;
+                }
 
-            for (i, double) in doubles.iter().enumerate() {
-                _motion[i] = *double;
+                Some(_motion)
+            } else {
+                None
             }
-
-            Some(_motion)
         } else {
             None
         };
