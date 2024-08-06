@@ -1,7 +1,4 @@
-use crate::{
-    error::SculkParseError, item::ItemWithNoSlot, traits::FromCompoundNbt,
-    util::get_loot_table_data,
-};
+use crate::{item::ItemWithNoSlot, traits::FromCompoundNbt, util::get_loot_table_data};
 
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

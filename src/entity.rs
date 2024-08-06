@@ -1,10 +1,7 @@
 use crate::{
     error::SculkParseError,
     traits::FromCompoundNbt,
-    util::{
-        get_bool, get_optional_name, get_owned_optional_string, get_owned_string,
-        get_t_compound_vec,
-    },
+    util::{get_optional_name, get_owned_optional_string, get_owned_string, get_t_compound_vec},
     uuid::Uuid,
 };
 
@@ -237,7 +234,9 @@ impl FromCompoundNbt for Entity {
         let fire = nbt.short("Fire");
         let glowing = nbt.byte("Glowing").map(|b| b != 0);
         let has_visual_fire = nbt.byte("HasVisualFire").map(|b| b != 0);
+
         let id = get_owned_string(&nbt, "id")?;
+
         let invulnerable = nbt.byte("Invulnerable").map(|b| b != 0);
 
         let motion_list = nbt

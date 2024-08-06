@@ -49,6 +49,7 @@ pub enum BlockEntityVariant {
     TrappedChest,
     TrialSpawner,
     Vault,
+    Dummy,
 }
 
 impl BlockEntityKind {
@@ -100,6 +101,7 @@ impl BlockEntityKind {
             BlockEntityKind::TrappedChest(_) => BlockEntityVariant::TrappedChest,
             BlockEntityKind::TrialSpawner(_) => BlockEntityVariant::TrialSpawner,
             BlockEntityKind::Vault(_) => BlockEntityVariant::Vault,
+            BlockEntityKind::Dummy => BlockEntityVariant::Dummy,
         }
     }
 }

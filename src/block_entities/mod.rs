@@ -181,6 +181,9 @@ pub enum BlockEntityKind {
 
     /// `minecraft:vault`
     Vault(vault::Vault),
+
+    /// `DUMMY`
+    Dummy,
 }
 
 impl FromCompoundNbt for BlockEntityKind {
@@ -450,6 +453,7 @@ impl FromCompoundNbt for BlockEntityKind {
                 BlockEntityKind::TrialSpawner(TrailSpawner::from_compound_nbt(&nbt)?)
             }
             "minecraft:vault" => BlockEntityKind::Vault(Vault::from_compound_nbt(&nbt)?),
+            "DUMMY" => BlockEntityKind::Dummy,
             _ => return Err(SculkParseError::UnsupportedBlockEntity(id.to_string())),
         };
 
