@@ -58,7 +58,7 @@ pub struct VaultServerData {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct VaultSharedData {
     /// The item that is currently being displayed.
-    pub display_item: Item,
+    pub display_item: Option<Item>,
 
     /// A set of player UUIDs that are within range of the vault.
     pub connected_players: Vec<Uuid>,
@@ -160,10 +160,11 @@ impl FromCompoundNbt for VaultSharedData {
     where
         Self: Sized,
     {
-        let display_item = nbt
-            .compound("display_item")
-            .map(|nbt| Item::from_compound_nbt(&nbt))
-            .ok_or(SculkParseError::MissingField("display_item".into()))??;
+        let display_item = if let Some(display_item) = nbt.compound("display_item") {
+            Some(Item::from_compound_nbt(&display_item)?)
+        } else {
+            None
+        };
 
         let connected_players = Uuid::from_nbt_to_vec(&nbt, "connected_players");
 
