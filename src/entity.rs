@@ -5,6 +5,8 @@ use crate::{
     uuid::Uuid,
 };
 
+// TODO: Might has well merge MaybeEntity into Entity now that like everything is just OPTIONALS
+// i love incomplete documentation and unclear guesses or something
 /// An entity in the game.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -108,7 +110,7 @@ pub struct Entity {
 
     /// This entity's Universally Unique IDentifier.
     /// `UUID`
-    pub uuid: Uuid,
+    pub uuid: Option<Uuid>,
     //
     // TODO: Add entity specific data field like block entites, low priority as it allows very specific narrow block entity -> entity data handling
 }
@@ -308,10 +310,7 @@ impl FromCompoundNbt for Entity {
         };
 
         let ticks_frozen = nbt.int("TicksFrozen");
-        let uuid = nbt
-            .int_array("UUID")
-            .map(Uuid::from)
-            .ok_or(SculkParseError::MissingField("UUID".into()))?;
+        let uuid = nbt.int_array("UUID").map(Uuid::from);
 
         Ok(Entity {
             air,
