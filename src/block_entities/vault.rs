@@ -51,7 +51,7 @@ pub struct VaultServerData {
     pub items_to_eject: Vec<Item>,
 
     /// The total amount of item stacks that need to be ejected.
-    pub total_ejections_needed: i32,
+    pub total_ejections_needed: Option<i32>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -142,11 +142,7 @@ impl FromCompoundNbt for VaultServerData {
 
         let items_to_eject = get_t_compound_vec(&nbt, "items_to_eject", Item::from_compound_nbt)?;
 
-        let total_ejections_needed =
-            nbt.int("total_ejections_needed")
-                .ok_or(SculkParseError::MissingField(
-                    "total_ejections_needed".into(),
-                ))?;
+        let total_ejections_needed = nbt.int("total_ejections_needed");
 
         Ok(VaultServerData {
             rewarded_players,
