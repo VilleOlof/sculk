@@ -32,15 +32,18 @@ impl FromCompoundNbt for DecoratedPot {
     where
         Self: Sized,
     {
-        let sherds_list = nbt
-            .list("sherds")
-            .ok_or(SculkParseError::MissingField("sherds".into()))?;
-        let mut sherds: Vec<String> = vec![];
-        for sherd in sherds_list.strings().into_iter() {
-            // maybe???
-            let str = (*sherd.first().unwrap()).to_string();
-            sherds.push(str);
-        }
+        let sherds = if let Some(sherds_list) = nbt.list("sherds") {
+            let mut sherds: Vec<String> = vec![];
+            for sherd in sherds_list.strings().into_iter() {
+                // maybe???
+                let str = (*sherd.first().unwrap()).to_string();
+                sherds.push(str);
+            }
+
+            sherds
+        } else {
+            vec![]
+        };
 
         let item = nbt
             .compound("item")
