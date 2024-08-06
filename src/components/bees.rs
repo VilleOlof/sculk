@@ -23,7 +23,10 @@ impl FromCompoundNbt for Bee {
     where
         Self: Sized,
     {
-        let entity_data = Entity::from_compound_nbt(nbt)?;
+        let entity_data = nbt
+            .compound("entity_data")
+            .map(|nbt| Entity::from_compound_nbt(&nbt))
+            .ok_or(SculkParseError::MissingField("entity_data".to_string()))??;
 
         let min_ticks_in_hive = nbt
             .int("min_ticks_in_hive")
