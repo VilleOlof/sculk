@@ -45,7 +45,7 @@ pub struct VaultServerData {
     pub rewarded_players: Vec<Uuid>,
 
     /// The game time when the vault processes block state changes, such as changing from unlocking to ejecting after a delay.
-    pub state_updating_resumes_at: i64,
+    pub state_updating_resumes_at: Option<i64>,
 
     /// List of item stacks that have been rolled by the loot table and are waiting to be ejected.
     pub items_to_eject: Vec<Item>,
@@ -134,11 +134,7 @@ impl FromCompoundNbt for VaultServerData {
     {
         let rewarded_players = Uuid::from_nbt_to_vec(&nbt, "rewarded_players");
 
-        let state_updating_resumes_at =
-            nbt.long("state_updating_resumes_at")
-                .ok_or(SculkParseError::MissingField(
-                    "state_updating_resumes_at".into(),
-                ))?;
+        let state_updating_resumes_at = nbt.long("state_updating_resumes_at");
 
         let items_to_eject = get_t_compound_vec(&nbt, "items_to_eject", Item::from_compound_nbt)?;
 
