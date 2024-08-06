@@ -64,7 +64,7 @@ pub struct VaultSharedData {
     pub connected_players: Vec<Uuid>,
 
     /// The range in blocks when the vault emits particles.
-    pub connected_particles_range: f64,
+    pub connected_particles_range: Option<f64>,
 }
 
 impl FromCompoundNbt for Vault {
@@ -168,11 +168,7 @@ impl FromCompoundNbt for VaultSharedData {
 
         let connected_players = Uuid::from_nbt_to_vec(&nbt, "connected_players");
 
-        let connected_particles_range =
-            nbt.double("connected_particles_range")
-                .ok_or(SculkParseError::MissingField(
-                    "connected_particles_range".into(),
-                ))?;
+        let connected_particles_range = nbt.double("connected_particles_range");
 
         Ok(VaultSharedData {
             display_item,
