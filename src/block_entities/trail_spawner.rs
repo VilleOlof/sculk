@@ -38,7 +38,7 @@ pub struct TrailSpawner {
     pub total_mobs_spawned: i32,
 
     /// The next mob to attempt to spawn. Selected from  spawn_potentials after the last attempt. Determines the mob displayed in the spawner.
-    pub spawn_data: SpawnData,
+    pub spawn_data: Option<SpawnData>,
 
     /// A resource location to the loot table that is given as reward. Unset if not currently giving rewards. Selected from  loot_tables_to_eject after all mobs are defeated.
     pub ejecting_loot_table: Option<String>,
@@ -113,10 +113,11 @@ impl FromCompoundNbt for TrailSpawner {
         let next_mob_spawns_at = nbt.long("next_mob_spawns_at").unwrap_or(0);
         let total_mobs_spawned = nbt.int("total_mobs_spawned").unwrap_or(0);
 
-        let spawn_data = nbt
-            .compound("spawn_data")
-            .map(|nbt| SpawnData::from_compound_nbt(&nbt))
-            .ok_or(SculkParseError::MissingField("spawn_data".into()))??;
+        let spawn_data = if let Some(spawn_data) = nbt.compound("spawn_data") {
+            Some(SpawnData::from_compound_nbt(&spawn_data)?)
+        } else {
+            None
+        };
 
         let ejecting_loot_table = get_owned_optional_string(&nbt, "ejecting_loot_table");
 
