@@ -12,7 +12,7 @@ pub struct DecoratedPot {
     pub sherds: Vec<String>,
 
     /// The item stored within the pot. A decorated pot does not use Slot to describe its contents, even though it functionally has 1 item slot.
-    pub item: ItemWithNoSlot,
+    pub item: Option<ItemWithNoSlot>,
 
     /// Optional. Name of the loot table to use. If this is used in a chest-like container, the loot table generates its content when it is opened. Generating the items in the container removes both loot table tags ( LootTable and  LootTableSeed).
     ///
@@ -45,10 +45,11 @@ impl FromCompoundNbt for DecoratedPot {
             vec![]
         };
 
-        let item = nbt
-            .compound("item")
-            .map(|i| ItemWithNoSlot::from_compound_nbt(&i))
-            .ok_or(SculkParseError::MissingField("item".into()))??;
+        let item = if let Some(item) = nbt.compound("item") {
+            Some(ItemWithNoSlot::from_compound_nbt(&item)?)
+        } else {
+            None
+        };
 
         let loot_table = get_loot_table_data(&nbt);
 
