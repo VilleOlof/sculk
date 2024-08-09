@@ -1,6 +1,6 @@
 use crate::{error::SculkParseError, traits::FromCompoundNbt};
 use simdnbt::borrow::NbtCompound;
-use std::collections::HashMap;
+use std::{collections::HashMap, ops::Deref};
 
 #[derive(Debug, Clone, PartialEq, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -9,6 +9,18 @@ pub struct KVPair<T>(HashMap<String, T>);
 impl<T> KVPair<T> {
     pub fn new(map: HashMap<String, T>) -> Self {
         KVPair(map)
+    }
+
+    pub fn inner(&self) -> &HashMap<String, T> {
+        &self.0
+    }
+}
+
+impl<T> Deref for KVPair<T> {
+    type Target = HashMap<String, T>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
