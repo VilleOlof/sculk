@@ -269,10 +269,10 @@ impl FromCompoundNbt for Components {
                     Component::EntityData(Entity::from_compound_nbt(&nbt)?)
                 }
                 "minecraft:fire_resistant" => {
-                    let value = value.byte().ok_or(SculkParseError::InvalidField(
+                    value.compound().ok_or(SculkParseError::InvalidField(
                         "minecraft:fire_resistant".into(),
                     ))?;
-                    Component::FireResistant(value != 0)
+                    Component::FireResistant(true)
                 }
                 "minecraft:firework_explosion" => {
                     let nbt = value
@@ -295,16 +295,16 @@ impl FromCompoundNbt for Components {
                     Component::Food(food::Food::from_compound_nbt(&nbt)?)
                 }
                 "minecraft:hide_additional_tooltip" => {
-                    let value = value.byte().ok_or(SculkParseError::InvalidField(
+                    value.compound().ok_or(SculkParseError::InvalidField(
                         "minecraft:hide_additional_tooltip".into(),
                     ))?;
-                    Component::HideAdditionalTooltip(value != 0)
+                    Component::HideAdditionalTooltip(true)
                 }
                 "minecraft:hide_tooltip" => {
-                    let value = value.byte().ok_or(SculkParseError::InvalidField(
+                    value.compound().ok_or(SculkParseError::InvalidField(
                         "minecraft:hide_tooltip".into(),
                     ))?;
-                    Component::HideTooltip(value != 0)
+                    Component::HideTooltip(true)
                 }
                 "minecraft:instrument" => Component::Instrument(
                     instrument::Instrument::from_compound_nbt(&nbt_components)?,
