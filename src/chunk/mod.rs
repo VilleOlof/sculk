@@ -8,10 +8,13 @@ use std::io::Cursor;
 use structure::Structures;
 use tile_tick::TileTick;
 
+mod minimal_chunk;
+
 pub mod section;
 pub mod status;
 pub mod structure;
 pub mod tile_tick;
+pub use minimal_chunk::*;
 
 /// Represents a chunk in the world.  
 /// [Minecraft Wiki](https://minecraft.wiki/w/Chunk_format)  

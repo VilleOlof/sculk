@@ -29,11 +29,15 @@ impl FromCompoundNbt for Fireworks {
         Self: Sized,
     {
         let explosions = if let Some(explosions) = &nbt.list("explosions") {
-            get_t_list(
-                explosions,
-                "explosions",
-                FireworkExplosion::from_compound_nbt,
-            )?
+            if explosions.empty() {
+                vec![]
+            } else {
+                get_t_list(
+                    explosions,
+                    "explosions",
+                    FireworkExplosion::from_compound_nbt,
+                )?
+            }
         } else {
             vec![]
         };

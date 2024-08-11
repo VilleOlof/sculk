@@ -125,12 +125,14 @@ pub fn get_t_list<T>(
     key: &'static str,
     nbt_conversion: fn(nbt: &NbtCompound) -> Result<T, SculkParseError>,
 ) -> Result<Vec<T>, SculkParseError> {
-    Ok(nbt
-        .compounds()
-        .ok_or(SculkParseError::InvalidField(key.into()))?
-        .into_iter()
-        .map(|nbt| nbt_conversion(&nbt))
-        .collect::<Result<Vec<T>, SculkParseError>>()?)
+    Ok(if let Some(compounds) = nbt.compounds() {
+        compounds
+            .into_iter()
+            .map(|nbt| nbt_conversion(&nbt))
+            .collect::<Result<Vec<T>, SculkParseError>>()?
+    } else {
+        vec![]
+    })
 }
 
 pub fn get_optional_components(nbt: &NbtCompound) -> Result<Option<Components>, SculkParseError> {
