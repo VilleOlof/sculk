@@ -129,7 +129,9 @@ impl FromCompoundNbt for Components {
 
                     Component::BannerPatterns(patterns)
                 }
-                "minecraft:base_color" => Component::BaseColor(BaseColor::from_compound_nbt(&nbt)?),
+                "minecraft:base_color" => {
+                    Component::BaseColor(BaseColor::from_compound_nbt(&nbt_components)?)
+                }
                 "minecraft:bees" => {
                     let list = value
                         .list()

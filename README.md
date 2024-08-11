@@ -3,6 +3,10 @@
 > [!IMPORTANT]  
 > Supported Minecraft version: `1.21`
 
+
+**Not stable to use in production, many things are misspelled, wrong data types and or doesn't work as for  now, i'm writing this as a part of another actual production project and will continue to patch  
+and fix this project for that, it does work for 90%+ of cases and easy manual work but unstable outside  of that**
+
 A Rust crate for handling data in Minecraft.  
 Using the fastest NBT parser in Rust, [`simdnbt`](https://crates.io/crates/simdnbt) so you can get the best performance.
 
