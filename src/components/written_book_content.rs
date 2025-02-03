@@ -32,14 +32,14 @@ impl FromCompoundNbt for WrittenBookContent {
     where
         Self: Sized,
     {
-        let pages = PageType::from_compound_nbt(&nbt)?;
+        let pages = PageType::from_compound_nbt(nbt)?;
 
         let tile = nbt
             .compound("title")
             .map(|nbt| BookTextData::from_compound_nbt(&nbt))
             .ok_or(SculkParseError::MissingField("title".into()))??;
 
-        let author = get_owned_string(&nbt, "author")?;
+        let author = get_owned_string(nbt, "author")?;
         let generation = nbt.int("generation").unwrap_or(0);
 
         let resolved = nbt.byte("resolved").map(|b| b != 0).unwrap_or(false);

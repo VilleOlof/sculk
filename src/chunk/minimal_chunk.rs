@@ -85,12 +85,12 @@ impl FromCompoundNbt for MinimalChunk {
             .map(|s| ChunkStatus::from(s.to_str().as_ref()))
             .ok_or(SculkParseError::MissingField("Status".into()))?;
 
-        let sections = get_t_compound_vec(&nbt, "sections", ChunkSection::from_compound_nbt)?;
+        let sections = get_t_compound_vec(nbt, "sections", ChunkSection::from_compound_nbt)?;
         let block_entities =
-            get_t_compound_vec(&nbt, "block_entities", BlockEntity::from_compound_nbt)?;
+            get_t_compound_vec(nbt, "block_entities", BlockEntity::from_compound_nbt)?;
 
-        let fluid_ticks = get_t_compound_vec(&nbt, "fluid_ticks", TileTick::from_compound_nbt)?;
-        let block_ticks = get_t_compound_vec(&nbt, "block_ticks", TileTick::from_compound_nbt)?;
+        let fluid_ticks = get_t_compound_vec(nbt, "fluid_ticks", TileTick::from_compound_nbt)?;
+        let block_ticks = get_t_compound_vec(nbt, "block_ticks", TileTick::from_compound_nbt)?;
 
         let blending_data = if let Some(nbt) = nbt.compound("blending_data") {
             Some(BlendingData::from_compound_nbt(&nbt)?)

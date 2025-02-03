@@ -41,12 +41,12 @@ impl FromCompoundNbt for Abilities {
     where
         Self: Sized,
     {
-        let flying = get_bool(&nbt, "flying");
+        let flying = get_bool(nbt, "flying");
         let fly_speed = nbt.float("flySpeed").unwrap_or(0.05);
-        let insta_build = get_bool(&nbt, "instabuild");
-        let invulnerable = get_bool(&nbt, "invulnerable");
-        let may_build = get_bool(&nbt, "mayBuild");
-        let may_fly = get_bool(&nbt, "mayfly");
+        let insta_build = get_bool(nbt, "instabuild");
+        let invulnerable = get_bool(nbt, "invulnerable");
+        let may_build = get_bool(nbt, "mayBuild");
+        let may_fly = get_bool(nbt, "mayfly");
         let walk_speed = nbt.float("walkSpeed").unwrap_or(0.1);
 
         Ok(Abilities {

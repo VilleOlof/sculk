@@ -23,7 +23,7 @@ impl FromCompoundNbt for ChiseledBookshelf {
     where
         Self: Sized,
     {
-        let items = get_t_compound_vec(&nbt, "Items", Item::from_compound_nbt)?;
+        let items = get_t_compound_vec(nbt, "Items", Item::from_compound_nbt)?;
         let last_interacted_slot = nbt
             .int("last_interacted_slot")
             .ok_or(SculkParseError::MissingField("last_interacted_slot".into()))?;

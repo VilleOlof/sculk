@@ -233,9 +233,9 @@ impl FromCompoundNbt for VersionData {
         let id = nbt
             .int("Id")
             .ok_or(SculkParseError::MissingField("Id".into()))?;
-        let name = get_owned_string(&nbt, "Name")?;
-        let series = get_owned_string(&nbt, "Series")?;
-        let snapshot = get_bool(&nbt, "Snapshot");
+        let name = get_owned_string(nbt, "Name")?;
+        let series = get_owned_string(nbt, "Series")?;
+        let snapshot = get_bool(nbt, "Snapshot");
 
         Ok(VersionData {
             id,
@@ -323,7 +323,7 @@ impl FromCompoundNbt for Level {
 
         let difficulty = nbt
             .byte("Difficulty")
-            .map(|b| Difficulty::from_i8(b))
+            .map(Difficulty::from_i8)
             .unwrap_or(Difficulty::Normal);
         let difficulty_locked = nbt.byte("DifficultyLocked").map(|b| b != 0).unwrap_or(true);
 
@@ -360,7 +360,7 @@ impl FromCompoundNbt for Level {
 
         let game_type = nbt
             .int("GameType")
-            .map(|i| GameType::from_i32(i))
+            .map(GameType::from_i32)
             .ok_or(SculkParseError::MissingField("GameType".into()))?;
 
         let hardcore = get_bool(&nbt, "hardcore");

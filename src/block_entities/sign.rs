@@ -1,4 +1,5 @@
 use crate::{color::Color, error::SculkParseError, traits::FromCompoundNbt, util::get_bool};
+use std::str::FromStr;
 
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -34,7 +35,7 @@ impl FromCompoundNbt for Sign {
     where
         Self: Sized,
     {
-        let is_waxed = get_bool(&nbt, "is_waxed");
+        let is_waxed = get_bool(nbt, "is_waxed");
 
         let front_text = nbt
             .compound("front_text")
@@ -61,14 +62,11 @@ impl FromCompoundNbt for SignText {
     where
         Self: Sized,
     {
-        let has_glowing_text = get_bool(&nbt, "has_glowing_text");
+        let has_glowing_text = get_bool(nbt, "has_glowing_text");
 
         let color = nbt
             .string("color")
-            .map(|s| {
-                Color::from_str(s.to_str().as_ref())
-                    .ok_or(SculkParseError::InvalidField("color".into()))
-            })
+            .map(|s| Color::from_str(s.to_str().as_ref()).map_err(SculkParseError::InvalidField))
             .ok_or(SculkParseError::MissingField("color".into()))??;
 
         let filtered_messages = if let Some(list) = nbt.list("filtered_messages") {

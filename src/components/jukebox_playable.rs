@@ -21,7 +21,7 @@ impl FromCompoundNbt for JukeboxPlayable {
     where
         Self: Sized,
     {
-        let song = get_owned_string(&nbt, "song")?;
+        let song = get_owned_string(nbt, "song")?;
 
         let show_in_tooltip = nbt.byte("show_in_tooltip").map(|b| b != 0).unwrap_or(true);
 

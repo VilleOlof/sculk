@@ -25,7 +25,7 @@ impl FromCompoundNbt for SuspiciousBlock {
     where
         Self: Sized,
     {
-        let loot_table = get_loot_table_data(&nbt);
+        let loot_table = get_loot_table_data(nbt);
 
         let item = if let Some(item) = nbt.compound("item") {
             Some(Item::from_compound_nbt(&item)?)

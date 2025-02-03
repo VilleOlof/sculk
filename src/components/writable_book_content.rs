@@ -56,7 +56,7 @@ impl FromCompoundNbt for PageType {
         Self: Sized,
     {
         if let Some(single) = nbt.string("pages") {
-            return Ok(PageType::Single(single.to_string()));
+            Ok(PageType::Single(single.to_string()))
         } else if let Some(multiple) = nbt.list("pages") {
             let mut pages = Vec::new();
 
@@ -81,8 +81,8 @@ impl FromCompoundNbt for BookTextData {
     where
         Self: Sized,
     {
-        let raw = get_owned_string(&nbt, "raw")?;
-        let filtered = get_owned_optional_string(&nbt, "filtered");
+        let raw = get_owned_string(nbt, "raw")?;
+        let filtered = get_owned_optional_string(nbt, "filtered");
 
         Ok(BookTextData { raw, filtered })
     }

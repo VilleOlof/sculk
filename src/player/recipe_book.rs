@@ -87,15 +87,15 @@ impl FromCompoundNbt for RecipeBook {
             vec![]
         };
 
-        let is_filtering_craftable = get_bool(&nbt, "isFilteringCraftable");
-        let is_gui_open = get_bool(&nbt, "isGuiOpen");
-        let is_furnace_filtering_craftable = get_bool(&nbt, "isFurnaceFilteringCraftable");
-        let is_furnace_gui_open = get_bool(&nbt, "isFurnaceGuiOpen");
+        let is_filtering_craftable = get_bool(nbt, "isFilteringCraftable");
+        let is_gui_open = get_bool(nbt, "isGuiOpen");
+        let is_furnace_filtering_craftable = get_bool(nbt, "isFurnaceFilteringCraftable");
+        let is_furnace_gui_open = get_bool(nbt, "isFurnaceGuiOpen");
         let is_blasting_furnace_filtering_craftable =
-            get_bool(&nbt, "isBlastingFurnaceFilteringCraftable");
-        let is_blast_furnace_gui_open = get_bool(&nbt, "isBlastingFurnaceGuiOpen");
-        let is_smoker_filtering_craftable = get_bool(&nbt, "isSmokerFilteringCraftable");
-        let is_smoker_gui_open = get_bool(&nbt, "isSmokerGuiOpen");
+            get_bool(nbt, "isBlastingFurnaceFilteringCraftable");
+        let is_blast_furnace_gui_open = get_bool(nbt, "isBlastingFurnaceGuiOpen");
+        let is_smoker_filtering_craftable = get_bool(nbt, "isSmokerFilteringCraftable");
+        let is_smoker_gui_open = get_bool(nbt, "isSmokerGuiOpen");
 
         Ok(RecipeBook {
             recipes,

@@ -1,4 +1,5 @@
 use crate::error::SculkParseError;
+use std::str::FromStr;
 
 /// Represents the rarity of an item.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -15,9 +16,11 @@ pub enum Rarity {
     Epic,
 }
 
-impl Rarity {
+impl FromStr for Rarity {
+    type Err = SculkParseError;
+
     /// Converts a string to a `Rarity`.
-    pub fn from_str(s: &str) -> Result<Self, SculkParseError> {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "common" => Ok(Self::Common),
             "uncommon" => Ok(Self::Uncommon),

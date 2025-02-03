@@ -14,6 +14,6 @@ impl FromCompoundNbt for BlockState {
     where
         Self: Sized,
     {
-        Ok(BlockState(KVPair::from_compound_nbt(&nbt)?))
+        Ok(BlockState(KVPair::from_compound_nbt(nbt)?))
     }
 }

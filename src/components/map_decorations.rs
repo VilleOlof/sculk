@@ -2,6 +2,7 @@
 
 use crate::{error::SculkParseError, kv::KVPair, traits::FromCompoundNbt};
 use std::collections::HashMap;
+use std::str::FromStr;
 
 /// Decorations on a map.
 #[derive(Debug, Clone, PartialEq)]
@@ -65,10 +66,12 @@ pub enum MapIconType {
     Unknown(String),
 }
 
-impl MapIconType {
+impl FromStr for MapIconType {
+    type Err = String;
+
     /// Converts a string to a `MapIconType`.
-    pub fn from_str(s: &str) -> Self {
-        match s {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(match s {
             "player" => Self::Player,
             "frame" => Self::Frame,
             "red_marker" => Self::RedMarker,
@@ -104,25 +107,21 @@ impl MapIconType {
             "jungle_temple" => Self::JungleTemple,
             "swamp_hut" => Self::SwampHut,
             _ => Self::Unknown(s.to_string()),
-        }
+        }) // TODO: This should be returned in Err
     }
 }
 
 impl FromCompoundNbt for MapDecorations {
-    fn from_compound_nbt(
-        nbt: &simdnbt::borrow::NbtCompound,
-    ) -> Result<Self, crate::error::SculkParseError>
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
-        Ok(MapDecorations(KVPair::from_compound_nbt(&nbt)?))
+        Ok(MapDecorations(KVPair::from_compound_nbt(nbt)?))
     }
 }
 
 impl FromCompoundNbt for KVPair<MapIcon> {
-    fn from_compound_nbt(
-        nbt: &simdnbt::borrow::NbtCompound,
-    ) -> Result<Self, crate::error::SculkParseError>
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
@@ -142,15 +141,13 @@ impl FromCompoundNbt for KVPair<MapIcon> {
 }
 
 impl FromCompoundNbt for MapIcon {
-    fn from_compound_nbt(
-        nbt: &simdnbt::borrow::NbtCompound,
-    ) -> Result<Self, crate::error::SculkParseError>
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
         let r#type = nbt
             .string("type")
-            .map(|s| MapIconType::from_str(s.to_str().as_ref()))
+            .map(|s| MapIconType::from_str(s.to_str().as_ref()).unwrap())
             .ok_or(SculkParseError::MissingField("type".into()))?;
 
         let x = nbt

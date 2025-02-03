@@ -55,7 +55,7 @@ impl FromCompoundNbt for Instrument {
         Self: Sized,
     {
         if let Some(id) = nbt.string("minecraft:instrument") {
-            return Ok(Instrument::ID(id.to_string()));
+            Ok(Instrument::ID(id.to_string()))
         } else if let Some(compound) = nbt.compound("minecraft:instrument") {
             let data = InstrumentData::from_compound_nbt(&compound)?;
 
@@ -71,7 +71,7 @@ impl FromCompoundNbt for InstrumentData {
     where
         Self: Sized,
     {
-        let sound_event = SoundEvent::from_compound_nbt(&nbt)?;
+        let sound_event = SoundEvent::from_compound_nbt(nbt)?;
 
         let use_duration = nbt
             .int("use_duration")
@@ -96,7 +96,7 @@ impl FromCompoundNbt for SoundEvent {
         Self: Sized,
     {
         if let Some(id) = nbt.string("sound_event") {
-            return Ok(SoundEvent::ID(id.to_string()));
+            Ok(SoundEvent::ID(id.to_string()))
         } else if let Some(compound) = nbt.compound("sound_event") {
             let data = SoundEventData::from_compound_nbt(&compound)?;
 
@@ -114,7 +114,7 @@ impl FromCompoundNbt for SoundEventData {
     where
         Self: Sized,
     {
-        let sound_id = get_owned_string(&nbt, "sound_id")?;
+        let sound_id = get_owned_string(nbt, "sound_id")?;
         let range = nbt.float("range");
 
         Ok(SoundEventData { sound_id, range })

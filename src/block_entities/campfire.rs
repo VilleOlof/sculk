@@ -30,10 +30,10 @@ impl FromCompoundNbt for Campfire {
     where
         Self: Sized,
     {
-        let cooking_times = get_int_array(&nbt, "CookingTimes")?;
-        let cooking_total_times = get_int_array(&nbt, "CookingTotalTimes")?;
+        let cooking_times = get_int_array(nbt, "CookingTimes")?;
+        let cooking_total_times = get_int_array(nbt, "CookingTotalTimes")?;
 
-        let items = get_t_compound_vec(&nbt, "Items", Item::from_compound_nbt)?;
+        let items = get_t_compound_vec(nbt, "Items", Item::from_compound_nbt)?;
 
         Ok(Campfire {
             cooking_times,

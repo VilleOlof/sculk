@@ -122,7 +122,7 @@ impl FromCompoundNbt for CustomBossEvent {
 
             let mut vec: Vec<Uuid> = vec![];
 
-            for item in list.into_iter() {
+            for item in list.iter() {
                 let int_array = item.to_vec();
                 vec.push(Uuid::from(int_array));
             }
@@ -132,9 +132,9 @@ impl FromCompoundNbt for CustomBossEvent {
             vec![]
         };
 
-        let color = get_owned_string(&nbt, "Color")?;
-        let create_world_fog = get_bool(&nbt, "CreateWorldFog");
-        let darken_screen = get_bool(&nbt, "DarkenScreen");
+        let color = get_owned_string(nbt, "Color")?;
+        let create_world_fog = get_bool(nbt, "CreateWorldFog");
+        let darken_screen = get_bool(nbt, "DarkenScreen");
         let max = nbt
             .int("Max")
             .ok_or(SculkParseError::MissingField("Max".into()))?;
@@ -142,15 +142,15 @@ impl FromCompoundNbt for CustomBossEvent {
             .int("Value")
             .ok_or(SculkParseError::MissingField("Value".into()))?;
 
-        let name = get_owned_string(&nbt, "Name")?;
+        let name = get_owned_string(nbt, "Name")?;
 
         let overlay = nbt
             .string("Overlay")
             .map(|nbt| BossEventOverlay::from(nbt.to_str().as_ref()))
             .ok_or(SculkParseError::MissingField("Overlay".into()))?;
 
-        let play_boss_music = get_bool(&nbt, "PlayBossMusic");
-        let visible = get_bool(&nbt, "Visible");
+        let play_boss_music = get_bool(nbt, "PlayBossMusic");
+        let visible = get_bool(nbt, "Visible");
 
         Ok(Self {
             players,

@@ -123,7 +123,7 @@ impl FromCompoundNbt for AttributeModifiers {
     where
         Self: Sized,
     {
-        let show_in_tooltip = get_bool(&nbt, "show_in_tooltip");
+        let show_in_tooltip = get_bool(nbt, "show_in_tooltip");
 
         let modifiers: Vec<Modifier> = match nbt.list("modifiers") {
             Some(modifiers) => get_t_list(&modifiers, "modifiers", Modifier::from_compound_nbt)?,

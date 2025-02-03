@@ -65,7 +65,7 @@ impl FromCompoundNbt for Cursor {
             .int("charge")
             .ok_or(SculkParseError::MissingField("charge".into()))?;
 
-        let pos = get_int_array(&nbt, "pos").and_then(|arr| {
+        let pos = get_int_array(nbt, "pos").and_then(|arr| {
             if arr.len() == 3 {
                 Ok([arr[0], arr[1], arr[2]])
             } else {

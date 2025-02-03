@@ -86,7 +86,7 @@ impl FromCompoundNbt for Piston {
                 .ok_or(SculkParseError::MissingField("blockState".into()))?,
         )?;
 
-        let extending = get_bool(&nbt, "extending");
+        let extending = get_bool(nbt, "extending");
         let facing = if let Some(facing) = nbt.int("facing") {
             Ok(Facing::from(facing))
         } else {
@@ -119,7 +119,7 @@ impl FromCompoundNbt for BlockState {
     where
         Self: Sized,
     {
-        let name = get_owned_string(&nbt, "name")?;
+        let name = get_owned_string(nbt, "name")?;
 
         let properties = if let Some(props) = nbt.compound("properties") {
             let mut map = HashMap::new();

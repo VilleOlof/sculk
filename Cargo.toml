@@ -14,12 +14,13 @@ categories = ["data-structures", "game-development", "parsing"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-simdnbt = "0.6.0"
-thiserror = "1.0.61"
-serde = { version = "1.0", features = ["derive"], optional = true }
+flate2 = "1"
+serde = { version = "1", features = ["derive"], optional = true }
+simdnbt = "0.7"
+thiserror = "2"
 
 [dev-dependencies]
-flate2 = "1.0.30"
+mca = "1"
 
 [features]
 stats = ["dep:serde"]

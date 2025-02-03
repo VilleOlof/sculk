@@ -103,10 +103,10 @@ impl FromCompoundNbt for VaultConfig {
     where
         Self: Sized,
     {
-        let loot_table = get_owned_optional_string(&nbt, "loot_table");
+        let loot_table = get_owned_optional_string(nbt, "loot_table");
 
         let override_loot_table_to_display =
-            get_owned_optional_string(&nbt, "override_loot_table_to_display");
+            get_owned_optional_string(nbt, "override_loot_table_to_display");
 
         let activation_range = nbt.int("activation_range");
         let deactivation_range = nbt.int("deactivation_range");
@@ -132,11 +132,11 @@ impl FromCompoundNbt for VaultServerData {
     where
         Self: Sized,
     {
-        let rewarded_players = Uuid::from_nbt_to_vec(&nbt, "rewarded_players");
+        let rewarded_players = Uuid::from_nbt_to_vec(nbt, "rewarded_players");
 
         let state_updating_resumes_at = nbt.long("state_updating_resumes_at");
 
-        let items_to_eject = get_t_compound_vec(&nbt, "items_to_eject", Item::from_compound_nbt)?;
+        let items_to_eject = get_t_compound_vec(nbt, "items_to_eject", Item::from_compound_nbt)?;
 
         let total_ejections_needed = nbt.int("total_ejections_needed");
 
@@ -162,7 +162,7 @@ impl FromCompoundNbt for VaultSharedData {
             None
         };
 
-        let connected_players = Uuid::from_nbt_to_vec(&nbt, "connected_players");
+        let connected_players = Uuid::from_nbt_to_vec(nbt, "connected_players");
 
         let connected_particles_range = nbt.double("connected_particles_range");
 

@@ -5,9 +5,7 @@
 //!
 //! ## Examples
 //! ```rust
-//! use sculk::BlockEntity;
-//! use sculk::BlockEntityVariant;
-//!
+//! use sculk::{block_entities::variant::BlockEntityVariant, block_entity::BlockEntity};
 //! let bytes = include_bytes!("structure_block.nbt");
 //! let block_entity: BlockEntity = BlockEntity::from_bytes(bytes).unwrap();
 //!

@@ -115,12 +115,12 @@ impl FromCompoundNbt for DragonFight {
         let gateways = nbt
             .int_array("Gateways")
             .ok_or(SculkParseError::MissingField("Gateways".into()))?;
-        let dragon_killed = get_bool(&nbt, "DragonKilled");
+        let dragon_killed = get_bool(nbt, "DragonKilled");
 
         let dragon_uuid_least = nbt.long("DragonUUIDLeast");
         let dragon_uuid_most = nbt.long("DragonUUIDMost");
 
-        let previously_killed = get_bool(&nbt, "PreviouslyKilled");
+        let previously_killed = get_bool(nbt, "PreviouslyKilled");
 
         Ok(Self {
             exit_portal_location,

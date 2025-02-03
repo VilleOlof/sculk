@@ -45,11 +45,11 @@ impl FromCompoundNbt for Hopper {
     where
         Self: Sized,
     {
-        let items = get_t_compound_vec(&nbt, "Items", Item::from_compound_nbt)?;
+        let items = get_t_compound_vec(nbt, "Items", Item::from_compound_nbt)?;
 
-        let custom_name = get_optional_name(&nbt);
-        let lock = get_optional_lock(&nbt);
-        let loot_table = get_loot_table_data(&nbt);
+        let custom_name = get_optional_name(nbt);
+        let lock = get_optional_lock(nbt);
+        let loot_table = get_loot_table_data(nbt);
 
         let transfer_cooldown = nbt.int("TransferCooldown").unwrap_or(0);
 

@@ -106,8 +106,8 @@ impl FromCompoundNbt for TrailSpawner {
             None
         };
 
-        let registered_players = Uuid::from_nbt_to_vec(&nbt, "registered_players");
-        let current_mobs = Uuid::from_nbt_to_vec(&nbt, "current_mobs");
+        let registered_players = Uuid::from_nbt_to_vec(nbt, "registered_players");
+        let current_mobs = Uuid::from_nbt_to_vec(nbt, "current_mobs");
 
         let cooldown_ends_at = nbt.long("cooldown_ends_at").unwrap_or(0);
         let next_mob_spawns_at = nbt.long("next_mob_spawns_at").unwrap_or(0);
@@ -119,7 +119,7 @@ impl FromCompoundNbt for TrailSpawner {
             None
         };
 
-        let ejecting_loot_table = get_owned_optional_string(&nbt, "ejecting_loot_table");
+        let ejecting_loot_table = get_owned_optional_string(nbt, "ejecting_loot_table");
 
         Ok(TrailSpawner {
             required_player_range,
@@ -180,7 +180,7 @@ impl FromCompoundNbt for TrailSpawnerConfig {
         };
 
         let items_to_drop_when_ominous =
-            get_owned_optional_string(&nbt, "items_to_drop_when_ominous");
+            get_owned_optional_string(nbt, "items_to_drop_when_ominous");
 
         Ok(TrailSpawnerConfig {
             spawn_range,
@@ -207,7 +207,7 @@ impl FromCompoundNbt for LootTable {
             .int("weight")
             .ok_or(SculkParseError::MissingField("weight".into()))?;
 
-        let data = get_owned_string(&nbt, "data")?;
+        let data = get_owned_string(nbt, "data")?;
 
         Ok(LootTable { weight, data })
     }

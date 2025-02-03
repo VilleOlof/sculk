@@ -178,14 +178,14 @@ impl FromCompoundNbt for StructureBlock {
     where
         Self: Sized,
     {
-        let author = get_owned_string(&nbt, "author")?;
-        let ignore_entities = get_bool(&nbt, "ignoreEntities");
+        let author = get_owned_string(nbt, "author")?;
+        let ignore_entities = get_bool(nbt, "ignoreEntities");
 
         let integrity = nbt
             .float("integrity")
             .ok_or(SculkParseError::MissingField("integrity".into()))?;
 
-        let metadata = get_owned_string(&nbt, "metadata")?;
+        let metadata = get_owned_string(nbt, "metadata")?;
 
         let mirror = nbt
             .string("mirror")
@@ -197,7 +197,7 @@ impl FromCompoundNbt for StructureBlock {
             .map(|string| StructureBlockMode::from(string.to_str().as_ref()))
             .ok_or(SculkParseError::MissingField("mode".into()))?;
 
-        let name = get_owned_string(&nbt, "name")?;
+        let name = get_owned_string(nbt, "name")?;
 
         let pos_x = nbt
             .int("posX")
@@ -209,7 +209,7 @@ impl FromCompoundNbt for StructureBlock {
             .int("posZ")
             .ok_or(SculkParseError::MissingField("posZ".into()))?;
 
-        let powered = get_bool(&nbt, "powered");
+        let powered = get_bool(nbt, "powered");
 
         let rotation = nbt
             .string("rotation")
@@ -219,7 +219,7 @@ impl FromCompoundNbt for StructureBlock {
         let seed = nbt
             .long("seed")
             .ok_or(SculkParseError::MissingField("seed".into()))?;
-        let show_bounding_box = get_bool(&nbt, "showboundingbox");
+        let show_bounding_box = get_bool(nbt, "showboundingbox");
 
         let size_x = nbt
             .int("sizeX")

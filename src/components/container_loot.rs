@@ -20,7 +20,7 @@ impl FromCompoundNbt for ContainerLoot {
     where
         Self: Sized,
     {
-        let loot_table = get_owned_string(&nbt, "loot_table")?;
+        let loot_table = get_owned_string(nbt, "loot_table")?;
 
         let seed = nbt.long("seed");
 

@@ -14,7 +14,7 @@ impl FromCompoundNbt for BaseColor {
     where
         Self: Sized,
     {
-        let base_color = get_owned_string(&nbt, "minecraft:base_color")?;
+        let base_color = get_owned_string(nbt, "minecraft:base_color")?;
 
         Ok(BaseColor(base_color))
     }

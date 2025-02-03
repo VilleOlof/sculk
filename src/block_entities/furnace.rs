@@ -68,9 +68,9 @@ impl FromCompoundNbt for Furnace {
             .short("CookTimeTotal")
             .ok_or(SculkParseError::MissingField("CookTimeTotal".into()))?;
 
-        let custom_name = get_optional_name(&nbt);
-        let items = get_t_compound_vec(&nbt, "Items", Item::from_compound_nbt)?;
-        let lock = get_optional_lock(&nbt);
+        let custom_name = get_optional_name(nbt);
+        let items = get_t_compound_vec(nbt, "Items", Item::from_compound_nbt)?;
+        let lock = get_optional_lock(nbt);
 
         let recipes_used = nbt
             .compound("RecipesUsed")

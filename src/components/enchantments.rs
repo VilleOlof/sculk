@@ -27,19 +27,19 @@ impl FromCompoundNbt for Enchantments {
             let levels = KVPair::<i32>::from_compound_nbt(&levels)?;
             let show_in_tooltip = nbt.byte("show_in_tooltip").map(|b| b != 0).unwrap_or(true);
 
-            return Ok(Enchantments {
+            Ok(Enchantments {
                 levels,
                 show_in_tooltip,
-            });
+            })
         } else {
             // key value only
-            let levels = KVPair::<i32>::from_compound_nbt(&nbt)?;
+            let levels = KVPair::<i32>::from_compound_nbt(nbt)?;
 
             // this could be an enum but eh, show_in_tooltip is default true anyway
-            return Ok(Enchantments {
+            Ok(Enchantments {
                 levels,
                 show_in_tooltip: true,
-            });
-        };
+            })
+        }
     }
 }

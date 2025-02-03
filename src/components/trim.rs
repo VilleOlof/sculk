@@ -24,8 +24,8 @@ impl FromCompoundNbt for Trim {
     where
         Self: Sized,
     {
-        let pattern = get_owned_string(&nbt, "pattern")?;
-        let material = get_owned_string(&nbt, "material")?;
+        let pattern = get_owned_string(nbt, "pattern")?;
+        let material = get_owned_string(nbt, "material")?;
 
         let show_in_tooltip = nbt.byte("show_in_tooltip").map(|b| b != 0).unwrap_or(true);
 

@@ -27,7 +27,7 @@ impl FromCompoundNbt for TileTick {
     where
         Self: Sized,
     {
-        let i = get_owned_string(&nbt, "i")?;
+        let i = get_owned_string(nbt, "i")?;
         let p = nbt
             .int("p")
             .ok_or(SculkParseError::MissingField("p".into()))?;

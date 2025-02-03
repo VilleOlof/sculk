@@ -51,13 +51,13 @@ impl FromCompoundNbt for Item {
             .byte("Slot")
             .ok_or(crate::error::SculkParseError::MissingField("Slot".into()))?;
 
-        let id = get_owned_string(&nbt, "id")?;
+        let id = get_owned_string(nbt, "id")?;
 
         let count = nbt
             .int("count")
             .unwrap_or_else(|| nbt.byte("Count").unwrap_or(1) as i32);
 
-        let components = get_optional_components(&nbt)?;
+        let components = get_optional_components(nbt)?;
 
         Ok(Item {
             slot,
@@ -75,13 +75,13 @@ impl FromCompoundNbt for ItemWithNoSlot {
     where
         Self: Sized,
     {
-        let id = get_owned_string(&nbt, "id")?;
+        let id = get_owned_string(nbt, "id")?;
 
         let count = nbt
             .int("count")
             .unwrap_or_else(|| nbt.byte("Count").unwrap_or(1) as i32);
 
-        let components = get_optional_components(&nbt)?;
+        let components = get_optional_components(nbt)?;
 
         Ok(ItemWithNoSlot {
             id,

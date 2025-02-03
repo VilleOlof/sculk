@@ -110,7 +110,7 @@ impl FromCompoundNbt for Food {
             None
         };
 
-        let effects = get_t_compound_vec(&nbt, "effects", Effect::from_compound_nbt)?;
+        let effects = get_t_compound_vec(nbt, "effects", Effect::from_compound_nbt)?;
 
         Ok(Food {
             nutrition,
@@ -128,8 +128,8 @@ impl FromCompoundNbt for FoodConvertedItem {
     where
         Self: Sized,
     {
-        let id = get_owned_string(&nbt, "id")?;
-        let components = get_optional_components(&nbt)?;
+        let id = get_owned_string(nbt, "id")?;
+        let components = get_optional_components(nbt)?;
 
         Ok(FoodConvertedItem { id, components })
     }
@@ -163,7 +163,7 @@ impl FromCompoundNbt for EffectDetails {
     where
         Self: Sized,
     {
-        let id = get_owned_string(&nbt, "id")?;
+        let id = get_owned_string(nbt, "id")?;
         let amplifier = nbt.byte("amplifier");
         let duration = nbt.int("duration");
         let ambient = nbt.byte("ambient").map(|b| b != 0);

@@ -4,6 +4,7 @@ use crate::{
     traits::FromCompoundNbt,
     util::{get_bool, get_owned_optional_string, get_owned_string, get_t_compound_vec},
 };
+use std::str::FromStr;
 
 /// Represents a map in the game.
 #[derive(Debug, Clone, PartialEq)]
@@ -149,15 +150,12 @@ impl FromCompoundNbt for MapBanner {
         Self: Sized,
     {
         let color = if let Some(s) = nbt.string("Color") {
-            match Color::from_str(s.to_str().as_ref()) {
-                Some(color) => color,
-                None => return Err(SculkParseError::InvalidField("Color".into())),
-            }
+            Color::from_str(s.to_str().as_ref()).map_err(SculkParseError::InvalidField)?
         } else {
             return Err(SculkParseError::MissingField("Color".into()));
         };
 
-        let name = get_owned_optional_string(&nbt, "Name");
+        let name = get_owned_optional_string(nbt, "Name");
 
         let pos = nbt
             .compound("Pos")

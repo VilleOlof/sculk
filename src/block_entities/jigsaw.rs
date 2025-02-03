@@ -59,15 +59,15 @@ impl FromCompoundNbt for Jigsaw {
     where
         Self: Sized,
     {
-        let final_state = get_owned_string(&nbt, "final_state")?;
+        let final_state = get_owned_string(nbt, "final_state")?;
         let joint = nbt
             .string("joint")
             .map(|s| JigsawJoint::from(s.to_str().as_ref()))
             .ok_or(SculkParseError::MissingField("joint".into()))?;
 
-        let name = get_owned_string(&nbt, "name")?;
-        let pool = get_owned_string(&nbt, "pool")?;
-        let target = get_owned_string(&nbt, "target")?;
+        let name = get_owned_string(nbt, "name")?;
+        let pool = get_owned_string(nbt, "pool")?;
+        let target = get_owned_string(nbt, "target")?;
         let selection_priority = nbt
             .int("selection_priority")
             .ok_or(SculkParseError::MissingField("selection_priority".into()))?;

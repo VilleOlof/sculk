@@ -58,10 +58,10 @@ impl FromCompoundNbt for Skull {
     where
         Self: Sized,
     {
-        let custom_name = get_owned_optional_string(&nbt, "custom_name");
-        let note_block_sound = get_owned_optional_string(&nbt, "note_block_sound");
+        let custom_name = get_owned_optional_string(nbt, "custom_name");
+        let note_block_sound = get_owned_optional_string(nbt, "note_block_sound");
 
-        let profile = match SkullProfile::from_compound_nbt(&nbt) {
+        let profile = match SkullProfile::from_compound_nbt(nbt) {
             Ok(profile) => Some(profile),
             Err(SculkParseError::InvalidField(_)) => None,
             Err(e) => return Err(e),
@@ -80,8 +80,8 @@ impl FromCompoundNbt for SkullProfile {
     where
         Self: Sized,
     {
-        if let Some(name) = get_owned_optional_string(&nbt, "profile") {
-            return Ok(SkullProfile::Name(name));
+        if let Some(name) = get_owned_optional_string(nbt, "profile") {
+            Ok(SkullProfile::Name(name))
         } else if let Some(compound) = nbt.compound("profile") {
             let profile = Profile::from_compound_nbt(&compound)?;
             return Ok(SkullProfile::Profile(profile));
@@ -98,8 +98,8 @@ impl SkullProfile {
     where
         Self: Sized,
     {
-        if let Some(name) = get_owned_optional_string(&nbt, "minecraft:profile") {
-            return Ok(SkullProfile::Name(name));
+        if let Some(name) = get_owned_optional_string(nbt, "minecraft:profile") {
+            Ok(SkullProfile::Name(name))
         } else if let Some(compound) = nbt.compound("minecraft:profile") {
             let profile = Profile::from_compound_nbt(&compound)?;
             return Ok(SkullProfile::Profile(profile));
@@ -116,7 +116,7 @@ impl FromCompoundNbt for Profile {
     where
         Self: Sized,
     {
-        let name = get_owned_optional_string(&nbt, "name");
+        let name = get_owned_optional_string(nbt, "name");
 
         let id = nbt.int_array("id").map(Uuid::from);
 
@@ -151,9 +151,9 @@ impl FromCompoundNbt for Property {
     where
         Self: Sized,
     {
-        let name = get_owned_string(&nbt, "name")?;
-        let value = get_owned_string(&nbt, "value")?;
-        let signature = get_owned_optional_string(&nbt, "signature");
+        let name = get_owned_string(nbt, "name")?;
+        let value = get_owned_string(nbt, "value")?;
+        let signature = get_owned_optional_string(nbt, "signature");
 
         Ok(Property {
             name,

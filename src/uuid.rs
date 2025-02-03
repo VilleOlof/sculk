@@ -59,7 +59,7 @@ impl Uuid {
                     Ok(entries)
                 },
             )
-            .unwrap_or(Vec::new())
+            .unwrap_or_default()
     }
 }
 

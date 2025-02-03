@@ -260,8 +260,8 @@ impl FromCompoundNbt for Equipment {
     where
         Self: Sized,
     {
-        let loot_table = get_owned_string(&nbt, "loot_table")?;
-        let slot_drop_chances = get_slot_drop_chances(&nbt);
+        let loot_table = get_owned_string(nbt, "loot_table")?;
+        let slot_drop_chances = get_slot_drop_chances(nbt);
 
         Ok(Equipment {
             loot_table,
@@ -272,10 +272,7 @@ impl FromCompoundNbt for Equipment {
 
 /// Just wraps [`DropChanceType::from_compound_nbt`] into a [`Option<DropChanceType>`]
 fn get_slot_drop_chances(nbt: &NbtCompound) -> Option<DropChanceType> {
-    match DropChanceType::from_compound_nbt(&nbt) {
-        Ok(slot_drop_chances) => Some(slot_drop_chances),
-        Err(_) => None,
-    }
+    DropChanceType::from_compound_nbt(nbt).ok()
 }
 
 impl FromCompoundNbt for DropChanceType {

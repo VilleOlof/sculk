@@ -70,11 +70,11 @@ impl FromCompoundNbt for BucketEntityData {
             nbt.int(key).map(|b| b != 0)
         }
 
-        let no_ai = bool(&nbt, "NoAI");
-        let silent = bool(&nbt, "Silent");
-        let no_gravity = bool(&nbt, "NoGravity");
-        let glowing = bool(&nbt, "Glowing");
-        let invulnerable = bool(&nbt, "Invulnerable");
+        let no_ai = bool(nbt, "NoAI");
+        let silent = bool(nbt, "Silent");
+        let no_gravity = bool(nbt, "NoGravity");
+        let glowing = bool(nbt, "Glowing");
+        let invulnerable = bool(nbt, "Invulnerable");
         let health = nbt.float("Health");
         let age = nbt.int("Age");
         let variant = nbt.int("Variant");

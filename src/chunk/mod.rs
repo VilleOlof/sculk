@@ -88,7 +88,7 @@ pub struct Chunk {
     pub post_processing: Option<Vec<i16>>,
 
     /// Structure data in this chunk.
-    pub structures: Structures,
+    pub structures: Option<Structures>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -155,9 +155,9 @@ impl FromCompoundNbt for Chunk {
             .long("LastUpdate")
             .ok_or(SculkParseError::MissingField("LastUpdate".into()))?;
 
-        let sections = get_t_compound_vec(&nbt, "sections", ChunkSection::from_compound_nbt)?;
+        let sections = get_t_compound_vec(nbt, "sections", ChunkSection::from_compound_nbt)?;
         let block_entities =
-            get_t_compound_vec(&nbt, "block_entities", BlockEntity::from_compound_nbt)?;
+            get_t_compound_vec(nbt, "block_entities", BlockEntity::from_compound_nbt)?;
 
         let carving_masks = if let Some(nbt) = nbt.compound("CarvingMasks") {
             Some(CarvingMasks::from_compound_nbt(&nbt)?)
@@ -182,7 +182,7 @@ impl FromCompoundNbt for Chunk {
                     .shorts()
                     .ok_or(SculkParseError::InvalidField("Lights".into()))?;
 
-                lights_vec.push(inner_lights.iter().map(|s| *s).collect());
+                lights_vec.push(inner_lights.to_vec());
             }
 
             lights_vec
@@ -190,13 +190,13 @@ impl FromCompoundNbt for Chunk {
             Vec::new()
         };
 
-        let entities = match get_t_compound_vec(&nbt, "Entities", Entity::from_compound_nbt) {
+        let entities = match get_t_compound_vec(nbt, "Entities", Entity::from_compound_nbt) {
             Ok(entities) => Some(entities),
             Err(SculkParseError::MissingField(_)) => None,
             Err(e) => return Err(e),
         };
-        let fluid_ticks = get_t_compound_vec(&nbt, "fluid_ticks", TileTick::from_compound_nbt)?;
-        let block_ticks = get_t_compound_vec(&nbt, "block_ticks", TileTick::from_compound_nbt)?;
+        let fluid_ticks = get_t_compound_vec(nbt, "fluid_ticks", TileTick::from_compound_nbt)?;
+        let block_ticks = get_t_compound_vec(nbt, "block_ticks", TileTick::from_compound_nbt)?;
 
         let inhabited_time = nbt
             .long("InhabitedTime")
@@ -228,8 +228,7 @@ impl FromCompoundNbt for Chunk {
 
         let structures = nbt
             .compound("structures")
-            .map(|nbt| Structures::from_compound_nbt(&nbt))
-            .ok_or(SculkParseError::MissingField("structures".into()))??;
+            .and_then(|nbt| Structures::from_compound_nbt(&nbt).ok());
 
         Ok(Chunk {
             data_version,

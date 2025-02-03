@@ -1,5 +1,4 @@
 use crate::{error::SculkParseError, traits::FromCompoundNbt, util::get_owned_string};
-use jukebox::Jukebox;
 
 pub mod variant;
 
@@ -66,6 +65,9 @@ pub enum BlockEntityKind {
 
     /// `minecraft:brewing_stand`
     BrewingStand(brewing_stand::BrewingStand),
+
+    /// `minecraft:brushable_block`
+    BrushableBlock(suspicious_block::SuspiciousBlock),
 
     /// `minecraft:calibrated_sculk_sensor`
     CalibratedSculkSensor(calibrated_sculk_sensor::CalibratedSculkSensor),
@@ -177,7 +179,7 @@ pub enum BlockEntityKind {
     TrappedChest(chest::Chest),
 
     /// `minecraft:trail_spawner`
-    TrialSpawner(trail_spawner::TrailSpawner),
+    TrialSpawner(Box<trail_spawner::TrailSpawner>),
 
     /// `minecraft:vault`
     Vault(vault::Vault),
@@ -214,6 +216,7 @@ impl FromCompoundNbt for BlockEntityKind {
         use furnace::Furnace;
         use hopper::Hopper;
         use jigsaw::Jigsaw;
+        use jukebox::Jukebox;
         use lectern::Lectern;
         use mob_spawner::MobSpawner;
         use piston::Piston;
@@ -228,7 +231,7 @@ impl FromCompoundNbt for BlockEntityKind {
         use trail_spawner::TrailSpawner;
         use vault::Vault;
 
-        let id = get_owned_string(&nbt, "id").map_err(|_| {
+        let id = get_owned_string(nbt, "id").map_err(|_| {
             SculkParseError::MissingField(
                 "BlockEntityKind requires a parent block entity tag, no / invalid id found".into(),
             )
@@ -268,10 +271,10 @@ impl FromCompoundNbt for BlockEntityKind {
             | "minecraft:green_wall_banner"
             | "minecraft:red_wall_banner"
             | "minecraft:black_wall_banner" => {
-                BlockEntityKind::Banners(Banner::from_compound_nbt(&nbt)?)
+                BlockEntityKind::Banners(Banner::from_compound_nbt(nbt)?)
             }
-            "minecraft:barrel" => BlockEntityKind::Barrel(Barrel::from_compound_nbt(&nbt)?),
-            "minecraft:beacon" => BlockEntityKind::Beacon(Beacon::from_compound_nbt(&nbt)?),
+            "minecraft:barrel" => BlockEntityKind::Barrel(Barrel::from_compound_nbt(nbt)?),
+            "minecraft:beacon" => BlockEntityKind::Beacon(Beacon::from_compound_nbt(nbt)?),
             "minecraft:bed"
             | "minecraft:white_bed"
             | "minecraft:orange_bed"
@@ -289,50 +292,49 @@ impl FromCompoundNbt for BlockEntityKind {
             | "minecraft:green_bed"
             | "minecraft:red_bed"
             | "minecraft:black_bed" => BlockEntityKind::Bed,
-            "minecraft:beehive" => BlockEntityKind::Beehive(Beehive::from_compound_nbt(&nbt)?),
+            "minecraft:beehive" => BlockEntityKind::Beehive(Beehive::from_compound_nbt(nbt)?),
             "minecraft:bell" => BlockEntityKind::Bell,
             "minecraft:blast_furnace" => {
-                BlockEntityKind::BlastFurnace(Furnace::from_compound_nbt(&nbt)?)
+                BlockEntityKind::BlastFurnace(Furnace::from_compound_nbt(nbt)?)
             }
             "minecraft:brewing_stand" => {
-                BlockEntityKind::BrewingStand(BrewingStand::from_compound_nbt(&nbt)?)
+                BlockEntityKind::BrewingStand(BrewingStand::from_compound_nbt(nbt)?)
             }
             "minecraft:calibrated_sculk_sensor" => BlockEntityKind::CalibratedSculkSensor(
-                CalibratedSculkSensor::from_compound_nbt(&nbt)?,
+                CalibratedSculkSensor::from_compound_nbt(nbt)?,
             ),
-            "minecraft:campfire" => BlockEntityKind::Campfire(Campfire::from_compound_nbt(&nbt)?),
+            "minecraft:campfire" => BlockEntityKind::Campfire(Campfire::from_compound_nbt(nbt)?),
             "minecraft:chiseled_bookshelf" => {
-                BlockEntityKind::ChiseledBookshelf(ChiseledBookshelf::from_compound_nbt(&nbt)?)
+                BlockEntityKind::ChiseledBookshelf(ChiseledBookshelf::from_compound_nbt(nbt)?)
             }
-            "minecraft:chest" => BlockEntityKind::Chest(Chest::from_compound_nbt(&nbt)?),
+            "minecraft:chest" => BlockEntityKind::Chest(Chest::from_compound_nbt(nbt)?),
             "minecraft:comparator" => {
-                BlockEntityKind::Comparator(Comparator::from_compound_nbt(&nbt)?)
+                BlockEntityKind::Comparator(Comparator::from_compound_nbt(nbt)?)
             }
             "minecraft:command_block"
             | "minecraft:chain_command_block"
             | "minecraft:repeating_command_block" => {
-                BlockEntityKind::CommandBlock(CommandBlock::from_compound_nbt(&nbt)?)
+                BlockEntityKind::CommandBlock(CommandBlock::from_compound_nbt(nbt)?)
             }
-            "minecraft:conduit" => BlockEntityKind::Conduit(Conduit::from_compound_nbt(&nbt)?),
-            "minecraft:crafter" => BlockEntityKind::Crafter(Crafter::from_compound_nbt(&nbt)?),
+            "minecraft:conduit" => BlockEntityKind::Conduit(Conduit::from_compound_nbt(nbt)?),
+            "minecraft:crafter" => BlockEntityKind::Crafter(Crafter::from_compound_nbt(nbt)?),
             "minecraft:daylight_detector" => BlockEntityKind::DaylightDetector,
             "minecraft:decorated_pot" => {
-                BlockEntityKind::DecoratedPot(DecoratedPot::from_compound_nbt(&nbt)?)
+                BlockEntityKind::DecoratedPot(DecoratedPot::from_compound_nbt(nbt)?)
             }
-            "minecraft:dispenser" => {
-                BlockEntityKind::Dispenser(Dispenser::from_compound_nbt(&nbt)?)
-            }
-            "minecraft:dropper" => BlockEntityKind::Dropper(Dropper::from_compound_nbt(&nbt)?),
+            "minecraft:dispenser" => BlockEntityKind::Dispenser(Dispenser::from_compound_nbt(nbt)?),
+            "minecraft:dropper" => BlockEntityKind::Dropper(Dropper::from_compound_nbt(nbt)?),
             "minecraft:enchanting_table" => {
-                BlockEntityKind::EnchantingTable(EnchantingTable::from_compound_nbt(&nbt)?)
+                BlockEntityKind::EnchantingTable(EnchantingTable::from_compound_nbt(nbt)?)
             }
             "minecraft:ender_chest" => BlockEntityKind::EnderChest,
             "minecraft:end_gateway" => {
-                BlockEntityKind::EndGateway(EndGateway::from_compound_nbt(&nbt)?)
+                BlockEntityKind::EndGateway(EndGateway::from_compound_nbt(nbt)?)
             }
             "minecraft:end_portal" => BlockEntityKind::EndPortal,
-            "minecraft:furnace" => BlockEntityKind::Furnace(Furnace::from_compound_nbt(&nbt)?),
-            "minecraft:oak_hanging_sign"
+            "minecraft:furnace" => BlockEntityKind::Furnace(Furnace::from_compound_nbt(nbt)?),
+            "minecraft:hanging_sign"
+            | "minecraft:oak_hanging_sign"
             | "minecraft:spruce_hanging_sign"
             | "minecraft:birch_hanging_sign"
             | "minecraft:jungle_hanging_sign"
@@ -354,24 +356,24 @@ impl FromCompoundNbt for BlockEntityKind {
             | "minecraft:bamboo_wall_hanging_sign"
             | "minecraft:crimson_wall_hanging_sign"
             | "minecraft:warped_wall_hanging_sign" => {
-                BlockEntityKind::HangingSign(Sign::from_compound_nbt(&nbt)?)
+                BlockEntityKind::HangingSign(Sign::from_compound_nbt(nbt)?)
             }
-            "minecraft:hopper" => BlockEntityKind::Hopper(Hopper::from_compound_nbt(&nbt)?),
-            "minecraft:jigsaw" => BlockEntityKind::Jigsaw(Jigsaw::from_compound_nbt(&nbt)?),
-            "minecraft:jukebox" => BlockEntityKind::Jukebox(Jukebox::from_compound_nbt(&nbt)?),
-            "minecraft:lectern" => BlockEntityKind::Lectern(Lectern::from_compound_nbt(&nbt)?),
+            "minecraft:hopper" => BlockEntityKind::Hopper(Hopper::from_compound_nbt(nbt)?),
+            "minecraft:jigsaw" => BlockEntityKind::Jigsaw(Jigsaw::from_compound_nbt(nbt)?),
+            "minecraft:jukebox" => BlockEntityKind::Jukebox(Jukebox::from_compound_nbt(nbt)?),
+            "minecraft:lectern" => BlockEntityKind::Lectern(Lectern::from_compound_nbt(nbt)?),
             "minecraft:mob_spawner" => {
-                BlockEntityKind::MobSpawner(MobSpawner::from_compound_nbt(&nbt)?)
+                BlockEntityKind::MobSpawner(MobSpawner::from_compound_nbt(nbt)?)
             }
-            "minecraft:piston" => BlockEntityKind::Piston(Piston::from_compound_nbt(&nbt)?),
+            "minecraft:piston" => BlockEntityKind::Piston(Piston::from_compound_nbt(nbt)?),
             "minecraft:sculk_catalyst" => {
-                BlockEntityKind::SculkCatalyst(SculkCatalyst::from_compound_nbt(&nbt)?)
+                BlockEntityKind::SculkCatalyst(SculkCatalyst::from_compound_nbt(nbt)?)
             }
             "minecraft:sculk_sensor" => {
-                BlockEntityKind::SculkSensor(SculkSensor::from_compound_nbt(&nbt)?)
+                BlockEntityKind::SculkSensor(SculkSensor::from_compound_nbt(nbt)?)
             }
             "minecraft:sculk_shrieker" => {
-                BlockEntityKind::SculkShrieker(SculkShrieker::from_compound_nbt(&nbt)?)
+                BlockEntityKind::SculkShrieker(SculkShrieker::from_compound_nbt(nbt)?)
             }
             "minecraft:shulker_box"
             | "minecraft:white_shulker_box"
@@ -390,7 +392,7 @@ impl FromCompoundNbt for BlockEntityKind {
             | "minecraft:green_shulker_box"
             | "minecraft:red_shulker_box"
             | "minecraft:black_shulker_box" => {
-                BlockEntityKind::ShulkerBox(ShulkerBox::from_compound_nbt(&nbt)?)
+                BlockEntityKind::ShulkerBox(ShulkerBox::from_compound_nbt(nbt)?)
             }
             "minecraft:sign"
             | "minecraft:oak_sign"
@@ -414,7 +416,7 @@ impl FromCompoundNbt for BlockEntityKind {
             | "minecraft:cherry_wall_sign"
             | "minecraft:bamboo_wall_sign"
             | "minecraft:crimson_wall_sign"
-            | "minecraft:warped_wall_sign" => BlockEntityKind::Sign(Sign::from_compound_nbt(&nbt)?),
+            | "minecraft:warped_wall_sign" => BlockEntityKind::Sign(Sign::from_compound_nbt(nbt)?),
             // SKULL
             "minecraft:skull"
             | "minecraft:skeleton_skull"
@@ -431,28 +433,31 @@ impl FromCompoundNbt for BlockEntityKind {
             | "minecraft:piglin_wall_head"
             | "minecraft:dragon_head"
             | "minecraft:dragon_wall_head" => {
-                BlockEntityKind::Skull(Skull::from_compound_nbt(&nbt)?)
+                BlockEntityKind::Skull(Skull::from_compound_nbt(nbt)?)
             }
             "minecraft:structure_block" => {
-                BlockEntityKind::StructureBlock(StructureBlock::from_compound_nbt(&nbt)?)
+                BlockEntityKind::StructureBlock(StructureBlock::from_compound_nbt(nbt)?)
             }
-            "minecraft:smoker" => BlockEntityKind::Smoker(Furnace::from_compound_nbt(&nbt)?),
+            "minecraft:smoker" => BlockEntityKind::Smoker(Furnace::from_compound_nbt(nbt)?),
             "minecraft:soul_campfire" => {
-                BlockEntityKind::SoulCampfire(Campfire::from_compound_nbt(&nbt)?)
+                BlockEntityKind::SoulCampfire(Campfire::from_compound_nbt(nbt)?)
+            }
+            "minecraft:brushable_block" => {
+                BlockEntityKind::BrushableBlock(SuspiciousBlock::from_compound_nbt(nbt)?)
             }
             "minecraft:suspicious_gravel" => {
-                BlockEntityKind::SuspiciousGravel(SuspiciousBlock::from_compound_nbt(&nbt)?)
+                BlockEntityKind::SuspiciousGravel(SuspiciousBlock::from_compound_nbt(nbt)?)
             }
             "minecraft:suspicious_sand" => {
-                BlockEntityKind::SuspiciousSand(SuspiciousBlock::from_compound_nbt(&nbt)?)
+                BlockEntityKind::SuspiciousSand(SuspiciousBlock::from_compound_nbt(nbt)?)
             }
             "minecraft:trapped_chest" => {
-                BlockEntityKind::TrappedChest(Chest::from_compound_nbt(&nbt)?)
+                BlockEntityKind::TrappedChest(Chest::from_compound_nbt(nbt)?)
             }
             "minecraft:trial_spawner" => {
-                BlockEntityKind::TrialSpawner(TrailSpawner::from_compound_nbt(&nbt)?)
+                BlockEntityKind::TrialSpawner(Box::from(TrailSpawner::from_compound_nbt(nbt)?))
             }
-            "minecraft:vault" => BlockEntityKind::Vault(Vault::from_compound_nbt(&nbt)?),
+            "minecraft:vault" => BlockEntityKind::Vault(Vault::from_compound_nbt(nbt)?),
             "DUMMY" => BlockEntityKind::Dummy,
             _ => return Err(SculkParseError::UnsupportedBlockEntity(id.to_string())),
         };

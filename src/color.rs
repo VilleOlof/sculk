@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 /// Represents a color in Minecraft.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -51,7 +53,7 @@ impl From<&str> for Color {
 
 impl From<Color> for &str {
     fn from(value: Color) -> Self {
-        &value.to_str()
+        value.to_str()
     }
 }
 
@@ -76,32 +78,6 @@ impl Color {
             13 => Some(Self::Green),
             14 => Some(Self::Red),
             15 => Some(Self::Black),
-            _ => None,
-        }
-    }
-
-    /// Converts a string to a `Color`.
-    pub fn from_str(s: &str) -> Option<Self> {
-        let s = s.to_lowercase();
-        let s = s.as_str();
-
-        match s {
-            "white" => Some(Self::White),
-            "orange" => Some(Self::Orange),
-            "magenta" => Some(Self::Magenta),
-            "light_blue" => Some(Self::LightBlue),
-            "yellow" => Some(Self::Yellow),
-            "lime" => Some(Self::Lime),
-            "pink" => Some(Self::Pink),
-            "gray" => Some(Self::Gray),
-            "light_gray" => Some(Self::LightGray),
-            "cyan" => Some(Self::Cyan),
-            "purple" => Some(Self::Purple),
-            "blue" => Some(Self::Blue),
-            "brown" => Some(Self::Brown),
-            "green" => Some(Self::Green),
-            "red" => Some(Self::Red),
-            "black" => Some(Self::Black),
             _ => None,
         }
     }
@@ -152,6 +128,36 @@ impl Color {
     }
 }
 
+impl FromStr for Color {
+    type Err = String;
+
+    /// Converts a string to a `Color`.
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let s = s.to_lowercase();
+        let s = s.as_str();
+
+        Ok(match s {
+            "white" => Self::White,
+            "orange" => Self::Orange,
+            "magenta" => Self::Magenta,
+            "light_blue" => Self::LightBlue,
+            "yellow" => Self::Yellow,
+            "lime" => Self::Lime,
+            "pink" => Self::Pink,
+            "gray" => Self::Gray,
+            "light_gray" => Self::LightGray,
+            "cyan" => Self::Cyan,
+            "purple" => Self::Purple,
+            "blue" => Self::Blue,
+            "brown" => Self::Brown,
+            "green" => Self::Green,
+            "red" => Self::Red,
+            "black" => Self::Black,
+            _ => return Err("Unknown".to_string()),
+        })
+    }
+}
+
 /// Represents an RGB color.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -182,6 +188,6 @@ impl RGB {
     pub fn from_u8(r: u8, g: u8, b: u8) -> Self {
         // Formula: Red<<16 + Green<<8 + Blue
         // see: https://minecraft.wiki/w/Data_component_format#dyed_color
-        RGB((r as i32) << 16 | (g as i32) << 8 | b as i32)
+        RGB(((r as i32) << 16) | ((g as i32) << 8) | b as i32)
     }
 }

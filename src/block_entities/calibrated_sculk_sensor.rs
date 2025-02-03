@@ -141,9 +141,9 @@ impl FromCompoundNbt for Event {
         let distance = nbt
             .float("distance")
             .ok_or(SculkParseError::MissingField("distance".into()))?;
-        let game_event = get_owned_string(&nbt, "game_event")?;
+        let game_event = get_owned_string(nbt, "game_event")?;
 
-        let pos = get_doubles_array(&nbt, "pos").and_then(|arr| {
+        let pos = get_doubles_array(nbt, "pos").and_then(|arr| {
             if arr.len() == 3 {
                 Ok([arr[0], arr[1], arr[2]])
             } else {

@@ -52,12 +52,12 @@ impl FromCompoundNbt for Crafter {
                 .ok_or(SculkParseError::MissingField(
                     "crafting_ticks_remaining".into(),
                 ))?;
-        let triggered = get_bool(&nbt, "triggered");
-        let disabled_slots = get_int_array(&nbt, "disabled_slots")?;
+        let triggered = get_bool(nbt, "triggered");
+        let disabled_slots = get_int_array(nbt, "disabled_slots")?;
 
-        let items = get_t_compound_vec(&nbt, "Items", Item::from_compound_nbt)?;
-        let lock = get_optional_lock(&nbt);
-        let loot_table = get_loot_table_data(&nbt);
+        let items = get_t_compound_vec(nbt, "Items", Item::from_compound_nbt)?;
+        let lock = get_optional_lock(nbt);
+        let loot_table = get_loot_table_data(nbt);
 
         Ok(Crafter {
             crafting_ticks_remaining,

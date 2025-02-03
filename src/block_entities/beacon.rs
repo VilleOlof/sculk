@@ -30,11 +30,11 @@ impl FromCompoundNbt for Beacon {
     where
         Self: Sized,
     {
-        let custom_name = get_optional_name(&nbt);
-        let lock = get_optional_lock(&nbt);
+        let custom_name = get_optional_name(nbt);
+        let lock = get_optional_lock(nbt);
 
-        let primary_effect = get_owned_optional_string(&nbt, "primary_effect");
-        let secondary_effect = get_owned_optional_string(&nbt, "secondary_effect");
+        let primary_effect = get_owned_optional_string(nbt, "primary_effect");
+        let secondary_effect = get_owned_optional_string(nbt, "secondary_effect");
 
         Ok(Beacon {
             custom_name,

@@ -23,10 +23,10 @@ impl FromCompoundNbt for Banner {
     where
         Self: Sized,
     {
-        let custom_name = get_optional_name(&nbt);
+        let custom_name = get_optional_name(nbt);
 
         let patterns: Vec<BannerPattern> =
-            get_t_compound_vec(&nbt, "patterns", BannerPattern::from_compound_nbt)?;
+            get_t_compound_vec(nbt, "patterns", BannerPattern::from_compound_nbt)?;
 
         Ok(Banner {
             custom_name,

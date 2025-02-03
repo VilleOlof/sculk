@@ -230,14 +230,14 @@ impl FromCompoundNbt for Entity {
         Self: Sized,
     {
         let air = nbt.short("Air");
-        let custom_name = get_optional_name(&nbt);
+        let custom_name = get_optional_name(nbt);
         let custom_name_visible = nbt.byte("CustomNameVisible").map(|b| b != 0);
         let fall_distance = nbt.float("FallDistance");
         let fire = nbt.short("Fire");
         let glowing = nbt.byte("Glowing").map(|b| b != 0);
         let has_visual_fire = nbt.byte("HasVisualFire").map(|b| b != 0);
 
-        let id = get_owned_string(&nbt, "id")?;
+        let id = get_owned_string(nbt, "id")?;
 
         let invulnerable = nbt.byte("Invulnerable").map(|b| b != 0);
 
@@ -261,7 +261,7 @@ impl FromCompoundNbt for Entity {
         let on_ground = nbt.byte("OnGround").map(|b| b != 0);
 
         let passengers: Vec<Entity> =
-            get_t_compound_vec(&nbt, "passengers", Entity::from_compound_nbt)?;
+            get_t_compound_vec(nbt, "passengers", Entity::from_compound_nbt)?;
 
         let portal_cooldown = nbt.int("PortalCooldown");
 
@@ -345,13 +345,13 @@ impl FromCompoundNbt for MaybeEntity {
         Self: Sized,
     {
         let air = nbt.short("Air");
-        let custom_name = get_optional_name(&nbt);
+        let custom_name = get_optional_name(nbt);
         let custom_name_visible = nbt.byte("CustomNameVisible").map(|b| b != 0);
         let fall_distance = nbt.float("FallDistance");
         let fire = nbt.short("Fire");
         let glowing = nbt.byte("Glowing").map(|b| b != 0);
         let has_visual_fire = nbt.byte("HasVisualFire").map(|b| b != 0);
-        let id = get_owned_optional_string(&nbt, "id");
+        let id = get_owned_optional_string(nbt, "id");
         let invulnerable = nbt.byte("Invulnerable").map(|b| b != 0);
 
         let motion = if let Some(motion_list) = nbt.list("Motion") {
@@ -373,7 +373,7 @@ impl FromCompoundNbt for MaybeEntity {
         let on_ground = nbt.byte("OnGround").map(|b| b != 0);
 
         let passengers: Option<Vec<Entity>> =
-            match get_t_compound_vec(&nbt, "passengers", Entity::from_compound_nbt) {
+            match get_t_compound_vec(nbt, "passengers", Entity::from_compound_nbt) {
                 Ok(passengers) => Some(passengers),
                 Err(SculkParseError::MissingField(_)) => None,
                 Err(e) => return Err(e),

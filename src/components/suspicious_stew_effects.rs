@@ -26,7 +26,7 @@ impl FromCompoundNbt for SuspiciousStewEffects {
     where
         Self: Sized,
     {
-        let id = get_owned_string(&nbt, "id")?;
+        let id = get_owned_string(nbt, "id")?;
         let duration = nbt.int("duration").unwrap_or(160);
 
         Ok(SuspiciousStewEffects { id, duration })

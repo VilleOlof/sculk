@@ -21,7 +21,7 @@ impl FromCompoundNbt for CustomData {
     {
         if let Some(string) = nbt.string("minecraft:custom_data") {
             let snbt = string.to_string();
-            return Ok(CustomData::Snbt(snbt));
+            Ok(CustomData::Snbt(snbt))
         } else if let Some(compound) = nbt.compound("minecraft:custom_data") {
             let map = KVPair::from_compound_nbt(&compound)?;
             return Ok(CustomData::KeyValues(map));

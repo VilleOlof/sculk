@@ -51,8 +51,8 @@ impl FromCompoundNbt for FireworkExplosion {
         let colors = nbt.int_array("colors").unwrap_or_default();
         let fade_colors = nbt.int_array("fade_colors").unwrap_or_default();
 
-        let has_trail = get_bool(&nbt, "has_trail");
-        let has_twinkle = get_bool(&nbt, "has_twinkle");
+        let has_trail = get_bool(nbt, "has_trail");
+        let has_twinkle = get_bool(nbt, "has_twinkle");
 
         Ok(FireworkExplosion {
             shape,

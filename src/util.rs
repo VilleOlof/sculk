@@ -17,7 +17,7 @@ pub fn default_true() -> bool {
 }
 
 pub fn get_loot_table_data(nbt: &NbtCompound) -> LootTableData {
-    let loot_table = get_owned_optional_string(&nbt, "LootTable");
+    let loot_table = get_owned_optional_string(nbt, "LootTable");
 
     let loot_table_seed = nbt.long("LootTableSeed");
 
@@ -31,21 +31,20 @@ pub fn get_loot_table_data(nbt: &NbtCompound) -> LootTableData {
 // Making this borrowed would save like 50µs per call.
 // But i just dont know how to deal with it and its lifetimes.
 pub fn get_owned_string(nbt: &NbtCompound, key: &'static str) -> Result<String, SculkParseError> {
-    Ok(nbt
-        .string(key)
+    nbt.string(key)
         .map(|s| s.to_string())
-        .ok_or(SculkParseError::InvalidField(key.into()))?)
+        .ok_or(SculkParseError::InvalidField(key.into()))
 }
 
 pub fn get_owned_optional_string(nbt: &NbtCompound, key: &'static str) -> Option<String> {
     nbt.string(key).map(|s| s.to_string())
 }
 
-pub fn get_optional_lock<'a>(nbt: &NbtCompound) -> Option<String> {
+pub fn get_optional_lock(nbt: &NbtCompound) -> Option<String> {
     nbt.string("Lock").map(|s| s.to_string())
 }
 
-pub fn get_optional_name<'a>(nbt: &NbtCompound) -> Option<String> {
+pub fn get_optional_name(nbt: &NbtCompound) -> Option<String> {
     nbt.string("CustomName").map(|s| s.to_string())
 }
 
@@ -136,12 +135,12 @@ pub fn get_t_list<T>(
 }
 
 pub fn get_optional_components(nbt: &NbtCompound) -> Result<Option<Components>, SculkParseError> {
-    match Components::from_compound_nbt(&nbt) {
+    match Components::from_compound_nbt(nbt) {
         Ok(components) => Ok(Some(components)),
         // Only return None if the field is missing
         Err(SculkParseError::MissingField(_)) => Ok(None),
         // Return the error if it's anything else
-        Err(e) => return Err(e),
+        Err(e) => Err(e),
     }
 }
 

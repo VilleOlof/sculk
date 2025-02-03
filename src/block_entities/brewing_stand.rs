@@ -50,12 +50,12 @@ impl FromCompoundNbt for BrewingStand {
         let brew_time = nbt
             .short("BrewTime")
             .ok_or(SculkParseError::MissingField("BrewTime".into()))?;
-        let custom_name = get_optional_name(&nbt);
+        let custom_name = get_optional_name(nbt);
         let fuel = nbt
             .byte("Fuel")
             .ok_or(SculkParseError::MissingField("Fuel".into()))?;
-        let items = get_t_compound_vec(&nbt, "Items", Item::from_compound_nbt)?;
-        let lock = get_optional_lock(&nbt);
+        let items = get_t_compound_vec(nbt, "Items", Item::from_compound_nbt)?;
+        let lock = get_optional_lock(nbt);
 
         Ok(BrewingStand {
             brew_time,

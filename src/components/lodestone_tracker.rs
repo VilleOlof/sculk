@@ -54,10 +54,10 @@ impl FromCompoundNbt for LodestoneTarget {
     where
         Self: Sized,
     {
-        let pos = get_int_array(&nbt, "pos")?;
+        let pos = get_int_array(nbt, "pos")?;
         let pos = [pos[0], pos[1], pos[2]];
 
-        let dimension = get_owned_string(&nbt, "dimension")?;
+        let dimension = get_owned_string(nbt, "dimension")?;
 
         Ok(LodestoneTarget { pos, dimension })
     }

@@ -25,7 +25,7 @@ pub enum CanBreak {
         blocks: Blocks,
 
         /// Block entity NBT to match.
-        nbt: Option<BlockEntity>,
+        nbt: Box<Option<BlockEntity>>,
 
         /// The block state properties to match.
         state: Option<BlockState>,
@@ -66,7 +66,7 @@ impl FromCompoundNbt for CanBreak {
     where
         Self: Sized,
     {
-        if let Some(_) = nbt.compound("state") {
+        if nbt.compound("state").is_some() {
             // Single
             let blocks = Blocks::from_compound_nbt(nbt)?;
             let struct_nbt = if let Some(nbt) = nbt.compound("nbt") {
@@ -81,13 +81,13 @@ impl FromCompoundNbt for CanBreak {
             };
             let show_in_tooltip = nbt.byte("show_in_tooltip").map(|b| b != 0).unwrap_or(true);
 
-            return Ok(CanBreak::Single {
+            Ok(CanBreak::Single {
                 blocks,
-                nbt: struct_nbt,
+                nbt: Box::from(struct_nbt),
                 state,
                 show_in_tooltip,
-            });
-        } else if let Some(_) = nbt.list("predicates") {
+            })
+        } else if nbt.list("predicates").is_some() {
             // List
             let predicates = get_t_list(
                 &nbt.list("predicates")
@@ -143,18 +143,18 @@ impl FromCompoundNbt for Blocks {
         Self: Sized,
     {
         if let Some(string) = nbt.string("blocks") {
-            return Ok(Blocks::Block(string.to_string()));
+            Ok(Blocks::Block(string.to_string()))
         } else if let Some(list) = nbt.list("blocks") {
             let blocks = list
                 .strings()
                 .ok_or(SculkParseError::InvalidField("blocks".into()))?
-                .into_iter()
+                .iter()
                 .map(|string| (*string).to_string())
                 .collect::<Vec<String>>();
 
             return Ok(Blocks::Blocks(blocks));
         } else {
             return Err(SculkParseError::MissingField("blocks".into()));
-        };
+        }
     }
 }

@@ -17,7 +17,7 @@ impl FromCompoundNbt for EnchantingTable {
         Self: Sized,
     {
         Ok(EnchantingTable {
-            custom_name: get_optional_name(&nbt),
+            custom_name: get_optional_name(nbt),
         })
     }
 }

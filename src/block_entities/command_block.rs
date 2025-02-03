@@ -61,20 +61,20 @@ impl FromCompoundNbt for CommandBlock {
     where
         Self: Sized,
     {
-        let auto = get_bool(&nbt, "auto");
-        let command = get_owned_string(&nbt, "Command")?;
-        let condition_met = get_bool(&nbt, "conditionMet");
-        let custom_name = get_owned_optional_string(&nbt, "CustomName");
+        let auto = get_bool(nbt, "auto");
+        let command = get_owned_string(nbt, "Command")?;
+        let condition_met = get_bool(nbt, "conditionMet");
+        let custom_name = get_owned_optional_string(nbt, "CustomName");
         let last_execution = nbt
             .long("LastExecution")
             .ok_or(SculkParseError::MissingField("LastExecution".into()))?;
-        let last_output = get_owned_string(&nbt, "LastOutput")?;
-        let powered = get_bool(&nbt, "powered");
+        let last_output = get_owned_string(nbt, "LastOutput")?;
+        let powered = get_bool(nbt, "powered");
         let success_count = nbt
             .int("SuccessCount")
             .ok_or(SculkParseError::MissingField("SuccessCount".into()))?;
-        let track_output = get_bool(&nbt, "TrackOutput");
-        let update_last_execution = get_bool(&nbt, "UpdateLastExecution");
+        let track_output = get_bool(nbt, "TrackOutput");
+        let update_last_execution = get_bool(nbt, "UpdateLastExecution");
 
         Ok(CommandBlock {
             auto,

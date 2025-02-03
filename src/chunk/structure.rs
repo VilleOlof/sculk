@@ -140,10 +140,10 @@ impl FromCompoundNbt for Structure {
             bb
         });
 
-        let biome = get_owned_optional_string(&nbt, "biome");
+        let biome = get_owned_optional_string(nbt, "biome");
         let chunk_x = nbt.int("ChunkX");
         let chunk_z = nbt.int("ChunkZ");
-        let id = get_owned_string(&nbt, "id")?;
+        let id = get_owned_string(nbt, "id")?;
 
         let processed = if let Some(list) = nbt.list("processed") {
             let mut processed = vec![];

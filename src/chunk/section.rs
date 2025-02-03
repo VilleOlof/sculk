@@ -89,11 +89,11 @@ impl FromCompoundNbt for ChunkSection {
 
         let block_light = nbt
             .byte_array("block_light")
-            .map(|x| x.iter().map(|x| *x).collect::<Vec<u8>>());
+            .map(|x| x.to_vec());
 
         let sky_light = nbt
             .byte_array("sky_light")
-            .map(|x| x.iter().map(|x| *x).collect::<Vec<u8>>());
+            .map(|x| x.to_vec());
 
         Ok(ChunkSection {
             y,
@@ -139,7 +139,7 @@ impl FromCompoundNbt for BlockStates {
     where
         Self: Sized,
     {
-        let palette = get_t_compound_vec(&nbt, "palette", Palette::from_compound_nbt)?;
+        let palette = get_t_compound_vec(nbt, "palette", Palette::from_compound_nbt)?;
         let data = nbt.long_array("data");
 
         Ok(BlockStates { palette, data })
@@ -153,7 +153,7 @@ impl FromCompoundNbt for PaletteNoProps {
     where
         Self: Sized,
     {
-        let name = get_owned_string(&nbt, "name")?;
+        let name = get_owned_string(nbt, "name")?;
 
         Ok(PaletteNoProps { name })
     }
@@ -166,8 +166,8 @@ impl FromCompoundNbt for Palette {
     where
         Self: Sized,
     {
-        let name = get_owned_string(&nbt, "Name")?;
-        let properties = KVPair::<String>::from_compound_nbt(&nbt)?;
+        let name = get_owned_string(nbt, "Name")?;
+        let properties = KVPair::<String>::from_compound_nbt(nbt)?;
 
         Ok(Palette { name, properties })
     }

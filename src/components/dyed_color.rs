@@ -27,11 +27,11 @@ impl FromCompoundNbt for DyedColor {
         Self: Sized,
     {
         if let Some(rgb) = nbt.int("minecraft:dyed_color") {
-            return Ok(DyedColor::Int(RGB::new(rgb)));
+            Ok(DyedColor::Int(RGB::new(rgb)))
         } else if let Some(compound) = nbt.compound("minecraft:dyed_color") {
             let rgb = compound
                 .int("rgb")
-                .map(|rgb| RGB::new(rgb))
+                .map(RGB::new)
                 .ok_or(SculkParseError::MissingField("rgb".into()))?;
 
             let show_in_tooltip = compound

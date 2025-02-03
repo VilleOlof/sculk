@@ -48,7 +48,7 @@ impl FromCompoundNbt for DecoratedPot {
             None
         };
 
-        let loot_table = get_loot_table_data(&nbt);
+        let loot_table = get_loot_table_data(nbt);
 
         Ok(DecoratedPot {
             sherds,

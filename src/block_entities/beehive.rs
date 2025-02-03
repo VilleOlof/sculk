@@ -21,8 +21,8 @@ impl FromCompoundNbt for Beehive {
     where
         Self: Sized,
     {
-        let bees = get_t_compound_vec(&nbt, "bees", Bee::from_compound_nbt)?;
-        let flower_pos = get_int_array(&nbt, "flower_pos")?;
+        let bees = get_t_compound_vec(nbt, "bees", Bee::from_compound_nbt)?;
+        let flower_pos = get_int_array(nbt, "flower_pos")?;
 
         Ok(Beehive { bees, flower_pos })
     }

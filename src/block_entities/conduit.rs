@@ -4,21 +4,16 @@ use crate::{error::SculkParseError, traits::FromCompoundNbt, uuid::Uuid};
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Conduit {
     /// `Target`
-    pub target: Uuid,
+    pub target: Option<Uuid>,
 }
 
 impl FromCompoundNbt for Conduit {
-    fn from_compound_nbt(
-        nbt: &simdnbt::borrow::NbtCompound,
-    ) -> Result<Self, crate::error::SculkParseError>
+    fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
         Ok(Conduit {
-            target: nbt
-                .int_array("target")
-                .map(Uuid::from)
-                .ok_or(SculkParseError::MissingField("target".into()))?,
+            target: nbt.int_array("target").map(Uuid::from),
         })
     }
 }

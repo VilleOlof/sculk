@@ -329,8 +329,8 @@ impl FromCompoundNbt for PlayerEntity {
         let fire = nbt
             .short("Fire")
             .ok_or(SculkParseError::MissingField("Fire".into()))?;
-        let has_visual_fire = get_bool(&nbt, "HasVisualFire");
-        let invulnerable = get_bool(&nbt, "Invulnerable");
+        let has_visual_fire = get_bool(nbt, "HasVisualFire");
+        let invulnerable = get_bool(nbt, "Invulnerable");
 
         let motion_list = nbt
             .list("Motion")
@@ -344,11 +344,11 @@ impl FromCompoundNbt for PlayerEntity {
             return Err(SculkParseError::InvalidField("Motion".into()));
         }
 
-        let no_gravity = get_bool(&nbt, "NoGravity");
-        let on_ground = get_bool(&nbt, "OnGround");
+        let no_gravity = get_bool(nbt, "NoGravity");
+        let on_ground = get_bool(nbt, "OnGround");
 
         let passengers: Vec<Entity> =
-            get_t_compound_vec(&nbt, "passengers", Entity::from_compound_nbt)?;
+            get_t_compound_vec(nbt, "passengers", Entity::from_compound_nbt)?;
 
         let portal_cooldown = nbt
             .int("PortalCooldown")
@@ -403,11 +403,11 @@ impl FromCompoundNbt for PlayerEntity {
         let absorption_amount = nbt.float("AbsorptionAmount");
 
         let active_effects =
-            get_t_compound_vec(&nbt, "ActiveEffects", EffectDetails::from_compound_nbt)?;
+            get_t_compound_vec(nbt, "ActiveEffects", EffectDetails::from_compound_nbt)?;
 
         let death_time = nbt.short("DeathTime").unwrap_or(0);
 
-        let fall_flying = get_bool(&nbt, "FallFlying");
+        let fall_flying = get_bool(nbt, "FallFlying");
         let health = nbt
             .float("Health")
             .ok_or(SculkParseError::MissingField("Health".into()))?;
@@ -416,7 +416,7 @@ impl FromCompoundNbt for PlayerEntity {
             .int("HurtByTimestamp")
             .ok_or(SculkParseError::MissingField("HurtByTimestamp".into()))?;
 
-        let left_handed = get_bool(&nbt, "LeftHanded");
+        let left_handed = get_bool(nbt, "LeftHanded");
 
         Ok(PlayerEntity {
             air,
@@ -462,8 +462,8 @@ impl FromCompoundNbt for Player {
             .int("DataVersion")
             .ok_or(SculkParseError::MissingField("DataVersion".into()))?;
 
-        let dimension = get_owned_string(&nbt, "Dimension")?;
-        let ender_items = get_t_compound_vec(&nbt, "EnderItems", Item::from_compound_nbt)?;
+        let dimension = get_owned_string(nbt, "Dimension")?;
+        let ender_items = get_t_compound_vec(nbt, "EnderItems", Item::from_compound_nbt)?;
 
         let entered_nether_position = if let Some(nbt) = nbt.compound("enteredNetherPosition") {
             Some(NetherPosition::from_compound_nbt(&nbt)?)
@@ -485,7 +485,7 @@ impl FromCompoundNbt for Player {
             .int("foodTickTimer")
             .ok_or(SculkParseError::MissingField("foodTickTimer".into()))?;
 
-        let inventory = get_t_compound_vec(&nbt, "Inventory", Item::from_compound_nbt)?;
+        let inventory = get_t_compound_vec(nbt, "Inventory", Item::from_compound_nbt)?;
 
         let last_death_location = if let Some(nbt) = nbt.compound("LastDeathLocation") {
             Some(DeathLocation::from_compound_nbt(&nbt)?)
@@ -495,14 +495,10 @@ impl FromCompoundNbt for Player {
 
         let player_game_type = nbt
             .int("playerGameType")
-            .map(|i| GameType::from_i32(i))
+            .map(GameType::from_i32)
             .ok_or(SculkParseError::MissingField("playerGameType".into()))?;
 
-        let previous_player_game_type = if let Some(nbt) = nbt.int("previousPlayerGameType") {
-            Some(GameType::from_i32(nbt))
-        } else {
-            None
-        };
+        let previous_player_game_type = nbt.int("previousPlayerGameType").map(GameType::from_i32);
 
         let recipe_book = nbt
             .compound("recipeBook")
@@ -517,7 +513,7 @@ impl FromCompoundNbt for Player {
 
         let score = nbt.int("Score").unwrap_or(0);
 
-        let seen_credits = get_bool(&nbt, "seenCredits");
+        let seen_credits = get_bool(nbt, "seenCredits");
         let selected_item_slot = nbt
             .int("SelectedItemSlot")
             .ok_or(SculkParseError::MissingField("SelectedItemSlot".into()))?;
@@ -537,7 +533,7 @@ impl FromCompoundNbt for Player {
             .short("SleepTimer")
             .ok_or(SculkParseError::MissingField("SleepTimer".into()))?;
 
-        let spawn_dimension = get_owned_optional_string(&nbt, "SpawnDimension");
+        let spawn_dimension = get_owned_optional_string(nbt, "SpawnDimension");
 
         let spawn_forced = nbt.byte("SpawnForced").map(|b| b != 0);
 
@@ -632,11 +628,7 @@ impl FromCompoundNbt for Vechile {
     where
         Self: Sized,
     {
-        let attach = if let Some(attach) = nbt.int_array("attach") {
-            Some(Uuid::from(attach))
-        } else {
-            None
-        };
+        let attach = nbt.int_array("attach").map(Uuid::from);
 
         let entity = if let Some(entity) = nbt.compound("Entity") {
             Some(Entity::from_compound_nbt(&entity)?)
@@ -653,7 +645,7 @@ impl FromCompoundNbt for DeathLocation {
     where
         Self: Sized,
     {
-        let dimension = get_owned_string(&nbt, "dimension")?;
+        let dimension = get_owned_string(nbt, "dimension")?;
         let pos = nbt
             .int_array("pos")
             .ok_or(SculkParseError::MissingField("pos".into()))?;

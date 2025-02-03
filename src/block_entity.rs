@@ -133,12 +133,12 @@ pub struct LazyBlockEntity<'a> {
     nbt_bytes: LazyByteVariant<'a>,
 }
 
-impl<'a> FromCompoundNbt for LazyBlockEntity<'a> {
+impl FromCompoundNbt for LazyBlockEntity<'_> {
     fn from_compound_nbt(nbt: &simdnbt::borrow::NbtCompound) -> Result<Self, SculkParseError>
     where
         Self: Sized,
     {
-        let base = LazyBlockEntityBase::from_compound_nbt(&nbt)?;
+        let base = LazyBlockEntityBase::from_compound_nbt(nbt)?;
 
         let mut buf: Vec<u8> = Vec::new();
         nbt.to_owned().write(&mut buf);
@@ -155,8 +155,8 @@ impl FromCompoundNbt for BlockEntityBase {
     where
         Self: Sized,
     {
-        let id = get_owned_string(&nbt, "id")?;
-        let keep_packed = get_bool(&nbt, "keepPacked");
+        let id = get_owned_string(nbt, "id")?;
+        let keep_packed = get_bool(nbt, "keepPacked");
 
         let x = nbt
             .int("x")
@@ -168,7 +168,7 @@ impl FromCompoundNbt for BlockEntityBase {
             .int("z")
             .ok_or(SculkParseError::MissingField("z".into()))?;
 
-        let components = get_optional_components(&nbt)?;
+        let components = get_optional_components(nbt)?;
 
         Ok(Self {
             id,
@@ -186,10 +186,10 @@ impl FromCompoundNbt for NoCoordinatesBlockEntityBase {
     where
         Self: Sized,
     {
-        let id = get_owned_string(&nbt, "id")?;
-        let keep_packed = get_bool(&nbt, "keepPacked");
+        let id = get_owned_string(nbt, "id")?;
+        let keep_packed = get_bool(nbt, "keepPacked");
 
-        let components = get_optional_components(&nbt)?;
+        let components = get_optional_components(nbt)?;
 
         Ok(Self {
             id,
@@ -204,8 +204,8 @@ impl FromCompoundNbt for LazyBlockEntityBase {
     where
         Self: Sized,
     {
-        let id = get_owned_string(&nbt, "id")?;
-        let keep_packed = get_bool(&nbt, "keepPacked");
+        let id = get_owned_string(nbt, "id")?;
+        let keep_packed = get_bool(nbt, "keepPacked");
 
         let x = nbt
             .int("x")
@@ -250,8 +250,8 @@ impl FromCompoundNbt for BlockEntity {
     where
         Self: Sized,
     {
-        let base = BlockEntityBase::from_compound_nbt(&nbt)?;
-        let kind = BlockEntityKind::from_compound_nbt(&nbt)?;
+        let base = BlockEntityBase::from_compound_nbt(nbt)?;
+        let kind = BlockEntityKind::from_compound_nbt(nbt)?;
 
         Ok(Self { base, kind })
     }
@@ -262,8 +262,8 @@ impl FromCompoundNbt for NoCoordinatesBlockEntity {
     where
         Self: Sized,
     {
-        let base = NoCoordinatesBlockEntityBase::from_compound_nbt(&nbt)?;
-        let kind = BlockEntityKind::from_compound_nbt(&nbt)?;
+        let base = NoCoordinatesBlockEntityBase::from_compound_nbt(nbt)?;
+        let kind = BlockEntityKind::from_compound_nbt(nbt)?;
 
         Ok(Self { base, kind })
     }

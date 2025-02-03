@@ -67,7 +67,7 @@ impl FromCompoundNbt for EndGateway {
         let age = nbt
             .int("Age")
             .ok_or(SculkParseError::MissingField("Age".into()))?;
-        let exact_teleport = get_bool(&nbt, "ExactTeleport");
+        let exact_teleport = get_bool(nbt, "ExactTeleport");
         let exit_portal = nbt
             .compound("ExitPortal")
             .map(|nbt| ExitPortal::from_compound_nbt(&nbt))

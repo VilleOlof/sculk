@@ -146,10 +146,10 @@ impl FromCompoundNbt for BannerPattern {
             let resource = ResourceName::from(id.to_str().as_ref());
 
             Pattern::ID(resource)
-        } else if let Some(_) = nbt.compound("pattern") {
+        } else if nbt.compound("pattern").is_some() {
             // Inlined pattern
-            let asset_id = get_owned_string(&nbt, "asset_id")?;
-            let translation_key = get_owned_string(&nbt, "translation_key")?;
+            let asset_id = get_owned_string(nbt, "asset_id")?;
+            let translation_key = get_owned_string(nbt, "translation_key")?;
 
             Pattern::Pattern {
                 asset_id,
